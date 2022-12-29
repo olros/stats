@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   List,
@@ -13,7 +14,7 @@ import {
   Typography,
   typographyClasses,
 } from '@mui/joy';
-import type { Project, Team } from '@prisma/client';
+import type { Project, Team, User } from '@prisma/client';
 import { Link, useParams } from '@remix-run/react';
 import { useState } from 'react';
 
@@ -35,11 +36,12 @@ const Separator = () => (
 );
 
 export type NavbarProps = {
+  user: User;
   teams: Team[];
   project?: Project;
 };
 
-export const Navbar = ({ teams, project }: NavbarProps) => {
+export const Navbar = ({ user, teams, project }: NavbarProps) => {
   const { teamSlug } = useParams();
 
   const selectedTeam = teams.find((team) => team.slug === teamSlug);
@@ -50,7 +52,7 @@ export const Navbar = ({ teams, project }: NavbarProps) => {
 
   return (
     <Sheet component='ol' sx={{ display: 'flex', justifyContent: 'space-between', overflow: 'hidden', listStyleType: 'none', m: 0, py: 1, px: 2 }}>
-      <Stack alignItems='center' direction='row'>
+      <Stack alignItems='center' direction='row' sx={{ overflow: 'hidden' }}>
         <Box component={Link} sx={{ height: 44 }} to={selectedTeam ? `/dashboard/${selectedTeam.slug}` : '/dashboard'}>
           <Box alt='' component='img' src='/android-chrome-192x192.png' sx={{ height: 44 }} />
         </Box>
@@ -121,13 +123,17 @@ export const Navbar = ({ teams, project }: NavbarProps) => {
         {project && (
           <>
             <Separator />
-            <Button color='neutral' component={Link} to='.' variant='plain'>
-              {project.name}
-            </Button>
+            <Typography component={Link} sx={{ textDecoration: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} to='.'>
+              {project.name} {project.name} {project.name} {project.name}
+            </Typography>
           </>
         )}
       </Stack>
-      <Button variant='plain'>Profil</Button>
+      <Link to='/profile'>
+        <Avatar alt='Link to profile' src={user.avatar_url || undefined} sx={{ ':hover': { scale: '1.1', transition: 'scale 0.1s' } }}>
+          {user.name[0]}
+        </Avatar>
+      </Link>
     </Sheet>
   );
 };

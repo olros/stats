@@ -32,16 +32,17 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   if (projectSlug && !project) {
     throw redirect(`/dashboard/${teamSlug}`);
   }
-  return json({ teams, project });
+  return json({ teams, project, user });
 };
 
 export default function Dashboard() {
-  const { teams, project } = useLoaderData<typeof loader>();
+  const { teams, project, user } = useLoaderData<typeof loader>();
   return (
     <>
       <Navbar
         project={project ? { ...project, createdAt: parseJSON(project.createdAt) } : undefined}
         teams={teams.map((team) => ({ ...team, createdAt: parseJSON(team.createdAt) }))}
+        user={user}
       />
       <Container sx={{ py: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
         <Outlet />

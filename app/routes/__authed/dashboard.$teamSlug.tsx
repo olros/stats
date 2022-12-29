@@ -31,14 +31,14 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   if (!teams.some((team) => team.slug === teamSlug)) {
     throw redirect('/dashboard');
   }
-  return json({ teams });
+  return json({ teams, user });
 };
 
 export default function TeamDashboard() {
-  const { teams } = useLoaderData<typeof loader>();
+  const { teams, user } = useLoaderData<typeof loader>();
   return (
     <>
-      <Navbar teams={teams.map((team) => ({ ...team, createdAt: parseJSON(team.createdAt) }))} />
+      <Navbar teams={teams.map((team) => ({ ...team, createdAt: parseJSON(team.createdAt) }))} user={user} />
       <Container sx={{ py: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
         <Outlet />
       </Container>
