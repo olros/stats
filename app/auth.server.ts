@@ -1,5 +1,6 @@
-import type { User } from '@prisma/client';
+import type { Team, User } from '@prisma/client';
 import { authSession } from '~/cookies.server';
+import { redirect } from 'react-router';
 import { Authenticator } from 'remix-auth';
 import { GitHubStrategy } from 'remix-auth-github';
 import invariant from 'tiny-invariant';
@@ -24,7 +25,8 @@ const gitHubStrategy = new GitHubStrategy(
       create: {
         id: profile._json.id,
         name: profile._json.name,
-        avatar: profile._json.avatar_url,
+        github_username: profile._json.login,
+        avatar_url: profile._json.avatar_url,
         email: profile._json.email,
       },
       where: {
@@ -32,10 +34,34 @@ const gitHubStrategy = new GitHubStrategy(
       },
       update: {
         name: profile._json.name,
-        avatar: profile._json.avatar_url,
+        github_username: profile._json.login,
+        avatar_url: profile._json.avatar_url,
         email: profile._json.email,
       },
     }),
 );
 
 authenticator.use(gitHubStrategy);
+
+export const getUserOrRedirect = async (request: Request) =>
+  await authenticator.isAuthenticated(request, {
+    failureRedirect: '/login',
+  });
+
+export const ensureIsTeamMember = async (request: Request, teamSlug: Team['slug']) => {
+  const user = await getUserOrRedirect(request);
+  const team = await prismaClient.team.findFirst({
+    select: { slug: true },
+    where: {
+      slug: teamSlug.toLowerCase(),
+      teamUsers: {
+        some: {
+          userId: user.id,
+        },
+      },
+    },
+  });
+  if (!team) {
+    throw redirect('/dashboard');
+  }
+};

@@ -1,9 +1,10 @@
 import type { MetaFunction } from '@remix-run/node';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import { CatchBoundary as CatchBound } from '~/components/ErrorBoundary';
 import StylesContext from '~/styles/server.context';
 import { useContext } from 'react';
 
-export { CatchBoundary, ErrorBoundary } from '~/components/ErrorBoundary';
+export { ErrorBoundary } from '~/components/ErrorBoundary';
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
@@ -19,7 +20,7 @@ const Document = ({ children }: DocumentProps) => {
   const styleData = useContext(StylesContext);
 
   return (
-    <html lang='no'>
+    <html data-joy-color-scheme='dark' lang='no'>
       <head>
         <link href='/apple-touch-icon.png' rel='apple-touch-icon' sizes='180x180' />
         <link href='/favicon-32x32.png' rel='icon' sizes='32x32' type='image/png' />
@@ -53,3 +54,9 @@ export default function App() {
     </Document>
   );
 }
+
+export const CatchBoundary = () => (
+  <Document>
+    <CatchBound />
+  </Document>
+);

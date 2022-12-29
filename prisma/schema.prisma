@@ -8,9 +8,45 @@ datasource db {
 }
 
 model User {
-  id        Int      @id
-  name      String   @db.VarChar(60)
-  email     String
-  avatar    String?
+  id              Int      @id
+  name            String   @db.VarChar(60)
+  github_username String
+  email           String
+  avatar_url      String?
+  createdAt       DateTime @default(now())
+
+  teamUsers TeamUser[]
+}
+
+model Team {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  name      String
   createdAt DateTime @default(now())
+
+  projects  Project[]
+  teamUsers TeamUser[]
+}
+
+model Project {
+  id        String   @id @default(uuid())
+  teamSlug  String
+  slug      String
+  name      String
+  url       String
+  createdAt DateTime @default(now())
+
+  team Team @relation(fields: [teamSlug], references: [slug], onDelete: Cascade)
+
+  @@unique([teamSlug, slug])
+}
+
+model TeamUser {
+  userId Int
+  teamId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@id([userId, teamId])
 }

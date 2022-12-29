@@ -14,7 +14,7 @@ const Grid = styled('div')(({ theme }) => ({
 export default function Index() {
   return (
     <Grid>
-      <Card sx={{ gridColumn: 'span 2' }} variant='outlined'>
+      <Card sx={{ gridColumn: 'span 2' }}>
         <Typography level='h1' textAlign='center'>
           Stat
         </Typography>

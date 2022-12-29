@@ -3,17 +3,23 @@ import type { LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { Outlet, useLoaderData } from '@remix-run/react';
-import { getUserOrRedirect } from '~/auth.server';
+import { ensureIsTeamMember, getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';
 import { parseJSON } from 'date-fns';
+import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
-  const teamSlug = params.teamSlug?.toLowerCase();
-  const projectSlug = params.projectSlug?.toLowerCase();
+  invariant(params.teamSlug, 'Expected params.teamSlug');
+  invariant(params.projectSlug, 'Expected params.projectSlug');
+  await ensureIsTeamMember(request, params.teamSlug);
+
+  const teamSlug = params.teamSlug.toLowerCase();
+  const projectSlug = params.projectSlug.toLowerCase();
   const user = await getUserOrRedirect(request);
+
   const teamsQuery = prismaClient.team.findMany({
     where: {
       teamUsers: {
@@ -23,19 +29,19 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       },
     },
   });
-  const projectQuery = !projectSlug || !teamSlug ? null : prismaClient.project.findFirst({ where: { slug: projectSlug, teamSlug } });
+  const projectQuery = prismaClient.project.findFirst({ where: { slug: projectSlug, teamSlug } });
 
   const [teams, project] = await Promise.all([teamsQuery, projectQuery]);
-  if (teamSlug && !teams.some((team) => team.slug === teamSlug)) {
+  if (!teams.some((team) => team.slug === teamSlug)) {
     throw redirect('/dashboard');
   }
-  if (projectSlug && !project) {
+  if (!project) {
     throw redirect(`/dashboard/${teamSlug}`);
   }
   return json({ teams, project });
 };
 
-export default function Dashboard() {
+export default function ProjectDashboard() {
   const { teams, project } = useLoaderData<typeof loader>();
   return (
     <>
