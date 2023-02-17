@@ -36,7 +36,7 @@ const Separator = () => (
 );
 
 export type NavbarProps = {
-  user: User;
+  user: Pick<User, 'avatar_url' | 'name'>;
   teams: Team[];
   project?: Project;
 };
@@ -124,7 +124,7 @@ export const Navbar = ({ user, teams, project }: NavbarProps) => {
           <>
             <Separator />
             <Typography component={Link} sx={{ textDecoration: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} to='.'>
-              {project.name} {project.name} {project.name} {project.name}
+              {project.name}
             </Typography>
           </>
         )}

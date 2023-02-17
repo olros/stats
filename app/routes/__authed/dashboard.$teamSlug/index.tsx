@@ -57,6 +57,7 @@ export default function TeamDashboard() {
             <Typography fontSize='xl' level='h2'>
               {project.name}
             </Typography>
+            <Typography fontSize='md'>{project.url}</Typography>
           </Card>
         ))}
       </Box>

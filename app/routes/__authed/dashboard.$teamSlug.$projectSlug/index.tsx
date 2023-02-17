@@ -30,14 +30,5 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 export default function ProjectDashboard() {
   const { project } = useLoaderData<typeof loader>();
-  return (
-    <>
-      <Stack component={Card} direction={{ sm: 'row' }} gap={1} justifyContent='space-between' sx={{ alignItems: 'center' }}>
-        <Typography level='h1'>{project.name}</Typography>
-        <Button component={Link} to='settings' variant='outlined'>
-          Settings
-        </Button>
-      </Stack>
-    </>
-  );
+  return <></>;
 }

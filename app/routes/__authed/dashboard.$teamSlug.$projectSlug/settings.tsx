@@ -1,9 +1,9 @@
-import { Button, Card, Stack, TextField, Typography } from '@mui/joy';
+import { Button, Card, FormControl, FormLabel, Input, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Form, Link, useActionData, useLoaderData, useNavigation, useParams } from '@remix-run/react';
+import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import { slugify } from '~/utils';
@@ -75,32 +75,21 @@ export default function ProjectSettings() {
   const { project } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const { state } = useNavigation();
-  const { teamSlug } = useParams();
 
   const [deleteName, setDeleteName] = useState('');
 
   return (
     <>
-      <Stack component={Card} direction={{ sm: 'row' }} gap={1} justifyContent='space-between' sx={{ alignItems: 'center' }}>
-        <Typography level='h1'>Settings</Typography>
-        <Button component={Link} to={`/dashboard/${teamSlug}/${project.slug}`} variant='outlined'>
-          Back
-        </Button>
-      </Stack>
-
       <Card component={Form} method='put' sx={{ gap: 1 }}>
         <Typography level='h3'>Edit</Typography>
-        <TextField
-          defaultValue={project.name}
-          disabled={state === 'submitting'}
-          error={Boolean(actionData?.errors.name)}
-          helperText={actionData?.errors.name}
-          id='name'
-          label='Project name'
-          name='name'
-          required
-        />
-        <TextField defaultValue={project.url} disabled={state === 'submitting'} id='url' label='Website url' name='url' required type='url' />
+        <FormControl id='name' required>
+          <FormLabel id='name-label'>Project name</FormLabel>
+          <Input defaultValue={project.name} disabled={state === 'submitting'} error={Boolean(actionData?.errors.name)} name='name' />
+        </FormControl>
+        <FormControl id='url' required>
+          <FormLabel id='url-label'>Website url</FormLabel>
+          <Input defaultValue={project.url} disabled={state === 'submitting'} name='url' type='url' />
+        </FormControl>
         <Button loading={state === 'submitting'} type='submit'>
           Save
         </Button>
@@ -111,16 +100,10 @@ export default function ProjectSettings() {
           Delete project
         </Typography>
         <Typography>Deleting the project will delete all its data. This action cannot be undone. Type the name of the project to confirm.</Typography>
-        <TextField
-          autoComplete='off'
-          disabled={state === 'submitting'}
-          id='delete-name'
-          label={`Please type "${project.name}" to confirm`}
-          onChange={(e) => setDeleteName(e.target.value)}
-          required
-          value={deleteName}
-        />
-        <Button color='danger' disabled={deleteName !== project.name} loading={state === 'submitting'} type='submit'>
+        <FormControl id='delete-name' required>
+          <Input autoComplete='off' disabled={state === 'submitting'} onChange={(e) => setDeleteName(e.target.value)} value={deleteName} />
+        </FormControl>
+        <Button color='danger' disabled={deleteName !== `delete ${project.name}`} loading={state === 'submitting'} type='submit'>
           I understand the consequences, delete this project
         </Button>
       </Card>

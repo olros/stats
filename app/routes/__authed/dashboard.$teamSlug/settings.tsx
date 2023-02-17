@@ -1,4 +1,4 @@
-import { Button, Card, Stack, TextField, Typography } from '@mui/joy';
+import { Button, Card, FormControl, FormLabel, Input, Stack, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
@@ -80,16 +80,10 @@ export default function TeamSettings() {
 
       <Card component={Form} method='put' sx={{ gap: 1 }}>
         <Typography level='h3'>Edit</Typography>
-        <TextField
-          defaultValue={team.name}
-          disabled={state === 'submitting'}
-          error={Boolean(actionData?.errors.name)}
-          helperText={actionData?.errors.name}
-          id='name'
-          label='Team name'
-          name='name'
-          required
-        />
+        <FormControl id='name' required>
+          <FormLabel id='name-label'>Team name</FormLabel>
+          <Input defaultValue={team.name} disabled={state === 'submitting'} error={Boolean(actionData?.errors.name)} name='name' />
+        </FormControl>
         <Button loading={state === 'submitting'} type='submit'>
           Save
         </Button>
@@ -102,15 +96,9 @@ export default function TeamSettings() {
         <Typography>
           Deleting the team will delete all its projects and their data. This action cannot be undone. Type the name of the team to confirm.
         </Typography>
-        <TextField
-          autoComplete='off'
-          disabled={state === 'submitting'}
-          id='delete-name'
-          label={`Please type "${team.name}" to confirm`}
-          onChange={(e) => setDeleteName(e.target.value)}
-          required
-          value={deleteName}
-        />
+        <FormControl id='delete-name' required>
+          <Input autoComplete='off' disabled={state === 'submitting'} onChange={(e) => setDeleteName(e.target.value)} value={deleteName} />
+        </FormControl>
         <Button color='danger' disabled={deleteName !== team.name} loading={state === 'submitting'} type='submit'>
           I understand the consequences, delete this team
         </Button>

@@ -1,4 +1,4 @@
-import { Button, Card, Stack, TextField, Typography } from '@mui/joy';
+import { Button, Card, FormControl, FormLabel, Input, Stack, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import type { ActionArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
@@ -44,16 +44,14 @@ export default function CreateProject() {
         Create project
       </Typography>
       <Stack component={Form} gap={1} method='post'>
-        <TextField
-          disabled={state === 'submitting'}
-          error={Boolean(actionData?.errors?.name)}
-          helperText={actionData?.errors?.name}
-          id='name'
-          label='Project name'
-          name='name'
-          required
-        />
-        <TextField disabled={state === 'submitting'} id='url' label='Website url' name='url' required type='url' />
+        <FormControl id='name' required>
+          <FormLabel id='name-label'>Project name</FormLabel>
+          <Input disabled={state === 'submitting'} error={Boolean(actionData?.errors?.name)} name='name' />
+        </FormControl>
+        <FormControl id='url' required>
+          <FormLabel id='url-label'>Website url</FormLabel>
+          <Input disabled={state === 'submitting'} name='url' type='url' />
+        </FormControl>
         <Stack direction='row' gap={1}>
           <Button loading={state === 'submitting'} type='submit'>
             Save

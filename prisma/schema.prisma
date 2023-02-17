@@ -38,6 +38,8 @@ model Project {
 
   team Team @relation(fields: [teamSlug], references: [slug], onDelete: Cascade)
 
+  pageViews PageView[]
+
   @@unique([teamSlug, slug])
 }
 
@@ -49,4 +51,20 @@ model TeamUser {
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@id([userId, teamId])
+}
+
+model PageView {
+  projectId String
+  date      DateTime @db.Date
+  hour      Int
+  pathname  String
+
+  count         Int
+  mobile_count  Int
+  tablet_count  Int
+  dekstop_count Int
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, date, hour, pathname])
 }

@@ -1,8 +1,8 @@
-import { Container } from '@mui/joy';
+import { Card, Container, Stack, Tab, TabList, Tabs, Typography } from '@mui/joy';
 import type { LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Outlet, useLoaderData } from '@remix-run/react';
+import { Link, Outlet, useLoaderData, useLocation, useParams } from '@remix-run/react';
 import { ensureIsTeamMember, getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';
@@ -41,8 +41,19 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   return json({ teams, project, user });
 };
 
+const TABS = [
+  { label: 'Pageviews', url: '' },
+  { label: 'Setup', url: 'setup' },
+  { label: 'Settings', url: 'settings' },
+];
+
 export default function ProjectDashboard() {
   const { teams, project, user } = useLoaderData<typeof loader>();
+  const { teamSlug, projectSlug } = useParams() as { teamSlug: string; projectSlug: string };
+  const location = useLocation();
+  console.log(location);
+  const baseLocation = `/dashboard/${teamSlug}/${projectSlug}`;
+
   return (
     <>
       <Navbar
@@ -51,6 +62,23 @@ export default function ProjectDashboard() {
         user={user}
       />
       <Container sx={{ py: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <Stack component={Card} direction={{ sm: 'row' }} gap={1} justifyContent='space-between' sx={{ alignItems: 'center' }}>
+          <Typography level='h1'>{project.name}</Typography>
+          <Typography fontSize='md'>{project.url}</Typography>
+        </Stack>
+        <Tabs aria-label='Plain tabs' sx={{ borderRadius: 'lg' }}>
+          <TabList variant='outlined'>
+            {TABS.map((tab) => (
+              <Tab
+                component={Link}
+                key={tab.url}
+                to={tab.url}
+                variant={location.pathname === `${baseLocation}${tab.url.length ? `/${tab.url}` : ''}` ? 'soft' : 'plain'}>
+                {tab.label}
+              </Tab>
+            ))}
+          </TabList>
+        </Tabs>
         <Outlet />
       </Container>
     </>

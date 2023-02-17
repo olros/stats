@@ -1,4 +1,4 @@
-import { Button, Card, Stack, TextField, Typography } from '@mui/joy';
+import { Button, Card, FormControl, FormLabel, Input, Stack, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import type { ActionArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
@@ -44,15 +44,10 @@ export default function CreateTeam() {
         Create team
       </Typography>
       <Stack component={Form} gap={1} method='post'>
-        <TextField
-          disabled={state === 'submitting'}
-          error={Boolean(actionData?.errors.name)}
-          helperText={actionData?.errors.name}
-          id='name'
-          label='Team name'
-          name='name'
-          required
-        />
+        <FormControl id='name' required>
+          <FormLabel id='name-label'>Team name</FormLabel>
+          <Input disabled={state === 'submitting'} error={Boolean(actionData?.errors.name)} name='name' />
+        </FormControl>
         <Stack direction='row' gap={1}>
           <Button loading={state === 'submitting'} type='submit'>
             Save
