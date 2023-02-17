@@ -8,5 +8,10 @@ export const theme = extendTheme({
         variant: 'outlined',
       },
     },
+    JoyTabList: {
+      defaultProps: {
+        variant: 'outlined',
+      },
+    },
   },
 });

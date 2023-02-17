@@ -1,16 +1,28 @@
 import type { MetaFunction } from '@remix-run/node';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
-import { CatchBoundary as CatchBound } from '~/components/ErrorBoundary';
+import { ErrorBoundary as BaseErrorBoundary } from '~/components/ErrorBoundary';
 import StylesContext from '~/styles/server.context';
 import { useContext } from 'react';
-
-export { ErrorBoundary } from '~/components/ErrorBoundary';
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   title: 'Stats',
   viewport: 'width=device-width,initial-scale=1',
 });
+
+export const ErrorBoundary = () => (
+  <html lang='no'>
+    <head>
+      <Meta />
+      <Links />
+    </head>
+    <body>
+      <BaseErrorBoundary />
+      <Scripts />
+      <LiveReload />
+    </body>
+  </html>
+);
 
 interface DocumentProps {
   children: React.ReactNode;
@@ -54,9 +66,3 @@ export default function App() {
     </Document>
   );
 }
-
-export const CatchBoundary = () => (
-  <Document>
-    <CatchBound />
-  </Document>
-);

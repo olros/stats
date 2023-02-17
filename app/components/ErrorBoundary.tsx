@@ -1,27 +1,21 @@
 import styled from '@emotion/styled';
-import { useCatch } from '@remix-run/react';
+import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
 
 const Container = styled('div')`
   background-color: #ff0000;
   padding: 1rem;
 `;
 
-export function CatchBoundary() {
-  const caught = useCatch();
+export const ErrorBoundary = () => {
+  const error = useRouteError();
 
-  return (
+  return isRouteErrorResponse(error) ? (
     <Container>
-      <p>
-        [CatchBoundary]: {caught.status} {caught.statusText}
-      </p>
+      <h1>{`${error.status} - ${error.data}`}</h1>
+    </Container>
+  ) : (
+    <Container>
+      <p>[ErrorBoundary]: There was an error: {(error as Error).message}</p>
     </Container>
   );
-}
-
-export function ErrorBoundary({ error }: { error: Error }) {
-  return (
-    <Container>
-      <p>[ErrorBoundary]: There was an error: {error.message}</p>
-    </Container>
-  );
-}
+};

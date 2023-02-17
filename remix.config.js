@@ -6,5 +6,6 @@ module.exports = {
   serverDependenciesToBundle: ['react-charts', 'd3-time-format'],
   future: {
     unstable_cssSideEffectImports: true,
+    v2_errorBoundary: true,
   },
 };

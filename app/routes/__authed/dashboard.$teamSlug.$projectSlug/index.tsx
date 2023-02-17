@@ -1,14 +1,13 @@
-import { Box, Button, Card, FormControl, FormLabel, Input, Stack, Typography } from '@mui/joy';
-import { PageView } from '@prisma/client';
+import { Button, Card, FormControl, FormLabel, Input, Stack, Typography, useTheme } from '@mui/joy';
+import type { Serie } from '@nivo/line';
+import { ResponsiveLine } from '@nivo/line';
 import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Form, Link, useLoaderData } from '@remix-run/react';
+import { Form, useLoaderData } from '@remix-run/react';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import { addDays, format, isDate, set } from 'date-fns';
-import { useMemo } from 'react';
-import type { AxisOptions, UserSerie } from 'react-charts';
-import { Chart } from 'react-charts';
+import { Suspense, useMemo } from 'react';
 import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
@@ -62,26 +61,19 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   return json({ pageViews, dateGte: formatDate(dateGte), dateLte: formatDate(dateLte), pathname });
 };
 
-type PageViewData = {
-  date: Date;
-  count: number;
-};
-
 export default function ProjectDashboard() {
   const { pageViews, dateGte, dateLte, pathname } = useLoaderData<typeof loader>();
-  const primaryAxis = useMemo<AxisOptions<PageViewData>>(
-    () => ({ getValue: (datum) => datum.date, scaleType: 'time', hardMin: new Date(dateGte), hardMax: new Date(dateLte) }),
-    [dateGte, dateLte],
-  );
-  const secondaryAxes = useMemo<AxisOptions<PageViewData>[]>(
-    () => [{ getValue: (datum) => datum.count, elementType: 'line', hardMin: 0, hardMax: Math.max(...pageViews.map((p) => p._sum.count || 0)) * 1.1 }],
+  const theme = useTheme();
+  const data: Serie[] = useMemo(
+    () => [
+      { id: 'Mobile devices', data: pageViews.map((item) => ({ x: item.date.substring(0, 10), y: item._sum.mobile_count })) },
+      { id: 'Tablet devices', data: pageViews.map((item) => ({ x: item.date.substring(0, 10), y: item._sum.tablet_count })) },
+      { id: 'Desktop devices', data: pageViews.map((item) => ({ x: item.date.substring(0, 10), y: item._sum.dekstop_count })) },
+      { id: 'Total amount', data: pageViews.map((item) => ({ x: item.date.substring(0, 10), y: item._sum.count })) },
+    ],
     [pageViews],
   );
 
-  const data: UserSerie<PageViewData>[] = [
-    { label: 'Total amount', data: pageViews.map((item) => ({ date: new Date(item.date), count: item._sum.count || 0 })) },
-    { label: 'Mobile device', data: pageViews.map((item) => ({ date: new Date(item.date), count: item._sum.mobile_count || 0 })) },
-  ];
   return (
     <Stack gap={1}>
       <Card>
@@ -103,19 +95,92 @@ export default function ProjectDashboard() {
           </Button>
         </Stack>
       </Card>
-      <Card sx={{ position: 'relative', p: 1 }}>
-        <Box sx={{ position: 'relative', width: '100%', height: '400px' }}>
-          <Chart
-            options={{
-              data,
-              primaryAxis,
-              secondaryAxes,
-              dark: true,
-              tooltip: false,
-              initialHeight: 400,
+      <Card sx={{ position: 'relative', p: 1, width: '100%', height: 400 }}>
+        <Suspense fallback={null}>
+          <ResponsiveLine
+            axisBottom={{
+              format: '%b %d',
+              tickValues: 'every 2 days',
+              tickRotation: -45,
             }}
+            colors={{ scheme: 'paired' }}
+            curve='monotoneX'
+            data={data}
+            enableSlices='x'
+            legends={[
+              {
+                anchor: 'bottom-right',
+                direction: 'column',
+                justify: false,
+                translateX: 100,
+                translateY: 0,
+                itemsSpacing: 0,
+                itemDirection: 'left-to-right',
+                itemWidth: 80,
+                itemHeight: 20,
+                itemOpacity: 0.75,
+                symbolSize: 12,
+                symbolShape: 'circle',
+                symbolBorderColor: 'rgba(0, 0, 0, .5)',
+                effects: [
+                  {
+                    on: 'hover',
+                    style: {
+                      itemBackground: 'rgba(0, 0, 0, .03)',
+                      itemOpacity: 1,
+                    },
+                  },
+                ],
+              },
+            ]}
+            margin={{ top: 20, right: 140, bottom: 50, left: 30 }}
+            pointBorderColor={{ from: 'serieColor' }}
+            pointBorderWidth={3}
+            pointColor={{ theme: 'background' }}
+            pointSize={3}
+            sliceTooltip={({ slice }) => (
+              <Card>
+                <Typography fontSize='md' fontWeight='bold'>
+                  Pageviews:
+                </Typography>
+                {slice.points.map((point) => (
+                  <Typography fontSize='sm' key={point.serieId}>
+                    {point.serieId}: {point.data.yFormatted}
+                  </Typography>
+                ))}
+              </Card>
+            )}
+            theme={{
+              textColor: theme.palette.text.primary,
+              axis: {
+                domain: { line: { stroke: theme.palette.background.level1 } },
+              },
+              grid: {
+                line: { stroke: theme.palette.background.level1 },
+              },
+              tooltip: {
+                container: {
+                  background: theme.palette.background.level2,
+                  fill: theme.palette.text.primary,
+                },
+              },
+              legends: {
+                text: { fill: theme.palette.text.primary },
+              },
+            }}
+            useMesh
+            xFormat='time:%Y-%m-%d'
+            xScale={{
+              type: 'time',
+              format: '%Y-%m-%d',
+              useUTC: false,
+              precision: 'day',
+              min: dateGte,
+              max: dateLte,
+            }}
+            yScale={{ type: 'linear' }}
           />
-        </Box>
+        </Suspense>
       </Card>
     </Stack>
   );

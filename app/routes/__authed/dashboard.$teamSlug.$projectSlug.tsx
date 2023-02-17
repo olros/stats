@@ -67,7 +67,7 @@ export default function ProjectDashboard() {
           <Typography fontSize='md'>{project.url}</Typography>
         </Stack>
         <Tabs aria-label='Plain tabs' sx={{ borderRadius: 'lg' }}>
-          <TabList variant='outlined'>
+          <TabList>
             {TABS.map((tab) => (
               <Tab
                 component={Link}
