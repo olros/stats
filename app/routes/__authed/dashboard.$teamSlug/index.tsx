@@ -31,7 +31,7 @@ export default function TeamDashboard() {
             key={project.slug}
             sx={{ textDecoration: 'none', '&:hover': { borderColor: 'neutral.outlinedHoverBorder' } }}
             to={project.slug}>
-            <Typography fontSize='xl' level='h2'>
+            <Typography fontSize='xl' level='h3'>
               {project.name}
             </Typography>
             <Typography fontSize='md'>{project.url}</Typography>

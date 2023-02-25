@@ -40,6 +40,7 @@ export default function ProjectSetup() {
           <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
             {`@olros/stats`}
           </Typography>
+          :
         </Description>
         <Code>{`yarn add @olros/stats`}</Code>
         <Description>Create an instance of Stats:</Description>

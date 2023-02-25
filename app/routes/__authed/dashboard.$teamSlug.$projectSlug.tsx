@@ -39,7 +39,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 };
 
 const TABS = [
-  { label: 'Pageviews', url: '' },
+  { label: 'Statistics', url: '' },
   { label: 'Setup', url: 'setup' },
   { label: 'Settings', url: 'settings' },
 ];

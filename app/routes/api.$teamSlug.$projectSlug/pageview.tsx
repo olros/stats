@@ -2,7 +2,7 @@ import type { ActionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import { screenWidthToDeviceType } from '~/utils';
-import { getHours } from 'date-fns';
+import { getHours, set } from 'date-fns';
 import invariant from 'tiny-invariant';
 
 import { DeviceType } from '~/types';
@@ -33,10 +33,12 @@ export const action = async ({ request, params }: ActionArgs) => {
     return json({ errors: { name: `Can't find the given project` } }, { status: 404 });
   }
 
+  const date = set(new Date(), { hours: 12 });
+
   await prismaClient.pageView.upsert({
     create: {
       projectId: project.id,
-      date: new Date(),
+      date,
       hour: getHours(new Date()),
       pathname: data.pathname,
       count: 1,
@@ -46,7 +48,7 @@ export const action = async ({ request, params }: ActionArgs) => {
     },
     where: {
       projectId_date_hour_pathname: {
-        date: new Date(),
+        date,
         hour: getHours(new Date()),
         projectId: project.id,
         pathname: data.pathname,

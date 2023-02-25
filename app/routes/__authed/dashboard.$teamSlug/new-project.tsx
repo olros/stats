@@ -46,7 +46,7 @@ export default function CreateProject() {
   const { teamSlug } = useParams();
   return (
     <Card>
-      <Typography gutterBottom level='h1'>
+      <Typography gutterBottom level='h3'>
         Create project
       </Typography>
       <Stack component={Form} gap={1} method='post'>

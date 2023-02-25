@@ -1,13 +1,13 @@
-import { Button, Card, FormControl, FormLabel, Input, Stack, Typography, useTheme } from '@mui/joy';
+import { Box, Button, Card, Divider, FormControl, FormLabel, Input, Stack, Tooltip, Typography, useTheme } from '@mui/joy';
 import type { Serie } from '@nivo/line';
 import { ResponsiveLine } from '@nivo/line';
 import type { LoaderArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
 import { Form, useLoaderData } from '@remix-run/react';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import { addDays, format, isDate, set } from 'date-fns';
-import { Suspense, useMemo } from 'react';
+import { Fragment, Suspense, useMemo } from 'react';
+import { jsonHash } from 'remix-utils';
 import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
@@ -34,7 +34,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   const pathname = searchParams.get('pathname') || '';
 
-  const pageViews = await prismaClient.pageView.groupBy({
+  const pageViews = prismaClient.pageView.groupBy({
     by: ['date'],
     where: {
       project: {
@@ -58,11 +58,36 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     orderBy: { date: 'asc' },
   });
 
-  return json({ pageViews, dateGte: formatDate(dateGte), dateLte: formatDate(dateLte), pathname });
+  const topPages = prismaClient.pageView.groupBy({
+    by: ['pathname'],
+    where: {
+      project: {
+        slug: params.projectSlug.toLowerCase(),
+        teamSlug: params.teamSlug.toLowerCase(),
+      },
+      date: {
+        gte: dateGte,
+        lte: dateLte,
+      },
+      ...(pathname.length
+        ? {
+            pathname: {
+              startsWith: pathname,
+              mode: 'insensitive',
+            },
+          }
+        : {}),
+    },
+    _sum: { count: true },
+    orderBy: { _sum: { count: 'desc' } },
+    take: 20,
+  });
+
+  return jsonHash({ pageViews: await pageViews, topPages: await topPages, dateGte: formatDate(dateGte), dateLte: formatDate(dateLte), pathname });
 };
 
 export default function ProjectDashboard() {
-  const { pageViews, dateGte, dateLte, pathname } = useLoaderData<typeof loader>();
+  const { pageViews, topPages, dateGte, dateLte, pathname } = useLoaderData<typeof loader>();
   const theme = useTheme();
   const data: Serie[] = useMemo(
     () => [
@@ -79,7 +104,9 @@ export default function ProjectDashboard() {
       <Card>
         <Stack component={Form} direction={{ xs: 'column', md: 'row' }} gap={1}>
           <FormControl id='pathname' sx={{ flex: 1 }}>
-            <FormLabel id='pathname-label'>Pathname</FormLabel>
+            <Tooltip title='Equal-matching for Trend and startswith-matching for Top pages'>
+              <FormLabel id='pathname-label'>Pathname</FormLabel>
+            </Tooltip>
             <Input defaultValue={pathname} name='pathname' />
           </FormControl>
           <FormControl id='gte' required sx={{ flex: 1 }}>
@@ -95,93 +122,132 @@ export default function ProjectDashboard() {
           </Button>
         </Stack>
       </Card>
-      <Card sx={{ position: 'relative', p: 1, width: '100%', height: 400 }}>
+      <Card sx={{ p: 2 }}>
+        <Typography gutterBottom level='h3'>
+          Trend
+        </Typography>
         <Suspense fallback={null}>
-          <ResponsiveLine
-            axisBottom={{
-              format: '%b %d',
-              tickValues: 'every 2 days',
-              tickRotation: -45,
-            }}
-            colors={{ scheme: 'paired' }}
-            curve='monotoneX'
-            data={data}
-            enableSlices='x'
-            legends={[
-              {
-                anchor: 'bottom-right',
-                direction: 'column',
-                justify: false,
-                translateX: 100,
-                translateY: 0,
-                itemsSpacing: 0,
-                itemDirection: 'left-to-right',
-                itemWidth: 80,
-                itemHeight: 20,
-                itemOpacity: 0.75,
-                symbolSize: 12,
-                symbolShape: 'circle',
-                symbolBorderColor: 'rgba(0, 0, 0, .5)',
-                effects: [
-                  {
-                    on: 'hover',
-                    style: {
-                      itemBackground: 'rgba(0, 0, 0, .03)',
-                      itemOpacity: 1,
+          <Box sx={{ position: 'relative', height: 400 }}>
+            <ResponsiveLine
+              axisBottom={{
+                format: '%b %d',
+                tickValues: 'every 2 days',
+                tickRotation: -45,
+              }}
+              colors={{ scheme: 'paired' }}
+              curve='monotoneX'
+              data={data}
+              enableSlices='x'
+              legends={[
+                {
+                  anchor: 'bottom-right',
+                  direction: 'column',
+                  justify: false,
+                  translateX: 100,
+                  translateY: 0,
+                  itemsSpacing: 0,
+                  itemDirection: 'left-to-right',
+                  itemWidth: 80,
+                  itemHeight: 20,
+                  itemOpacity: 0.75,
+                  symbolSize: 12,
+                  symbolShape: 'circle',
+                  symbolBorderColor: 'rgba(0, 0, 0, .5)',
+                  effects: [
+                    {
+                      on: 'hover',
+                      style: {
+                        itemBackground: 'rgba(0, 0, 0, .03)',
+                        itemOpacity: 1,
+                      },
                     },
-                  },
-                ],
-              },
-            ]}
-            margin={{ top: 20, right: 140, bottom: 50, left: 30 }}
-            pointBorderColor={{ from: 'serieColor' }}
-            pointBorderWidth={3}
-            pointColor={{ theme: 'background' }}
-            pointSize={3}
-            sliceTooltip={({ slice }) => (
-              <Card>
-                <Typography fontSize='md' fontWeight='bold'>
-                  Pageviews:
-                </Typography>
-                {slice.points.map((point) => (
-                  <Typography fontSize='sm' key={point.serieId}>
-                    {point.serieId}: {point.data.yFormatted}
-                  </Typography>
-                ))}
-              </Card>
-            )}
-            theme={{
-              textColor: theme.palette.text.primary,
-              axis: {
-                domain: { line: { stroke: theme.palette.background.level1 } },
-              },
-              grid: {
-                line: { stroke: theme.palette.background.level1 },
-              },
-              tooltip: {
-                container: {
-                  background: theme.palette.background.level2,
-                  fill: theme.palette.text.primary,
+                  ],
                 },
-              },
-              legends: {
-                text: { fill: theme.palette.text.primary },
-              },
-            }}
-            useMesh
-            xFormat='time:%Y-%m-%d'
-            xScale={{
-              type: 'time',
-              format: '%Y-%m-%d',
-              useUTC: false,
-              precision: 'day',
-              min: dateGte,
-              max: dateLte,
-            }}
-            yScale={{ type: 'linear' }}
-          />
+              ]}
+              margin={{ top: 10, right: 140, bottom: 40, left: 30 }}
+              pointBorderColor={{ from: 'serieColor' }}
+              pointBorderWidth={3}
+              pointColor={{ theme: 'background' }}
+              pointSize={3}
+              sliceTooltip={({ slice }) => (
+                <Card>
+                  <Typography fontSize='md' fontWeight='bold'>
+                    Pageviews:
+                  </Typography>
+                  {slice.points.map((point) => (
+                    <Typography fontSize='sm' key={point.serieId}>
+                      {point.serieId}: {point.data.yFormatted}
+                    </Typography>
+                  ))}
+                </Card>
+              )}
+              theme={{
+                textColor: theme.palette.text.primary,
+                axis: {
+                  domain: { line: { stroke: theme.palette.background.level1 } },
+                },
+                grid: {
+                  line: { stroke: theme.palette.background.level1 },
+                },
+                tooltip: {
+                  container: {
+                    background: theme.palette.background.level2,
+                    fill: theme.palette.text.primary,
+                  },
+                },
+                legends: {
+                  text: { fill: theme.palette.text.primary },
+                },
+              }}
+              useMesh
+              xFormat='time:%Y-%m-%d'
+              xScale={{
+                type: 'time',
+                format: '%Y-%m-%d',
+                useUTC: false,
+                precision: 'day',
+                min: dateGte,
+                max: dateLte,
+              }}
+              yScale={{ type: 'linear' }}
+            />
+          </Box>
         </Suspense>
       </Card>
+      <Box sx={{ display: 'grid', gap: 1, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
+        <Card>
+          <Typography gutterBottom level='h3'>
+            Top pages
+          </Typography>
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto' }}>
+            {topPages.map((page, i) => (
+              <Fragment key={page.pathname}>
+                <Typography sx={{ ml: 0.5 }}>{page.pathname}</Typography>
+                <Typography sx={{ mr: 0.5, textAlign: 'right' }}>
+                  {Intl.NumberFormat('en-GB', { notation: 'compact', compactDisplay: 'long', maximumFractionDigits: 1 }).format(page._sum.count || 0)}
+                </Typography>
+                {i !== topPages.length - 1 && <Divider sx={{ gridColumn: 'span 2', my: 0.25 }} />}
+              </Fragment>
+            ))}
+          </Box>
+        </Card>
+        <Card>
+          <Typography gutterBottom level='h3'>
+            Custom events
+          </Typography>
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto' }}>
+            {/* {[].map((event, i) => (
+              <Fragment key={event.name}>
+                <Typography sx={{ ml: 0.5 }}>{event.name}</Typography>
+                <Typography sx={{ mr: 0.5, textAlign: 'right' }}>
+                  {Intl.NumberFormat('en-GB', { notation: 'compact', compactDisplay: 'long', maximumFractionDigits: 1 }).format(event._sum.count || 0)}
+                </Typography>
+                {i !== [].length - 1 && <Divider sx={{ gridColumn: 'span 2', my: 0.25 }} />}
+              </Fragment>
+            ))} */}
+          </Box>
+        </Card>
+      </Box>
     </Stack>
   );
 }
