@@ -2,7 +2,7 @@ import { Card, Container, Stack, Tab, TabList, Tabs, Typography } from '@mui/joy
 import type { LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Link, Outlet, useLoaderData, useLocation, useParams } from '@remix-run/react';
+import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { ensureIsTeamMember, getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';
@@ -14,9 +14,8 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
-  await ensureIsTeamMember(request, params.teamSlug);
+  const team = await ensureIsTeamMember(request, params.teamSlug);
 
-  const teamSlug = params.teamSlug.toLowerCase();
   const projectSlug = params.projectSlug.toLowerCase();
   const user = await getUserOrRedirect(request);
 
@@ -29,16 +28,14 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       },
     },
   });
-  const projectQuery = prismaClient.project.findFirst({ where: { slug: projectSlug, teamSlug } });
+  const projectQuery = prismaClient.project.findFirst({ where: { slug: projectSlug, teamSlug: team.slug } });
 
   const [teams, project] = await Promise.all([teamsQuery, projectQuery]);
-  if (!teams.some((team) => team.slug === teamSlug)) {
-    throw redirect('/dashboard');
-  }
+
   if (!project) {
-    throw redirect(`/dashboard/${teamSlug}`);
+    throw redirect(`/dashboard/${team.slug}`);
   }
-  return json({ teams, project, user });
+  return json({ teams, team, project, user });
 };
 
 const TABS = [
@@ -48,11 +45,9 @@ const TABS = [
 ];
 
 export default function ProjectDashboard() {
-  const { teams, project, user } = useLoaderData<typeof loader>();
-  const { teamSlug, projectSlug } = useParams() as { teamSlug: string; projectSlug: string };
+  const { teams, team, project, user } = useLoaderData<typeof loader>();
   const location = useLocation();
-  console.log(location);
-  const baseLocation = `/dashboard/${teamSlug}/${projectSlug}`;
+  const baseLocation = `/dashboard/${team.slug}/${project.slug}`;
 
   return (
     <>
@@ -66,7 +61,7 @@ export default function ProjectDashboard() {
           <Typography level='h1'>{project.name}</Typography>
           <Typography fontSize='md'>{project.url}</Typography>
         </Stack>
-        <Tabs aria-label='Plain tabs' sx={{ borderRadius: 'lg' }}>
+        <Tabs aria-label='Select team page' sx={{ width: '100%', borderRadius: 'lg' }}>
           <TabList>
             {TABS.map((tab) => (
               <Tab

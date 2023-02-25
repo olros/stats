@@ -1,8 +1,7 @@
-import { Container } from '@mui/joy';
+import { Button, Card, Container, Stack, Tab, TabList, Tabs, Typography } from '@mui/joy';
 import type { LoaderArgs } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Outlet, useLoaderData } from '@remix-run/react';
+import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { ensureIsTeamMember, getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';
@@ -13,9 +12,8 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
-  await ensureIsTeamMember(request, params.teamSlug);
+  const team = await ensureIsTeamMember(request, params.teamSlug);
 
-  const teamSlug = params.teamSlug.toLowerCase();
   const user = await getUserOrRedirect(request);
 
   const teams = await prismaClient.team.findMany({
@@ -28,18 +26,43 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     },
   });
 
-  if (!teams.some((team) => team.slug === teamSlug)) {
-    throw redirect('/dashboard');
-  }
-  return json({ teams, user });
+  return json({ teams, team, user });
 };
 
-export default function TeamDashboard() {
-  const { teams, user } = useLoaderData<typeof loader>();
+const TABS = [
+  { label: 'Projects', url: '' },
+  { label: 'Members', url: 'members' },
+  { label: 'Settings', url: 'settings' },
+];
+
+export default function ProjectDashboard() {
+  const { teams, team, user } = useLoaderData<typeof loader>();
+  const location = useLocation();
+  const baseLocation = `/dashboard/${team.slug}`;
+
   return (
     <>
       <Navbar teams={teams.map((team) => ({ ...team, createdAt: parseJSON(team.createdAt) }))} user={user} />
       <Container sx={{ py: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <Stack component={Card} direction={{ sm: 'row' }} gap={1} justifyContent='space-between' sx={{ alignItems: 'center' }}>
+          <Typography level='h1'>{team.name}</Typography>
+          <Button component={Link} to='new-project'>
+            New project
+          </Button>
+        </Stack>
+        <Tabs aria-label='Select project page' sx={{ borderRadius: 'lg' }}>
+          <TabList>
+            {TABS.map((tab) => (
+              <Tab
+                component={Link}
+                key={tab.url}
+                to={tab.url}
+                variant={location.pathname === `${baseLocation}${tab.url.length ? `/${tab.url}` : ''}` ? 'soft' : 'plain'}>
+                {tab.label}
+              </Tab>
+            ))}
+          </TabList>
+        </Tabs>
         <Outlet />
       </Container>
     </>

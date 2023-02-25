@@ -1,9 +1,9 @@
-import { Button, Card, FormControl, FormLabel, Input, Stack, Typography } from '@mui/joy';
+import { Button, Card, FormControl, FormLabel, Input, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Form, Link, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
+import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import { slugify } from '~/utils';
@@ -14,17 +14,7 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
-  await ensureIsTeamMember(request, params.teamSlug);
-  const team = await prismaClient.team.findFirst({
-    where: {
-      slug: params.teamSlug.toLowerCase(),
-    },
-  });
-
-  if (!team) {
-    throw redirect('/dashboard');
-  }
-
+  const team = await ensureIsTeamMember(request, params.teamSlug);
   return json({ team });
 };
 
@@ -47,7 +37,7 @@ export const action = async ({ request, params }: ActionArgs) => {
       return redirect(`/dashboard/${team.slug}/settings`);
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError) {
-        return json({ errors: { name: 'This team name is already taken' } });
+        return json({ errors: { name: 'This team name is already taken' } }, { status: 400 });
       }
     }
   }
@@ -59,7 +49,7 @@ export const action = async ({ request, params }: ActionArgs) => {
     });
     return redirect(`/dashboard`);
   }
-  return json({ errors: { name: 'Something went wrong' } });
+  return json({ errors: { name: 'Something went wrong' } }, { status: 400 });
 };
 
 export default function TeamSettings() {
@@ -71,13 +61,6 @@ export default function TeamSettings() {
 
   return (
     <>
-      <Stack component={Card} direction={{ sm: 'row' }} gap={1} justifyContent='space-between' sx={{ alignItems: 'center' }}>
-        <Typography level='h1'>Settings</Typography>
-        <Button component={Link} to={`/dashboard/${team.slug}`} variant='outlined'>
-          Back
-        </Button>
-      </Stack>
-
       <Card component={Form} method='put' sx={{ gap: 1 }}>
         <Typography level='h3'>Edit</Typography>
         <FormControl id='name' required>
@@ -94,12 +77,12 @@ export default function TeamSettings() {
           Delete team
         </Typography>
         <Typography>
-          Deleting the team will delete all its projects and their data. This action cannot be undone. Type the name of the team to confirm.
+          {`Deleting the team will delete all its projects and their data. This action cannot be undone. Type the "delete ${team.name}" to confirm.`}
         </Typography>
         <FormControl id='delete-name' required>
           <Input autoComplete='off' disabled={state === 'submitting'} onChange={(e) => setDeleteName(e.target.value)} value={deleteName} />
         </FormControl>
-        <Button color='danger' disabled={deleteName !== team.name} loading={state === 'submitting'} type='submit'>
+        <Button color='danger' disabled={deleteName !== `delete ${team.name}`} loading={state === 'submitting'} type='submit'>
           I understand the consequences, delete this team
         </Button>
       </Card>

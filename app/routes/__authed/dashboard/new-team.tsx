@@ -29,10 +29,10 @@ export const action = async ({ request }: ActionArgs) => {
   } catch (e) {
     console.error(e);
     if (e instanceof PrismaClientKnownRequestError) {
-      return json({ errors: { name: 'This team name is already taken' } });
+      return json({ errors: { name: 'This team name is already taken' } }, { status: 400 });
     }
   }
-  return json({ errors: { name: 'Something went wrong' } });
+  return json({ errors: { name: 'Something went wrong' } }, { status: 400 });
 };
 
 export default function CreateTeam() {

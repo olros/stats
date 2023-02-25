@@ -12,26 +12,32 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 
 export const action = async ({ request, params }: ActionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
-  await ensureIsTeamMember(request, params.teamSlug);
+  const team = await ensureIsTeamMember(request, params.teamSlug);
   const formData = await request.formData();
   const name = formData.get('name') as string;
   const url = formData.get('url') as string;
+  const slug = slugify(name);
+
+  if (slug === 'settings' || slug === 'members') {
+    return json({ errors: { name: `"settings" and "members" are protected project names, chose a different name and try again` } }, { status: 400 });
+  }
+
   try {
     const project = await prismaClient.project.create({
       data: {
         name,
-        slug: slugify(name),
+        slug,
         url,
-        teamSlug: params.teamSlug.toLowerCase(),
+        teamSlug: team.slug,
       },
     });
-    return redirect(`/dashboard/${params.teamSlug}/${project.slug}`);
+    return redirect(`/dashboard/${team.slug}/${project.slug}`);
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
-      return json({ errors: { name: 'This team already contains a project with this name' } });
+      return json({ errors: { name: `This team already contains a project named "${name}"` } }, { status: 400 });
     }
   }
-  return json({ errors: { name: 'Something went wrong' } });
+  return json({ errors: { name: 'Something went wrong' } }, { status: 400 });
 };
 
 export default function CreateProject() {

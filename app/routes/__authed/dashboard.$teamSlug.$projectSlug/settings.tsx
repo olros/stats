@@ -53,7 +53,7 @@ export const action = async ({ request, params }: ActionArgs) => {
       return redirect(`/dashboard/${params.teamSlug}/${project.slug}/settings`);
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError) {
-        return json({ errors: { name: 'This team already contains a project with this name' } });
+        return json({ errors: { name: 'This team already contains a project with this name' } }, { status: 400 });
       }
     }
   }
@@ -68,7 +68,7 @@ export const action = async ({ request, params }: ActionArgs) => {
     });
     return redirect(`/dashboard/${params.teamSlug}`);
   }
-  return json({ errors: { name: 'Something went wrong' } });
+  return json({ errors: { name: 'Something went wrong' } }, { status: 400 });
 };
 
 export default function ProjectSettings() {
@@ -99,7 +99,7 @@ export default function ProjectSettings() {
         <Typography color='danger' level='h3'>
           Delete project
         </Typography>
-        <Typography>Deleting the project will delete all its data. This action cannot be undone. Type the name of the project to confirm.</Typography>
+        <Typography>{`Deleting the project will delete all its data. This action cannot be undone. Type "delete ${project.name}" to confirm.`}</Typography>
         <FormControl id='delete-name' required>
           <Input autoComplete='off' disabled={state === 'submitting'} onChange={(e) => setDeleteName(e.target.value)} value={deleteName} />
         </FormControl>

@@ -21,24 +21,29 @@ const gitHubStrategy = new GitHubStrategy(
     callbackURL: process.env.NODE_ENV === 'production' ? 'https://stats.olafros.com/auth/github/callback' : 'http://localhost:3000/auth/github/callback',
   },
   async ({ profile }) =>
-    await prismaClient.user.upsert({
-      create: {
-        id: profile._json.id,
-        name: profile._json.name,
-        github_username: profile._json.login,
-        avatar_url: profile._json.avatar_url,
-        email: profile._json.email,
-      },
-      where: {
-        id: profile._json.id,
-      },
-      update: {
-        name: profile._json.name,
-        github_username: profile._json.login,
-        avatar_url: profile._json.avatar_url,
-        email: profile._json.email,
-      },
-    }),
+    await prismaClient.user
+      .upsert({
+        create: {
+          id: profile._json.id,
+          name: profile._json.name,
+          github_username: profile._json.login,
+          avatar_url: profile._json.avatar_url,
+          email: profile._json.email,
+        },
+        where: {
+          id: profile._json.id,
+        },
+        update: {
+          name: profile._json.name,
+          github_username: profile._json.login,
+          avatar_url: profile._json.avatar_url,
+          email: profile._json.email,
+        },
+      })
+      .catch((e) => {
+        console.error('GitHubStrategy', e);
+        throw e;
+      }),
 );
 
 authenticator.use(gitHubStrategy);
@@ -51,7 +56,6 @@ export const getUserOrRedirect = async (request: Request) =>
 export const ensureIsTeamMember = async (request: Request, teamSlug: Team['slug']) => {
   const user = await getUserOrRedirect(request);
   const team = await prismaClient.team.findFirst({
-    select: { slug: true },
     where: {
       slug: teamSlug.toLowerCase(),
       teamUsers: {
@@ -64,4 +68,5 @@ export const ensureIsTeamMember = async (request: Request, teamSlug: Team['slug'
   if (!team) {
     throw redirect('/dashboard');
   }
+  return team;
 };
