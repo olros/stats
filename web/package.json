@@ -23,6 +23,7 @@
     "@nivo/bar": "^0.80.0",
     "@nivo/core": "^0.80.0",
     "@nivo/line": "^0.80.0",
+    "@olros/stats": "^1.2.0",
     "@prisma/client": "^4.10.1",
     "@remix-run/node": "^1.13.0",
     "@remix-run/react": "^1.13.0",

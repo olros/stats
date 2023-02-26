@@ -54,7 +54,7 @@ export const Navbar = ({ user, teams, project }: NavbarProps) => {
     <Sheet component='ol' sx={{ display: 'flex', justifyContent: 'space-between', overflow: 'hidden', listStyleType: 'none', m: 0, py: 1, px: 2 }}>
       <Stack alignItems='center' direction='row' sx={{ overflow: 'hidden' }}>
         <Box component={Link} sx={{ height: 44 }} to={selectedTeam ? `/dashboard/${selectedTeam.slug}` : '/dashboard'}>
-          <Box alt='' component='img' src='/android-chrome-192x192.png' sx={{ height: 44 }} />
+          <Box alt='' component='img' src='/favicon-192.png' sx={{ height: 44 }} />
         </Box>
         <Separator />
         <Button

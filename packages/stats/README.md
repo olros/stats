@@ -13,7 +13,7 @@ import { Stats } from '@olros/stats';
 const TEAM = '${teamSlug}';
 const PROJECT = '${projectSlug}';
 
-export const stats = Stats(TEAM, PROJECT);`}
+export const stats = Stats({ team: TEAM, project: PROJECT });`}
 ```
 
 Use the `stats.pageview`-method on each pagenavigation to track pageviews. Example from React with React-Router:
@@ -31,5 +31,14 @@ const location = useLocation();
 
 useEffect(() => {
   stats.pageview();
-}, [location.pathname, location.search]);`}
+}, [location.pathname, location.search]);
 ```
+
+## Configuration
+
+### `Stats()`
+
+- `team`: The team-ID, required
+- `project`: The project-ID, required
+- `baseUrl`: URL of Stats. Must be set if self-hosted. Defaults to `https://stats.olafros.com`
+- `allowLocalhost`: Send events from localhost, defaults to false

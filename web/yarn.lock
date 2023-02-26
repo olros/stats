@@ -1779,6 +1779,11 @@
   dependencies:
     json-parse-even-better-errors "^2.3.1"
 
+"@olros/stats@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@olros/stats/-/stats-1.2.0.tgz#e034497b03fc9b27bef7cd6fc0512fc626d64c11"
+  integrity sha512-+LYNa3RYb22IVOAzHEHrHHKrZLYPmjRyIDMThsgwXLhah4dRiffw4Z6jfcX3jfGfjggvR5RDWZUbtJrP6220zA==
+
 "@pkgr/utils@^2.3.1":
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/@pkgr/utils/-/utils-2.3.1.tgz#0a9b06ffddee364d6642b3cd562ca76f55b34a03"

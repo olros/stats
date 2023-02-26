@@ -51,7 +51,7 @@ import { Stats } from '@olros/stats';
 const TEAM = '${teamSlug}';
 const PROJECT = '${projectSlug}';
 
-export const stats = Stats(TEAM, PROJECT);`}
+export const stats = Stats({ team: TEAM, project: PROJECT });`}
         </Code>
         <Description>
           Use the{' '}
