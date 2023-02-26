@@ -46,7 +46,7 @@ export default function ProjectSetup() {
         <Description>Create an instance of Stats:</Description>
         <Code>
           {`// utils/stats.ts
-import { Stats } from @olros/stats;
+import { Stats } from '@olros/stats';
 
 const TEAM = '${teamSlug}';
 const PROJECT = '${projectSlug}';

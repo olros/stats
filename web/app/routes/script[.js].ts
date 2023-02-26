@@ -12,6 +12,7 @@ const pageviewScript = () => {
     const pathname = script.getAttribute('data-pathname') || location.pathname;
     const team = script.getAttribute('data-team');
     const project = script.getAttribute('data-project');
+    const baseUrl = script.getAttribute('data-baseurl') || (process.env.NODE_ENV === 'production' ? 'https://stats.olafros.com' : 'http://localhost:3000');
     if (!team || !project) return;
 
     const data = {
@@ -19,7 +20,7 @@ const pageviewScript = () => {
       screen_width: window.innerWidth,
     };
 
-    fetch(`${process.env.NODE_ENV === 'production' ? 'https://stats.olafros.com' : 'http://localhost:3000'}/api/` + team + '/' + project + '/pageview/', {
+    fetch(`${baseUrl}/api/` + team + '/' + project + '/pageview/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),

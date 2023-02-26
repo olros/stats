@@ -1,0 +1,35 @@
+{
+  "name": "@olros/stats",
+  "version": "0.2.0",
+  "private": false,
+  "description": "Simple tool to track analytics to Stats",
+  "homepage": "https://stats.olafros.com",
+  "bugs": {
+    "url": "https://github.com/olros/stats/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/olros/stats",
+    "directory": "packages/stats"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "yarn build"
+  },
+  "keywords": [
+    "stats",
+    "analytics"
+  ],
+  "author": "Olaf Rosendahl",
+  "license": "MIT",
+  "files": [
+    "dist/",
+    "LICENSE",
+    "README.md"
+  ],
+  "devDependencies": {
+    "typescript": "^4.9.5"
+  }
+}
