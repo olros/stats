@@ -73,7 +73,7 @@ export default function Index() {
       </Typography>
       <Typography level='body1' sx={{ mb: 4, px: 2 }} textAlign='center'>
         No need for a cookie-banner as no cookies are used, ever. Easy to add to your website with a lightweight script, NPM-package or by manually sending
-        HTTP-requests, whichever fits your application best! Server-side tracking are also supported!
+        HTTP-requests, choose whichever fits your application best! Server-side tracking are also supported!
       </Typography>
       {isAuthenticated ? (
         <Button component={Link} to='/dashboard'>
