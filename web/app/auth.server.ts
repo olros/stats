@@ -50,7 +50,7 @@ authenticator.use(gitHubStrategy);
 
 export const getUserOrRedirect = async (request: Request) =>
   await authenticator.isAuthenticated(request, {
-    failureRedirect: '/login',
+    failureRedirect: '/',
   });
 
 export const ensureIsTeamMember = async (request: Request, teamSlug: Team['slug']) => {
