@@ -11,13 +11,13 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   await ensureIsTeamMember(request, params.teamSlug);
-  const projects = await prismaClient.project.findMany({
+  const projects = prismaClient.project.findMany({
     where: {
       teamSlug: params.teamSlug.toLowerCase(),
     },
   });
 
-  return json({ projects });
+  return json({ projects: await projects });
 };
 
 export default function TeamDashboard() {
