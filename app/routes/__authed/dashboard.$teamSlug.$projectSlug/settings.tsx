@@ -1,4 +1,4 @@
-import { Button, Card, FormControl, FormLabel, Input, Typography } from '@mui/joy';
+import { Button, Card, FormControl, FormHelperText, FormLabel, Input, Textarea, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
@@ -82,13 +82,19 @@ export default function ProjectSettings() {
     <>
       <Card component={Form} method='put' sx={{ gap: 1 }}>
         <Typography level='h3'>Edit</Typography>
-        <FormControl id='name' required>
+        <FormControl error={Boolean(actionData?.errors?.name)} id='name' required>
           <FormLabel id='name-label'>Project name</FormLabel>
-          <Input defaultValue={project.name} disabled={state === 'submitting'} error={Boolean(actionData?.errors.name)} name='name' />
+          <Input defaultValue={project.name} disabled={state === 'submitting'} name='name' />
+          {Boolean(actionData?.errors?.name) && <FormHelperText>{actionData?.errors?.name}</FormHelperText>}
         </FormControl>
         <FormControl id='url' required>
           <FormLabel id='url-label'>Website url</FormLabel>
           <Input defaultValue={project.url} disabled={state === 'submitting'} name='url' type='url' />
+        </FormControl>
+        <FormControl id='allowed_hosts'>
+          <FormLabel id='allowed_hosts-label'>Allowed hosts</FormLabel>
+          <Textarea defaultValue={project.allowed_hosts} disabled={state === 'submitting'} minRows={2} name='allowed_hosts' />
+          <FormHelperText>Separate multiple hosts with commas. Leave empty to allow all hosts</FormHelperText>
         </FormControl>
         <Button loading={state === 'submitting'} type='submit'>
           Save

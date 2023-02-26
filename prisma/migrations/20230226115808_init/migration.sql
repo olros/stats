@@ -27,6 +27,7 @@ CREATE TABLE "Project" (
     "slug" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "url" TEXT NOT NULL,
+    "allowed_hosts" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
@@ -38,6 +39,20 @@ CREATE TABLE "TeamUser" (
     "teamId" TEXT NOT NULL,
 
     CONSTRAINT "TeamUser_pkey" PRIMARY KEY ("userId","teamId")
+);
+
+-- CreateTable
+CREATE TABLE "PageView" (
+    "projectId" TEXT NOT NULL,
+    "date" DATE NOT NULL,
+    "hour" INTEGER NOT NULL,
+    "pathname" TEXT NOT NULL,
+    "count" INTEGER NOT NULL,
+    "mobile_count" INTEGER NOT NULL,
+    "tablet_count" INTEGER NOT NULL,
+    "dekstop_count" INTEGER NOT NULL,
+
+    CONSTRAINT "PageView_pkey" PRIMARY KEY ("projectId","date","hour","pathname")
 );
 
 -- CreateIndex
@@ -54,3 +69,6 @@ ALTER TABLE "TeamUser" ADD CONSTRAINT "TeamUser_userId_fkey" FOREIGN KEY ("userI
 
 -- AddForeignKey
 ALTER TABLE "TeamUser" ADD CONSTRAINT "TeamUser_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "Team"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PageView" ADD CONSTRAINT "PageView_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;

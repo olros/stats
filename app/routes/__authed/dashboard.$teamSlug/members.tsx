@@ -87,23 +87,21 @@ export default function TeamMembers() {
       <Card component={Form} method='post' sx={{ gap: 1 }}>
         <Typography level='h3'>Add member</Typography>
         <Typography level='body2'>
-          The member to be added must have already logged in to Stats with their GitHub-profile before they can be added to teams
+          The member to be added must have already logged in to Stats with their GitHub-profile before they can be added to teams. All team members have the
+          same rights within the team to create, edit and delete projects and the team itself.
         </Typography>
         <FormControl error={Boolean(errors?.github_username)} id='github_username' required>
           <FormLabel id='github_username-label'>GitHub username</FormLabel>
           <Input disabled={state === 'submitting'} name='github_username' />
-          <FormHelperText>{errors?.github_username}</FormHelperText>
+          {Boolean(errors?.github_username) && <FormHelperText>{errors?.github_username}</FormHelperText>}
         </FormControl>
-        <Button disabled={state === 'submitting'} type='submit'>
+        <Button loading={state === 'submitting'} type='submit'>
           Add member
         </Button>
       </Card>
       {members.map((member) => (
         <Card key={member.user.id} orientation='horizontal' sx={{ gap: 1, alignItems: 'center' }}>
-          <Avatar
-            alt={`Profile image of ${member.user.name}`}
-            src={member.user.avatar_url || undefined}
-            sx={{ ':hover': { scale: '1.1', transition: 'scale 0.1s' } }}>
+          <Avatar alt={`Profile image of ${member.user.name}`} src={member.user.avatar_url || undefined}>
             {member.user.name[0]}
           </Avatar>
           <Typography fontSize='xl' sx={{ flex: 1 }}>

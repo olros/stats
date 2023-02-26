@@ -29,6 +29,7 @@ export const action = async ({ request, params }: ActionArgs) => {
         slug,
         url,
         teamSlug: team.slug,
+        allowed_hosts: '',
       },
     });
     return redirect(`/dashboard/${team.slug}/${project.slug}`);

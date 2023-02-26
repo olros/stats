@@ -29,12 +29,13 @@ model Team {
 }
 
 model Project {
-  id        String   @id @default(uuid())
-  teamSlug  String
-  slug      String
-  name      String
-  url       String
-  createdAt DateTime @default(now())
+  id            String   @id @default(uuid())
+  teamSlug      String
+  slug          String
+  name          String
+  url           String
+  allowed_hosts String
+  createdAt     DateTime @default(now())
 
   team Team @relation(fields: [teamSlug], references: [slug], onDelete: Cascade)
 

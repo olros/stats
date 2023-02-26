@@ -7,7 +7,7 @@ const pageviewScript = () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const isBot = Boolean(window._phantom || window.__nightmare || window.navigator.webdriver || window.Cypress);
-    if (host === 'localhost' || isBot || !script) return;
+    if (host.includes('localhost') || isBot || !script) return;
 
     const pathname = script.getAttribute('data-pathname') || location.pathname;
     const team = script.getAttribute('data-team');

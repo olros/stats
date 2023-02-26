@@ -33,6 +33,13 @@ export const action = async ({ request, params }: ActionArgs) => {
     return json({ errors: { name: `Can't find the given project` } }, { status: 404 });
   }
 
+  const host = request.headers.get('host');
+  const allowedHosts = project.allowed_hosts.split(',').filter((i) => i.length);
+
+  if (!host || !allowedHosts.includes(host)) {
+    return json({ errors: { host: `The host is either not in headers or not declared as one of the allowed hosts` } }, { status: 404 });
+  }
+
   const date = set(new Date(), { hours: 12 });
 
   await prismaClient.pageView.upsert({
