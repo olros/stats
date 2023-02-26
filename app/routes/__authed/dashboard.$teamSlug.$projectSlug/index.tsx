@@ -1,4 +1,6 @@
 import { Box, Button, Card, Divider, FormControl, FormLabel, Input, Stack, Tooltip, Typography, useTheme } from '@mui/joy';
+import type { BarDatum } from '@nivo/bar';
+import { ResponsiveBar } from '@nivo/bar';
 import type { Serie } from '@nivo/line';
 import { ResponsiveLine } from '@nivo/line';
 import type { LoaderArgs } from '@remix-run/node';
@@ -6,7 +8,7 @@ import { Form, useLoaderData } from '@remix-run/react';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import { addDays, format, isDate, set } from 'date-fns';
-import { Fragment, Suspense, useMemo } from 'react';
+import { Fragment, Suspense } from 'react';
 import { jsonHash } from 'remix-utils';
 import invariant from 'tiny-invariant';
 
@@ -34,29 +36,36 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   const pathname = searchParams.get('pathname') || '';
 
-  const pageViews = prismaClient.pageView.groupBy({
-    by: ['date'],
-    where: {
-      project: {
-        slug: params.projectSlug.toLowerCase(),
-        teamSlug: params.teamSlug.toLowerCase(),
+  const pageViews: Promise<Serie[]> = prismaClient.pageView
+    .groupBy({
+      by: ['date'],
+      where: {
+        project: {
+          slug: params.projectSlug.toLowerCase(),
+          teamSlug: params.teamSlug.toLowerCase(),
+        },
+        date: {
+          gte: dateGte,
+          lte: dateLte,
+        },
+        ...(pathname.length
+          ? {
+              pathname: {
+                equals: pathname,
+                mode: 'insensitive',
+              },
+            }
+          : {}),
       },
-      date: {
-        gte: dateGte,
-        lte: dateLte,
-      },
-      ...(pathname.length
-        ? {
-            pathname: {
-              equals: pathname,
-              mode: 'insensitive',
-            },
-          }
-        : {}),
-    },
-    _sum: { count: true, dekstop_count: true, mobile_count: true, tablet_count: true },
-    orderBy: { date: 'asc' },
-  });
+      _sum: { count: true, dekstop_count: true, mobile_count: true, tablet_count: true },
+      orderBy: { date: 'asc' },
+    })
+    .then((data) => [
+      { id: 'Mobile devices', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.mobile_count })) },
+      { id: 'Tablet devices', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.tablet_count })) },
+      { id: 'Desktop devices', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.dekstop_count })) },
+      { id: 'Total amount', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.count })) },
+    ]);
 
   const topPages = prismaClient.pageView.groupBy({
     by: ['pathname'],
@@ -83,28 +92,57 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     take: 20,
   });
 
-  return jsonHash({ pageViews: await pageViews, topPages: await topPages, dateGte: formatDate(dateGte), dateLte: formatDate(dateLte), pathname });
+  const topHours: Promise<BarDatum[]> = prismaClient.pageView
+    .groupBy({
+      by: ['hour'],
+      where: {
+        project: {
+          slug: params.projectSlug.toLowerCase(),
+          teamSlug: params.teamSlug.toLowerCase(),
+        },
+        date: {
+          gte: dateGte,
+          lte: dateLte,
+        },
+        ...(pathname.length
+          ? {
+              pathname: {
+                startsWith: pathname,
+                mode: 'insensitive',
+              },
+            }
+          : {}),
+      },
+      _sum: { count: true },
+      orderBy: { hour: 'asc' },
+    })
+    .then((data) =>
+      Array(24)
+        .fill(0)
+        .map((_, i) => ({ hour: String(i).padStart(2, '0'), count: data.find((hour) => hour.hour === i)?._sum.count || 0 }))
+        .reverse(),
+    );
+
+  return jsonHash({
+    pageViews: await pageViews,
+    topPages: await topPages,
+    topHours: await topHours,
+    dateGte: formatDate(dateGte),
+    dateLte: formatDate(dateLte),
+    pathname,
+  });
 };
 
 export default function ProjectDashboard() {
-  const { pageViews, topPages, dateGte, dateLte, pathname } = useLoaderData<typeof loader>();
+  const { pageViews, topPages, topHours, dateGte, dateLte, pathname } = useLoaderData<typeof loader>();
   const theme = useTheme();
-  const data: Serie[] = useMemo(
-    () => [
-      { id: 'Mobile devices', data: pageViews.map((item) => ({ x: item.date.substring(0, 10), y: item._sum.mobile_count })) },
-      { id: 'Tablet devices', data: pageViews.map((item) => ({ x: item.date.substring(0, 10), y: item._sum.tablet_count })) },
-      { id: 'Desktop devices', data: pageViews.map((item) => ({ x: item.date.substring(0, 10), y: item._sum.dekstop_count })) },
-      { id: 'Total amount', data: pageViews.map((item) => ({ x: item.date.substring(0, 10), y: item._sum.count })) },
-    ],
-    [pageViews],
-  );
 
   return (
     <Stack gap={1}>
       <Card>
         <Stack component={Form} direction={{ xs: 'column', md: 'row' }} gap={1}>
           <FormControl id='pathname' sx={{ flex: 1 }}>
-            <Tooltip title='Equal-matching for Trend and startswith-matching for Top pages'>
+            <Tooltip arrow title='Equal-matching for Trend, startswith-matching for Top pages and ignored for custom events'>
               <FormLabel id='pathname-label'>Pathname</FormLabel>
             </Tooltip>
             <Input defaultValue={pathname} name='pathname' />
@@ -136,7 +174,7 @@ export default function ProjectDashboard() {
               }}
               colors={{ scheme: 'paired' }}
               curve='monotoneX'
-              data={data}
+              data={pageViews}
               enableSlices='x'
               legends={[
                 {
@@ -164,7 +202,7 @@ export default function ProjectDashboard() {
                   ],
                 },
               ]}
-              margin={{ top: 10, right: 140, bottom: 40, left: 30 }}
+              margin={{ top: 10, right: 120, bottom: 40, left: 30 }}
               pointBorderColor={{ from: 'serieColor' }}
               pointBorderWidth={3}
               pointColor={{ theme: 'background' }}
@@ -189,12 +227,6 @@ export default function ProjectDashboard() {
                 grid: {
                   line: { stroke: theme.palette.background.level1 },
                 },
-                tooltip: {
-                  container: {
-                    background: theme.palette.background.level2,
-                    fill: theme.palette.text.primary,
-                  },
-                },
                 legends: {
                   text: { fill: theme.palette.text.primary },
                 },
@@ -216,8 +248,9 @@ export default function ProjectDashboard() {
       </Card>
       <Box sx={{ display: 'grid', gap: 1, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
         <Card>
-          <Typography gutterBottom level='h3'>
-            Top pages
+          <Typography level='h3'>Top pages</Typography>
+          <Typography gutterBottom level='body2'>
+            Which pages get more traffic
           </Typography>
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto' }}>
             {topPages.map((page, i) => (
@@ -232,11 +265,47 @@ export default function ProjectDashboard() {
           </Box>
         </Card>
         <Card>
-          <Typography gutterBottom level='h3'>
-            Custom events
+          <Typography level='h3'>Hours of day</Typography>
+          <Typography gutterBottom level='body2'>
+            What times during the day does the application get the most traffic
           </Typography>
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto' }}>
-            {/* {[].map((event, i) => (
+          <Suspense fallback={null}>
+            <Box sx={{ position: 'relative', height: 400 }}>
+              <ResponsiveBar
+                ariaLabel='Hours of day'
+                colors={{ scheme: 'dark2' }}
+                data={topHours}
+                indexBy='hour'
+                keys={['count']}
+                layout='horizontal'
+                margin={{ top: 0, right: 20, bottom: 20, left: 30 }}
+                padding={0.05}
+                theme={{
+                  textColor: theme.palette.text.primary,
+                  axis: {
+                    domain: { line: { stroke: theme.palette.background.level1 } },
+                  },
+                  grid: {
+                    line: { stroke: theme.palette.background.level1 },
+                  },
+                }}
+                tooltip={({ value }) => (
+                  <Typography component={Card} fontSize='md' fontWeight='bold'>
+                    {value}
+                  </Typography>
+                )}
+                valueScale={{ type: 'linear' }}
+              />
+            </Box>
+          </Suspense>
+        </Card>
+      </Box>
+      {/* <Card>
+        <Typography gutterBottom level='h3'>
+          Custom events
+        </Typography>
+        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto' }}>
+          {[].map((event, i) => (
               <Fragment key={event.name}>
                 <Typography sx={{ ml: 0.5 }}>{event.name}</Typography>
                 <Typography sx={{ mr: 0.5, textAlign: 'right' }}>
@@ -244,10 +313,9 @@ export default function ProjectDashboard() {
                 </Typography>
                 {i !== [].length - 1 && <Divider sx={{ gridColumn: 'span 2', my: 0.25 }} />}
               </Fragment>
-            ))} */}
-          </Box>
-        </Card>
-      </Box>
+            ))}
+        </Box>
+      </Card> */}
     </Stack>
   );
 }

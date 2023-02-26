@@ -73,5 +73,5 @@ export const action = async ({ request, params }: ActionArgs) => {
         : {}),
     },
   });
-  return json({ detail: 'Pageview registered' });
+  return json({}, { status: 202 });
 };
