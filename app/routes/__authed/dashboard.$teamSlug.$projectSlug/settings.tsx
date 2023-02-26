@@ -37,11 +37,15 @@ export const action = async ({ request, params }: ActionArgs) => {
   if (request.method === 'PUT') {
     const formData = await request.formData();
     const name = formData.get('name') as string;
+    const url = formData.get('url') as string;
+    const allowed_hosts = formData.get('allowed_hosts') as string;
     try {
       const project = await prismaClient.project.update({
         data: {
           name,
           slug: slugify(name),
+          url,
+          allowed_hosts,
         },
         where: {
           teamSlug_slug: {
@@ -93,7 +97,7 @@ export default function ProjectSettings() {
         </FormControl>
         <FormControl id='allowed_hosts'>
           <FormLabel id='allowed_hosts-label'>Allowed hosts</FormLabel>
-          <Textarea defaultValue={project.allowed_hosts} disabled={state === 'submitting'} minRows={2} name='allowed_hosts' />
+          <Textarea defaultValue={project.allowed_hosts} disabled={state === 'submitting'} minRows={2} name='allowed_hosts' placeholder='stats.olafros.com' />
           <FormHelperText>Separate multiple hosts with commas. Leave empty to allow all hosts</FormHelperText>
         </FormControl>
         <Button loading={state === 'submitting'} type='submit'>

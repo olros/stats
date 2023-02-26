@@ -83,7 +83,9 @@ useEffect(() => {
           <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
             {`https://stats.olafros.com/api/${teamSlug}/${projectSlug}/pageview/`}
           </Typography>
-          {' with a body containing pathname and optionally a screen-width, used to determine device type.'}
+          {
+            ' with a body containing pathname and optionally a screen-width, used to determine device type. Omitting screen-width can be useful for example when tracking server-side.'
+          }
         </Description>
         <Description>{`Example using Javascript fetch:`}</Description>
         <Code gutterBottom={false}>

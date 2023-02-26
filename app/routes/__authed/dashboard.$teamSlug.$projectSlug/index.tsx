@@ -265,7 +265,7 @@ export default function ProjectDashboard() {
           </Box>
         </Card>
         <Card>
-          <Typography level='h3'>Hours of day</Typography>
+          <Typography level='h3'>Hours of the day</Typography>
           <Typography gutterBottom level='body2'>
             What times during the day does the application get the most traffic
           </Typography>
