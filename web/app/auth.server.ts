@@ -14,7 +14,7 @@ invariant(process.env.GITHUB_CLIENT_SECRET, 'Expected GITHUB_CLIENT_SECRET to be
 
 const gitHubStrategy = new GitHubStrategy(
   {
-    scope: ['read:user'],
+    scope: ['read:user', 'user:email'],
     userAgent: 'stats.olafros.com',
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
@@ -28,7 +28,7 @@ const gitHubStrategy = new GitHubStrategy(
           name: profile._json.name,
           github_username: profile._json.login,
           avatar_url: profile._json.avatar_url,
-          email: profile._json.email,
+          email: profile._json.email || profile.emails[0]?.value || '',
         },
         where: {
           id: profile._json.id,
@@ -37,7 +37,7 @@ const gitHubStrategy = new GitHubStrategy(
           name: profile._json.name,
           github_username: profile._json.login,
           avatar_url: profile._json.avatar_url,
-          email: profile._json.email,
+          email: profile._json.email || profile.emails[0]?.value || '',
         },
       })
       .catch((e) => {
