@@ -300,7 +300,7 @@ export default function ProjectDashboard() {
                   {page.pathname}
                 </Typography>
                 <Typography sx={{ mr: 0.5, textAlign: 'right' }}>
-                  {Intl.NumberFormat('en-GB', { notation: 'compact', compactDisplay: 'long', maximumFractionDigits: 1 }).format(page._sum.count || 0)}
+                  {Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 }).format(page._sum.count || 0)}
                 </Typography>
                 {i !== topPages.length - 1 && <Divider sx={{ gridColumn: 'span 2', my: 0.25 }} />}
               </Fragment>
