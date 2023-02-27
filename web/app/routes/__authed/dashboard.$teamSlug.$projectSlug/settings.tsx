@@ -6,7 +6,6 @@ import { json } from '@remix-run/node';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
-import { slugify } from '~/utils';
 import { useState } from 'react';
 import invariant from 'tiny-invariant';
 
@@ -43,7 +42,6 @@ export const action = async ({ request, params }: ActionArgs) => {
       const project = await prismaClient.project.update({
         data: {
           name,
-          slug: slugify(name),
           url,
           allowed_hosts,
         },
