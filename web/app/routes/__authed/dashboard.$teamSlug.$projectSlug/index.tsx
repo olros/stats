@@ -116,12 +116,17 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       _sum: { count: true },
       orderBy: { hour: 'asc' },
     })
-    .then((data) =>
-      Array(24)
+    .then((data) => {
+      const totalCount = data.reduce((prev, cur) => prev + (cur._sum.count || 0), 0);
+      return Array(24)
         .fill(0)
-        .map((_, i) => ({ hour: String(i).padStart(2, '0'), count: data.find((hour) => hour.hour === i)?._sum.count || 0 }))
-        .reverse(),
-    );
+        .map((_, i) => {
+          const count = data.find((hour) => hour.hour === i)?._sum.count || 0;
+          const percentage = Number(((count / totalCount) * 100).toFixed(1));
+          return { hour: String(i).padStart(2, '0'), percentage, label: percentage > 0 ? `${percentage}% (${count})` : '0' };
+        })
+        .reverse();
+    });
 
   return jsonHash({
     pageViews: await pageViews,
@@ -276,7 +281,8 @@ export default function ProjectDashboard() {
                 colors={{ scheme: 'dark2' }}
                 data={topHours}
                 indexBy='hour'
-                keys={['count']}
+                keys={['percentage']}
+                label={(bar) => `${bar.data.label}`}
                 layout='horizontal'
                 margin={{ top: 0, right: 20, bottom: 20, left: 30 }}
                 padding={0.05}
