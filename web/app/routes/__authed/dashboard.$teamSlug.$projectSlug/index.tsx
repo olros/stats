@@ -1,4 +1,4 @@
-import { Box, Button, Card, Divider, FormControl, FormLabel, Input, Stack, Tooltip, Typography, useTheme } from '@mui/joy';
+import { AspectRatio, Box, Button, Card, CardContent, Divider, FormControl, FormLabel, Input, Stack, Tooltip, Typography, useTheme } from '@mui/joy';
 import type { BarDatum } from '@nivo/bar';
 import { ResponsiveBar } from '@nivo/bar';
 import type { Serie } from '@nivo/line';
@@ -36,36 +36,37 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   const pathname = searchParams.get('pathname') || '';
 
-  const pageViews: Promise<Serie[]> = prismaClient.pageView
-    .groupBy({
-      by: ['date'],
-      where: {
-        project: {
-          slug: params.projectSlug.toLowerCase(),
-          teamSlug: params.teamSlug.toLowerCase(),
-        },
-        date: {
-          gte: dateGte,
-          lte: dateLte,
-        },
-        ...(pathname.length
-          ? {
-              pathname: {
-                equals: pathname,
-                mode: 'insensitive',
-              },
-            }
-          : {}),
+  const pageViewsQuery = prismaClient.pageView.groupBy({
+    by: ['date'],
+    where: {
+      project: {
+        slug: params.projectSlug.toLowerCase(),
+        teamSlug: params.teamSlug.toLowerCase(),
       },
-      _sum: { count: true, dekstop_count: true, mobile_count: true, tablet_count: true },
-      orderBy: { date: 'asc' },
-    })
-    .then((data) => [
-      { id: 'Mobile devices', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.mobile_count })) },
-      { id: 'Tablet devices', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.tablet_count })) },
-      { id: 'Desktop devices', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.dekstop_count })) },
-      { id: 'Total amount', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.count })) },
-    ]);
+      date: {
+        gte: dateGte,
+        lte: dateLte,
+      },
+      ...(pathname.length
+        ? {
+            pathname: {
+              equals: pathname,
+              mode: 'insensitive',
+            },
+          }
+        : {}),
+    },
+    _sum: { count: true, dekstop_count: true, mobile_count: true, tablet_count: true },
+    orderBy: { date: 'asc' },
+  });
+  const pageViews: Promise<Serie[]> = pageViewsQuery.then((data) => [
+    { id: 'Mobile devices', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.mobile_count || 0 })) },
+    { id: 'Tablet devices', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.tablet_count || 0 })) },
+    { id: 'Desktop devices', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.dekstop_count || 0 })) },
+    { id: 'Total amount', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.count || 0 })) },
+  ]);
+
+  const totalPageviews: Promise<number> = pageViewsQuery.then((data) => data.reduce((prev, cur) => prev + (cur._sum.count || 0), 0));
 
   const topPages = prismaClient.pageView.groupBy({
     by: ['pathname'],
@@ -92,46 +93,50 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     take: 20,
   });
 
-  const topHours: Promise<BarDatum[]> = prismaClient.pageView
-    .groupBy({
-      by: ['hour'],
-      where: {
-        project: {
-          slug: params.projectSlug.toLowerCase(),
-          teamSlug: params.teamSlug.toLowerCase(),
-        },
-        date: {
-          gte: dateGte,
-          lte: dateLte,
-        },
-        ...(pathname.length
-          ? {
-              pathname: {
-                startsWith: pathname,
-                mode: 'insensitive',
-              },
-            }
-          : {}),
+  const topHoursQuery = prismaClient.pageView.groupBy({
+    by: ['hour'],
+    where: {
+      project: {
+        slug: params.projectSlug.toLowerCase(),
+        teamSlug: params.teamSlug.toLowerCase(),
       },
-      _sum: { count: true },
-      orderBy: { hour: 'asc' },
-    })
-    .then((data) => {
-      const totalCount = data.reduce((prev, cur) => prev + (cur._sum.count || 0), 0);
-      return Array(24)
-        .fill(0)
-        .map((_, i) => {
-          const count = data.find((hour) => hour.hour === i)?._sum.count || 0;
-          const percentage = Number(((count / totalCount) * 100).toFixed(1));
-          return { hour: String(i).padStart(2, '0'), percentage, label: percentage > 0 ? `${percentage}% (${count})` : '0' };
-        })
-        .reverse();
-    });
+      date: {
+        gte: dateGte,
+        lte: dateLte,
+      },
+      ...(pathname.length
+        ? {
+            pathname: {
+              startsWith: pathname,
+              mode: 'insensitive',
+            },
+          }
+        : {}),
+    },
+    _sum: { count: true },
+    orderBy: { hour: 'asc' },
+  });
+
+  const topHours = topHoursQuery.then((data) => {
+    const totalCount = data.reduce((prev, cur) => prev + (cur._sum.count || 0), 0);
+    return Array(24)
+      .fill(0)
+      .map((_, i) => {
+        const count = data.find((hour) => hour.hour === i)?._sum.count || 0;
+        const percentage = Number(((count / totalCount) * 100).toFixed(1));
+        return { hour: String(i).padStart(2, '0'), percentage, label: percentage > 0 ? `${percentage}% (${count})` : '0' };
+      })
+      .reverse() satisfies BarDatum[];
+  });
+
+  const mostPopularHour = topHours.then((data) => [...data].sort((a, b) => b.percentage - a.percentage)[0]);
 
   return jsonHash({
     pageViews: await pageViews,
     topPages: await topPages,
     topHours: await topHours,
+    totalPageviews: await totalPageviews,
+    mostPopularHour: await mostPopularHour,
     dateGte: formatDate(dateGte),
     dateLte: formatDate(dateLte),
     pathname,
@@ -139,7 +144,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 };
 
 export default function ProjectDashboard() {
-  const { pageViews, topPages, topHours, dateGte, dateLte, pathname } = useLoaderData<typeof loader>();
+  const { pageViews, totalPageviews, topPages, topHours, mostPopularHour, dateGte, dateLte, pathname } = useLoaderData<typeof loader>();
   const theme = useTheme();
 
   return (
@@ -165,6 +170,30 @@ export default function ProjectDashboard() {
           </Button>
         </Stack>
       </Card>
+      <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
+        <Card orientation='horizontal' sx={{ flex: 1 }}>
+          <AspectRatio ratio='1' sx={{ width: 55, background: 'transparent' }}>
+            <Typography fontSize='xl'>👀</Typography>
+          </AspectRatio>
+          <CardContent sx={{ px: 2, gap: 0.25 }}>
+            <Typography level='body2'>Pageviews</Typography>
+            <Typography fontSize='xl' fontWeight='bold'>
+              {Intl.NumberFormat('en-GB', { notation: 'compact', compactDisplay: 'long' }).format(totalPageviews)}
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card orientation='horizontal' sx={{ flex: 1 }}>
+          <AspectRatio ratio='1' sx={{ width: 55, background: 'transparent' }}>
+            <Typography fontSize='xl'>🕓</Typography>
+          </AspectRatio>
+          <CardContent sx={{ px: 2, gap: 0.25 }}>
+            <Typography level='body2'>Most popular hour</Typography>
+            <Typography fontSize='xl' fontWeight='bold'>
+              {`${mostPopularHour.hour}-${String(Number(mostPopularHour.hour) + 1).padStart(2, '0')} (${mostPopularHour.percentage}%)`}
+            </Typography>
+          </CardContent>
+        </Card>
+      </Stack>
       <Card sx={{ p: 2 }}>
         <Typography gutterBottom level='h3'>
           Trend
@@ -260,7 +289,9 @@ export default function ProjectDashboard() {
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto', columnGap: 0.5 }}>
             {topPages.map((page, i) => (
               <Fragment key={page.pathname}>
-                <Typography sx={{ ml: 0.5, overflowWrap: 'anywhere' }}>{page.pathname}</Typography>
+                <Typography fontFamily='monospace' sx={{ ml: 0.5, overflowWrap: 'anywhere' }}>
+                  {page.pathname}
+                </Typography>
                 <Typography sx={{ mr: 0.5, textAlign: 'right' }}>
                   {Intl.NumberFormat('en-GB', { notation: 'compact', compactDisplay: 'long', maximumFractionDigits: 1 }).format(page._sum.count || 0)}
                 </Typography>
@@ -278,6 +309,7 @@ export default function ProjectDashboard() {
             <Box sx={{ position: 'relative', height: 400 }}>
               <ResponsiveBar
                 ariaLabel='Hours of day'
+                axisLeft={{ tickSize: 10 }}
                 colors={{ scheme: 'dark2' }}
                 data={topHours}
                 indexBy='hour'
