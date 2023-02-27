@@ -252,10 +252,10 @@ export default function ProjectDashboard() {
           <Typography gutterBottom level='body2'>
             Which pages get more traffic
           </Typography>
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto' }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto', columnGap: 0.5 }}>
             {topPages.map((page, i) => (
               <Fragment key={page.pathname}>
-                <Typography sx={{ ml: 0.5 }}>{page.pathname}</Typography>
+                <Typography sx={{ ml: 0.5, overflowWrap: 'anywhere' }}>{page.pathname}</Typography>
                 <Typography sx={{ mr: 0.5, textAlign: 'right' }}>
                   {Intl.NumberFormat('en-GB', { notation: 'compact', compactDisplay: 'long', maximumFractionDigits: 1 }).format(page._sum.count || 0)}
                 </Typography>

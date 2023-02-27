@@ -58,8 +58,12 @@ export default function ProjectDashboard() {
       />
       <Container sx={{ py: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
         <Stack component={Card} direction={{ sm: 'row' }} gap={1} justifyContent='space-between' sx={{ alignItems: 'center' }}>
-          <Typography level='h1'>{project.name}</Typography>
-          <Typography fontSize='md'>{project.url}</Typography>
+          <Typography level='h1' sx={{ overflowWrap: 'anywhere' }}>
+            {project.name}
+          </Typography>
+          <Typography component='a' fontSize='md' href={project.url} sx={{ overflowWrap: 'anywhere' }} target='_blank'>
+            {project.url}
+          </Typography>
         </Stack>
         <Tabs aria-label='Select team page' sx={{ width: '100%', borderRadius: 'lg' }}>
           <TabList>

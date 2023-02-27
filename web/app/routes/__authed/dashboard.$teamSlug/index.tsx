@@ -29,7 +29,7 @@ export default function TeamDashboard() {
           <Card
             component={Link}
             key={project.slug}
-            sx={{ textDecoration: 'none', '&:hover': { borderColor: 'neutral.outlinedHoverBorder' } }}
+            sx={{ overflowWrap: 'anywhere', textDecoration: 'none', '&:hover': { borderColor: 'neutral.outlinedHoverBorder' } }}
             to={project.slug}>
             <Typography fontSize='xl' level='h3'>
               {project.name}
