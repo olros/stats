@@ -178,7 +178,7 @@ export default function ProjectDashboard() {
           <CardContent sx={{ px: 2, gap: 0.25 }}>
             <Typography level='body2'>Pageviews</Typography>
             <Typography fontSize='xl' fontWeight='bold'>
-              {Intl.NumberFormat('en-GB', { notation: 'compact' }).format(totalPageviews * 9876)}
+              {Intl.NumberFormat('en-GB', { notation: 'compact' }).format(totalPageviews)}
             </Typography>
           </CardContent>
         </Card>
