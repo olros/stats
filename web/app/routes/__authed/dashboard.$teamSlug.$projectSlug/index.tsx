@@ -4,13 +4,14 @@ import { ResponsiveBar } from '@nivo/bar';
 import type { Serie } from '@nivo/line';
 import { ResponsiveLine } from '@nivo/line';
 import type { LoaderArgs } from '@remix-run/node';
-import { Form, useLoaderData } from '@remix-run/react';
+import { Form, useLoaderData, useRevalidator } from '@remix-run/react';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
-import { addDays, format, isDate, set } from 'date-fns';
+import { addDays, format, isDate, secondsToMilliseconds, set } from 'date-fns';
 import { Fragment, Suspense } from 'react';
 import { jsonHash } from 'remix-utils';
 import invariant from 'tiny-invariant';
+import { useInterval } from 'usehooks-ts';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -146,6 +147,12 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 export default function ProjectDashboard() {
   const { pageViews, totalPageviews, topPages, topHours, mostPopularHour, dateGte, dateLte, pathname } = useLoaderData<typeof loader>();
   const theme = useTheme();
+
+  const { revalidate } = useRevalidator();
+
+  useInterval(() => {
+    revalidate();
+  }, secondsToMilliseconds(20));
 
   return (
     <Stack gap={1}>
