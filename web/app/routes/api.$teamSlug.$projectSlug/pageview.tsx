@@ -2,7 +2,8 @@ import type { ActionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import { screenWidthToDeviceType } from '~/utils';
-import { getHours, set } from 'date-fns';
+import { getHours } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
 import invariant from 'tiny-invariant';
 
 import { DeviceType } from '~/types';
@@ -40,13 +41,18 @@ export const action = async ({ request, params }: ActionArgs) => {
     return json({ errors: { host: `The host is either not in headers or not declared as one of the allowed hosts` } }, { status: 404 });
   }
 
-  const date = set(new Date(), { hours: 12 });
+  // As long as the application is hosted on Vercel, x-vercel-ip-timezone
+  // can be used to get the users timezone
+  // https://vercel.com/docs/concepts/edge-network/headers#x-vercel-ip-timezone
+  const timezone = request.headers.get('x-vercel-ip-timezone');
+  const date = timezone ? utcToZonedTime(new Date(), timezone) : new Date();
+  const hour = getHours(date);
 
   await prismaClient.pageView.upsert({
     create: {
       projectId: project.id,
       date,
-      hour: getHours(new Date()),
+      hour,
       pathname: data.pathname,
       count: 1,
       dekstop_count: deviceType === DeviceType.DESKTOP ? 1 : 0,
@@ -56,7 +62,7 @@ export const action = async ({ request, params }: ActionArgs) => {
     where: {
       projectId_date_hour_pathname: {
         date,
-        hour: getHours(new Date()),
+        hour,
         projectId: project.id,
         pathname: data.pathname,
       },
