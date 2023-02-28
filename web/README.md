@@ -10,6 +10,8 @@ Add the following .env-variables:
 DATABASE_URL=postgresql://root:password@localhost:5432/stats_db
 GITHUB_CLIENT_ID=<insert>
 GITHUB_CLIENT_SECRET=<insert>
+
+SECRET_KEY=<a_random_long_key_used_to_hash_user_IP_adresses>
 ```
 
 Run `yarn` to install packages, `yarn fresh` to setup the databse and load fixtures. Finally run `yarn dev` to run the project.
