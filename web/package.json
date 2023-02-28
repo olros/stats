@@ -11,7 +11,8 @@
     "studio": "npx prisma studio",
     "generate": "npx prisma generate",
     "push": "npx prisma db push",
-    "migrate": "npx prisma migrate dev --name"
+    "migrate": "npx prisma migrate dev --name",
+    "run-migrations": "npx prisma migrate deploy"
   },
   "dependencies": {
     "@emotion/cache": "^11.10.5",

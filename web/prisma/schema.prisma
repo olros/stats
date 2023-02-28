@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id              Int      @id
+  id              String   @id @default(uuid())
   name            String   @db.VarChar(60)
   github_username String
   email           String
@@ -45,7 +45,7 @@ model Project {
 }
 
 model TeamUser {
-  userId Int
+  userId String
   teamId String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

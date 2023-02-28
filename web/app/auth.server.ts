@@ -24,14 +24,14 @@ const gitHubStrategy = new GitHubStrategy(
     await prismaClient.user
       .upsert({
         create: {
-          id: profile._json.id,
+          id: `${profile._json.id}`,
           name: profile._json.name,
           github_username: profile._json.login,
           avatar_url: profile._json.avatar_url,
           email: profile._json.email || profile.emails[0]?.value || '',
         },
         where: {
-          id: profile._json.id,
+          id: `${profile._json.id}`,
         },
         update: {
           name: profile._json.name,
