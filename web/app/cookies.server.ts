@@ -13,7 +13,7 @@ export const DEFAULT_COOKIE_OPTIONS: SessionIdStorageStrategy['cookie'] = {
 export const authSession = createCookieSessionStorage({
   cookie: {
     ...DEFAULT_COOKIE_OPTIONS,
-    name: '_stats_auth',
+    name: '_stats_authentication',
     maxAge: hoursToSeconds(24 * weeksToDays(1)), // 1 week
   },
 });
