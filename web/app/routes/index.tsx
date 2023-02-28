@@ -76,20 +76,22 @@ export default function Index() {
         No need for a cookie-banner as no cookies are used, ever. Easy to add to your website with a lightweight script, NPM-package or by manually sending
         HTTP-requests, choose whichever fits your application best! Server-side tracking are also supported!
       </Typography>
-      {isAuthenticated ? (
-        <Button component={Link} to='/dashboard'>
-          Open your dashboard
+      <Stack direction='row' gap={2} justifyContent='center'>
+        {isAuthenticated ? (
+          <Button color='info' component={Link} to='/dashboard'>
+            Open your dashboard
+          </Button>
+        ) : (
+          <Box action='/auth/github' component={Form} method='post'>
+            <Button color='info' type='submit'>
+              Login with GitHub
+            </Button>
+          </Box>
+        )}
+        <Button component='a' href='https://stats.olafros.com/public/olros/stats' target='_blank' variant='outlined'>
+          Live demo
         </Button>
-      ) : (
-        <Stack action='/auth/github' component={Form} direction='row' gap={2} justifyContent='center' method='post'>
-          <Button color='info' sx={{ margin: 'auto' }} type='submit'>
-            Login with GitHub
-          </Button>
-          <Button color='info' sx={{ margin: 'auto' }} type='submit' variant='outlined'>
-            Sign up with GitHub
-          </Button>
-        </Stack>
-      )}
+      </Stack>
       <Divider sx={{ my: 4 }} />
       <Typography level='h2'>Features</Typography>
       <Box sx={{ width: '100%', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: { xs: 1, md: 2 }, p: { xs: 1, md: 2 } }}>
