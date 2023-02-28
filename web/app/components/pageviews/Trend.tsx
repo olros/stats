@@ -50,7 +50,7 @@ export const PageviewsTrend = ({ pageViews, dateGte, dateLte }: PageviewsTrendPr
               ],
             },
           ]}
-          margin={{ top: 10, right: 120, bottom: 40, left: 30 }}
+          margin={{ top: 10, right: 120, bottom: 40, left: 40 }}
           pointBorderColor={{ from: 'serieColor' }}
           pointBorderWidth={3}
           pointColor={{ theme: 'background' }}

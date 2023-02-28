@@ -36,15 +36,16 @@ const FEATURES: { emoji: string; heading: string; description: string }[] = [
     description:
       'The way pageviews, events and unique users are stored makes the consumed storage low. This makes hosting cheap and Stats can be free! (At least for now)',
   },
+  {
+    emoji: '🧮',
+    heading: 'Unique visitors',
+    description:
+      'View how many unique users visits your application. Visitors are counted by storing a combination of the user IP adress and user-agent, SHA512-hashed with a secret key.',
+  },
   // {
   //   emoji: '✏️',
   //   heading: 'Custom events (soon)',
   //   description: 'Want to know how many clicks a particular button? Track custom events and view how the engagement evolves through time.',
-  // },
-  // {
-  //   emoji: '🧮',
-  //   heading: 'Unique users (soon)',
-  //   description: 'View amount of unique users and how the amount evolves through time.',
   // },
 ];
 
