@@ -20,7 +20,7 @@ export const formatFilterDate = (date: Date) => format(date, 'yyyy-MM-dd');
 export const getFilteringParams = (request: Request) => {
   const searchParams = getRequestSearchparams(request);
   const defaultDate = set(new Date(), { hours: 12, minutes: 0, seconds: 0, milliseconds: 0 });
-  const dateGte = getDateFromSearchParam(searchParams.get('gte')) || addDays(defaultDate, -30);
+  const dateGte = getDateFromSearchParam(searchParams.get('gte')) || addDays(defaultDate, -14);
   const dateLte = getDateFromSearchParam(searchParams.get('lte')) || defaultDate;
   const pathname = searchParams.get('pathname') || '';
 
