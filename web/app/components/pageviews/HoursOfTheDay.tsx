@@ -2,12 +2,14 @@ import { Box, Card, Typography, useTheme } from '@mui/joy';
 import { ResponsiveBar } from '@nivo/bar';
 import { Suspense } from 'react';
 
+export type Hour = {
+  hour: string;
+  percentage: number;
+  label: string;
+};
+
 export type HoursOfTheDayProps = {
-  topHours: {
-    hour: string;
-    percentage: number;
-    label: string;
-  }[];
+  topHours: Hour[];
 };
 
 export const HoursOfTheDay = ({ topHours }: HoursOfTheDayProps) => {

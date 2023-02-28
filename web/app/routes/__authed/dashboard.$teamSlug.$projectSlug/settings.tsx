@@ -1,4 +1,4 @@
-import { Button, Card, FormControl, FormHelperText, FormLabel, Input, Textarea, Typography } from '@mui/joy';
+import { Box, Button, Card, FormControl, FormHelperText, FormLabel, Input, Switch, Textarea, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
@@ -8,6 +8,7 @@ import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import { useState } from 'react';
 import invariant from 'tiny-invariant';
+import { useIsClient } from 'usehooks-ts';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -38,12 +39,16 @@ export const action = async ({ request, params }: ActionArgs) => {
     const name = formData.get('name') as string;
     const url = formData.get('url') as string;
     const allowed_hosts = formData.get('allowed_hosts') as string;
+    const public_statistics = formData.get('public_statistics') === 'on';
+    const track_page_visitors = formData.get('track_page_visitors') === 'on';
     try {
       const project = await prismaClient.project.update({
         data: {
           name,
           url,
           allowed_hosts,
+          public_statistics,
+          track_page_visitors,
         },
         where: {
           teamSlug_slug: {
@@ -80,6 +85,9 @@ export default function ProjectSettings() {
 
   const [deleteName, setDeleteName] = useState('');
 
+  const isClient = useIsClient();
+  const publicStatsUrl = isClient ? `${location.origin}/public/${project.teamSlug}/${project.slug}` : '';
+
   return (
     <>
       <Card component={Form} method='put' sx={{ gap: 1 }}>
@@ -97,6 +105,28 @@ export default function ProjectSettings() {
           <FormLabel id='allowed_hosts-label'>Allowed hosts</FormLabel>
           <Textarea defaultValue={project.allowed_hosts} disabled={state === 'submitting'} minRows={2} name='allowed_hosts' placeholder='stats.olafros.com' />
           <FormHelperText>Separate multiple hosts with commas. Leave empty to allow all hosts</FormHelperText>
+        </FormControl>
+        {/* <FormControl id='track_page_visitors' orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
+          <Box>
+            <FormLabel>Track unique page visitors</FormLabel>
+            <FormHelperText sx={{ mt: 0, display: 'block' }}>
+              Enable tracking unique page visitors by storing a hash consisting of each visitors IP-adress, user-agent and a random salt. Changing this will not
+              affect data of eventual previously tracked unique users
+            </FormHelperText>
+          </Box>
+          <Switch defaultChecked={project.track_page_visitors} slotProps={{ input: { name: 'track_page_visitors' } }} variant='solid' />
+        </FormControl> */}
+        <FormControl id='public_statistics' orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
+          <Box>
+            <FormLabel>Public dashboard</FormLabel>
+            <FormHelperText sx={{ mt: 0, display: 'block' }}>
+              Make stats publicly available at{' '}
+              <Box component='a' href={publicStatsUrl} sx={{ overflowWrap: 'anywhere', color: (theme) => theme.palette.text.primary }} target='_blank'>
+                {publicStatsUrl}
+              </Box>
+            </FormHelperText>
+          </Box>
+          <Switch defaultChecked={project.public_statistics} slotProps={{ input: { name: 'public_statistics' } }} variant='solid' />
         </FormControl>
         <Button loading={state === 'submitting'} type='submit'>
           Save

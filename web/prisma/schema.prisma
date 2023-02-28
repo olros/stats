@@ -29,17 +29,21 @@ model Team {
 }
 
 model Project {
-  id            String   @id @default(uuid())
-  teamSlug      String
-  slug          String
-  name          String
-  url           String
-  allowed_hosts String
-  createdAt     DateTime @default(now())
+  id        String   @id @default(uuid())
+  teamSlug  String
+  slug      String
+  name      String
+  createdAt DateTime @default(now())
+
+  url                 String
+  allowed_hosts       String
+  track_page_visitors Boolean @default(true)
+  public_statistics   Boolean @default(false)
 
   team Team @relation(fields: [teamSlug], references: [slug], onDelete: Cascade)
 
-  pageViews PageView[]
+  pageViews    PageView[]
+  pageVisitors PageVisitor[]
 
   @@unique([teamSlug, slug])
 }
@@ -68,4 +72,16 @@ model PageView {
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@id([projectId, date, hour, pathname])
+}
+
+model PageVisitor {
+  projectId      String
+  date           DateTime @db.Date
+  hashed_user_id String
+
+  count Int
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, date, hashed_user_id])
 }

@@ -21,7 +21,12 @@ type DocumentProps = {
   children: React.ReactNode;
 };
 
-const stats = Stats({ team: 'olros', project: 'stats' });
+const stats = Stats({
+  team: 'olros',
+  project: 'stats',
+  allowLocalhost: process.env.NODE_ENV === 'development',
+  baseUrl: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : undefined,
+});
 
 const Document = ({ children }: DocumentProps) => {
   const styleData = useContext(StylesContext);

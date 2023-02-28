@@ -1,6 +1,7 @@
+import { Container, Typography } from '@mui/joy';
 import type { LoaderArgs } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
 import { useLoaderData, useRevalidator } from '@remix-run/react';
-import { ensureIsTeamMember } from '~/auth.server';
 import { PageviewsStatistics } from '~/components/pageviews';
 import {
   formatFilterDate,
@@ -14,6 +15,7 @@ import {
   getTopPagesQuery,
   getTotalPageviews,
 } from '~/components/pageviews/loaders';
+import { prismaClient } from '~/prismaClient';
 import { secondsToMilliseconds } from 'date-fns';
 import { jsonHash } from 'remix-utils';
 import invariant from 'tiny-invariant';
@@ -24,7 +26,26 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
-  await ensureIsTeamMember(request, params.teamSlug);
+
+  const project = await prismaClient.project.findFirst({
+    where: {
+      slug: params.projectSlug,
+      teamSlug: params.teamSlug,
+      public_statistics: true,
+    },
+    select: {
+      name: true,
+      team: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  if (!project) {
+    throw redirect('/');
+  }
 
   const pageViewsQuery = getPageViewsQuery(request, params.teamSlug, params.projectSlug);
   const topPagesQuery = getTopPagesQuery(request, params.teamSlug, params.projectSlug);
@@ -41,11 +62,12 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     dateGte: formatFilterDate(dateGte),
     dateLte: formatFilterDate(dateLte),
     pathname,
+    project,
   });
 };
 
-export default function ProjectPageviewsStatistics() {
-  const { pageViews, totalPageviews, topPages, topHours, mostPopularHour, dateGte, dateLte, pathname } = useLoaderData<typeof loader>();
+export default function PublicPageviewsStatistics() {
+  const { pageViews, totalPageviews, topPages, topHours, mostPopularHour, dateGte, dateLte, pathname, project } = useLoaderData<typeof loader>();
 
   const { revalidate } = useRevalidator();
 
@@ -54,15 +76,18 @@ export default function ProjectPageviewsStatistics() {
   }, secondsToMilliseconds(20));
 
   return (
-    <PageviewsStatistics
-      dateGte={dateGte}
-      dateLte={dateLte}
-      mostPopularHour={mostPopularHour}
-      pageViews={pageViews}
-      pathname={pathname}
-      topHours={topHours}
-      topPages={topPages}
-      totalPageviews={totalPageviews}
-    />
+    <Container sx={{ py: 2 }}>
+      <Typography level='h1' sx={{ pb: 4 }} textAlign='center'>{`Stats for ${project.team.name}/${project.name}`}</Typography>
+      <PageviewsStatistics
+        dateGte={dateGte}
+        dateLte={dateLte}
+        mostPopularHour={mostPopularHour}
+        pageViews={pageViews}
+        pathname={pathname}
+        topHours={topHours}
+        topPages={topPages}
+        totalPageviews={totalPageviews}
+      />
+    </Container>
   );
 }
