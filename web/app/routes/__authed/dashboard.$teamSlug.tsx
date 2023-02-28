@@ -1,22 +1,20 @@
 import { Button, Card, Container, Stack, Tab, TabList, Tabs, Typography } from '@mui/joy';
 import type { LoaderArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
 import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { ensureIsTeamMember, getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';
 import { parseJSON } from 'date-fns';
+import { jsonHash } from 'remix-utils';
 import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
-  const team = await ensureIsTeamMember(request, params.teamSlug);
+  const [team, user] = await Promise.all([ensureIsTeamMember(request, params.teamSlug), getUserOrRedirect(request)]);
 
-  const user = await getUserOrRedirect(request);
-
-  const teams = await prismaClient.team.findMany({
+  const teams = prismaClient.team.findMany({
     where: {
       teamUsers: {
         some: {
@@ -26,7 +24,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     },
   });
 
-  return json({ teams, team, user });
+  return jsonHash({ teams: await teams, team, user });
 };
 
 const TABS = [

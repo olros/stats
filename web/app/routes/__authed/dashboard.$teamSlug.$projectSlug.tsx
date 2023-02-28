@@ -14,10 +14,9 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
-  const team = await ensureIsTeamMember(request, params.teamSlug);
+  const [team, user] = await Promise.all([ensureIsTeamMember(request, params.teamSlug), getUserOrRedirect(request)]);
 
   const projectSlug = params.projectSlug.toLowerCase();
-  const user = await getUserOrRedirect(request);
 
   const teamsQuery = prismaClient.team.findMany({
     where: {
@@ -39,7 +38,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 };
 
 const TABS = [
-  { label: 'Statistics', url: '' },
+  { label: 'Pageviews', url: '' },
+  { label: 'Events', url: 'events' },
   { label: 'Setup', url: 'setup' },
   { label: 'Settings', url: 'settings' },
 ];
