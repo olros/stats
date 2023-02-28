@@ -1,9 +1,11 @@
+import type { Prisma } from '@prisma/client';
 import type { ActionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import { screenWidthToDeviceType } from '~/utils';
 import { getHours } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
+import { getClientIPAddress } from 'remix-utils';
 import invariant from 'tiny-invariant';
 
 import { DeviceType } from '~/types';
@@ -21,6 +23,7 @@ const parsePageviewInput = async (request: Request): Promise<PageviewInput> => {
 export const action = async ({ request, params }: ActionArgs) => {
   invariant(params.teamSlug, `Expected params.teamSlug`);
   invariant(params.projectSlug, `Expected params.projectSlug`);
+
   const data = await parsePageviewInput(request);
   const deviceType = typeof data.screen_width === 'number' ? screenWidthToDeviceType(data.screen_width) : null;
   const project = await prismaClient.project.findFirst({
@@ -48,24 +51,23 @@ export const action = async ({ request, params }: ActionArgs) => {
   const date = timezone ? utcToZonedTime(new Date(), timezone) : new Date();
   const hour = getHours(date);
 
+  const pageViewCompoundUnique: Prisma.PageViewProjectIdDateHourPathnameCompoundUniqueInput = {
+    date,
+    hour,
+    projectId: project.id,
+    pathname: data.pathname,
+  };
+
   await prismaClient.pageView.upsert({
     create: {
-      projectId: project.id,
-      date,
-      hour,
-      pathname: data.pathname,
+      ...pageViewCompoundUnique,
       count: 1,
       dekstop_count: deviceType === DeviceType.DESKTOP ? 1 : 0,
       tablet_count: deviceType === DeviceType.TABLET ? 1 : 0,
       mobile_count: deviceType === DeviceType.MOBILE ? 1 : 0,
     },
     where: {
-      projectId_date_hour_pathname: {
-        date,
-        hour,
-        projectId: project.id,
-        pathname: data.pathname,
-      },
+      projectId_date_hour_pathname: pageViewCompoundUnique,
     },
     update: {
       count: { increment: 1 },
@@ -86,5 +88,31 @@ export const action = async ({ request, params }: ActionArgs) => {
         : {}),
     },
   });
+
+  if (project.track_page_visitors) {
+    const clientIp = getClientIPAddress(request.headers);
+    const userAgent = request.headers.get('user-agent');
+    if (clientIp) {
+      invariant(process.env.SECRET_KEY, 'Missin environment variable "SECRET_KEY"');
+      const { createHmac } = await import('crypto');
+      const hashed_user_id = createHmac('sha512', process.env.SECRET_KEY).update(`${clientIp}_${userAgent}`).digest('hex');
+      await prismaClient.pageVisitor.upsert({
+        create: {
+          projectId: project.id,
+          hashed_user_id,
+          date,
+        },
+        where: {
+          projectId_date_hashed_user_id: {
+            projectId: project.id,
+            hashed_user_id,
+            date,
+          },
+        },
+        update: {},
+      });
+    }
+  }
+
   return json({}, { status: 202 });
 };

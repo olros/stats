@@ -106,7 +106,7 @@ export default function ProjectSettings() {
           <Textarea defaultValue={project.allowed_hosts} disabled={state === 'submitting'} minRows={2} name='allowed_hosts' placeholder='stats.olafros.com' />
           <FormHelperText>Separate multiple hosts with commas. Leave empty to allow all hosts</FormHelperText>
         </FormControl>
-        {/* <FormControl id='track_page_visitors' orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
+        <FormControl id='track_page_visitors' orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
           <Box>
             <FormLabel>Track unique page visitors</FormLabel>
             <FormHelperText sx={{ mt: 0, display: 'block' }}>
@@ -115,7 +115,7 @@ export default function ProjectSettings() {
             </FormHelperText>
           </Box>
           <Switch defaultChecked={project.track_page_visitors} slotProps={{ input: { name: 'track_page_visitors' } }} variant='solid' />
-        </FormControl> */}
+        </FormControl>
         <FormControl id='public_statistics' orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
           <Box>
             <FormLabel>Public dashboard</FormLabel>

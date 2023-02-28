@@ -5,11 +5,12 @@ import type { Hour } from './HoursOfTheDay';
 export type AggregatedProps = {
   totalPageviews: number;
   mostPopularHour: Hour;
+  uniqueVisitorsCount: number;
 };
 
-export const Aggregated = ({ totalPageviews, mostPopularHour }: AggregatedProps) => {
+export const Aggregated = ({ totalPageviews, mostPopularHour, uniqueVisitorsCount }: AggregatedProps) => {
   return (
-    <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
+    <Stack direction={{ xs: 'column', md: 'row' }} gap={1}>
       <Card orientation='horizontal' sx={{ flex: 1 }}>
         <AspectRatio ratio='1' sx={{ width: 55, background: 'transparent' }}>
           <Typography fontSize='xl'>👀</Typography>
@@ -18,6 +19,17 @@ export const Aggregated = ({ totalPageviews, mostPopularHour }: AggregatedProps)
           <Typography level='body2'>Pageviews</Typography>
           <Typography fontSize='xl' fontWeight='bold'>
             {Intl.NumberFormat('en-GB', { notation: 'compact' }).format(totalPageviews)}
+          </Typography>
+        </CardContent>
+      </Card>
+      <Card orientation='horizontal' sx={{ flex: 1 }}>
+        <AspectRatio ratio='1' sx={{ width: 55, background: 'transparent' }}>
+          <Typography fontSize='xl'>🧑</Typography>
+        </AspectRatio>
+        <CardContent sx={{ px: 2, gap: 0.25 }}>
+          <Typography level='body2'>Unique visitors</Typography>
+          <Typography fontSize='xl' fontWeight='bold'>
+            {Intl.NumberFormat('en-GB', { notation: 'compact' }).format(uniqueVisitorsCount)}
           </Typography>
         </CardContent>
       </Card>

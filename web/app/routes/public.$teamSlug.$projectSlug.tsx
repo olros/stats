@@ -14,6 +14,7 @@ import {
   getTopPages,
   getTopPagesQuery,
   getTotalPageviews,
+  getUniqueVisitorsCount,
 } from '~/components/pageviews/loaders';
 import { prismaClient } from '~/prismaClient';
 import { secondsToMilliseconds } from 'date-fns';
@@ -59,6 +60,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     topPages: await getTopPages(topPagesQuery),
     topHours: await getTopHours(topHoursQuery),
     mostPopularHour: await getMostPopularHour(topHoursQuery),
+    uniqueVisitorsCount: await getUniqueVisitorsCount(request, params.teamSlug, params.projectSlug),
     dateGte: formatFilterDate(dateGte),
     dateLte: formatFilterDate(dateLte),
     pathname,
@@ -67,7 +69,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 };
 
 export default function PublicPageviewsStatistics() {
-  const { pageViews, totalPageviews, topPages, topHours, mostPopularHour, dateGte, dateLte, pathname, project } = useLoaderData<typeof loader>();
+  const { pageViews, totalPageviews, topPages, uniqueVisitorsCount, topHours, mostPopularHour, dateGte, dateLte, pathname, project } =
+    useLoaderData<typeof loader>();
 
   const { revalidate } = useRevalidator();
 
@@ -87,6 +90,7 @@ export default function PublicPageviewsStatistics() {
         topHours={topHours}
         topPages={topPages}
         totalPageviews={totalPageviews}
+        uniqueVisitorsCount={uniqueVisitorsCount}
       />
     </Container>
   );

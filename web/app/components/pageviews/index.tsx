@@ -18,6 +18,7 @@ export const PageviewsStatistics = ({
   topPages,
   topHours,
   mostPopularHour,
+  uniqueVisitorsCount,
   dateGte,
   dateLte,
   pathname,
@@ -25,7 +26,7 @@ export const PageviewsStatistics = ({
   return (
     <Stack gap={1}>
       <Filters dateGte={dateGte} dateLte={dateLte} pathname={pathname} />
-      <Aggregated mostPopularHour={mostPopularHour} totalPageviews={totalPageviews} />
+      <Aggregated mostPopularHour={mostPopularHour} totalPageviews={totalPageviews} uniqueVisitorsCount={uniqueVisitorsCount} />
       <Card sx={{ p: 2 }}>
         <Typography gutterBottom level='h3'>
           Trend

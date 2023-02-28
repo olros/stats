@@ -79,8 +79,6 @@ model PageVisitor {
   date           DateTime @db.Date
   hashed_user_id String
 
-  count Int
-
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@id([projectId, date, hashed_user_id])

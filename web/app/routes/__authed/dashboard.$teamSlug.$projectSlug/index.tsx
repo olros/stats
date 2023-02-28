@@ -13,6 +13,7 @@ import {
   getTopPages,
   getTopPagesQuery,
   getTotalPageviews,
+  getUniqueVisitorsCount,
 } from '~/components/pageviews/loaders';
 import { secondsToMilliseconds } from 'date-fns';
 import { jsonHash } from 'remix-utils';
@@ -38,6 +39,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     topPages: await getTopPages(topPagesQuery),
     topHours: await getTopHours(topHoursQuery),
     mostPopularHour: await getMostPopularHour(topHoursQuery),
+    uniqueVisitorsCount: await getUniqueVisitorsCount(request, params.teamSlug, params.projectSlug),
     dateGte: formatFilterDate(dateGte),
     dateLte: formatFilterDate(dateLte),
     pathname,
@@ -45,7 +47,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 };
 
 export default function ProjectPageviewsStatistics() {
-  const { pageViews, totalPageviews, topPages, topHours, mostPopularHour, dateGte, dateLte, pathname } = useLoaderData<typeof loader>();
+  const { pageViews, totalPageviews, topPages, topHours, mostPopularHour, uniqueVisitorsCount, dateGte, dateLte, pathname } = useLoaderData<typeof loader>();
 
   const { revalidate } = useRevalidator();
 
@@ -63,6 +65,7 @@ export default function ProjectPageviewsStatistics() {
       topHours={topHours}
       topPages={topPages}
       totalPageviews={totalPageviews}
+      uniqueVisitorsCount={uniqueVisitorsCount}
     />
   );
 }
