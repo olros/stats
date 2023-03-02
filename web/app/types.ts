@@ -1,4 +1,4 @@
-import type { PageView } from '@prisma/client';
+import type { CustomEvent, PageView } from '@prisma/client';
 
 export enum DeviceType {
   MOBILE = 'MOBILE',
@@ -9,3 +9,5 @@ export enum DeviceType {
 export type PageviewInput = Pick<PageView, 'pathname'> & {
   screen_width: number | null | undefined;
 };
+
+export type CustomEventInput = Pick<CustomEvent, 'name'>;

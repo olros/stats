@@ -37,14 +37,14 @@ export const PageviewsStatistics = ({
         <Card>
           <Typography level='h3'>Top pages</Typography>
           <Typography gutterBottom level='body2'>
-            Which pages get more traffic
+            Which pages get more pageviews
           </Typography>
           <TopPages topPages={topPages} />
         </Card>
         <Card>
           <Typography level='h3'>Hours of the day</Typography>
           <Typography gutterBottom level='body2'>
-            What times during the day does the application get the most traffic
+            What times during the day has most pageviews
           </Typography>
           <HoursOfTheDay topHours={topHours} />
         </Card>

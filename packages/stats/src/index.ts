@@ -14,20 +14,47 @@ export type StatsInit = {
 
 /**
  * Create a stats-instance which has methods to track pageviews, etc...
+ * 
+ * Generics can be used to optionally typecheck which custom events are allowed.
+ * By default all strings are accepted
+ * 
  * @param init Configuration
+ * @example
+ * ```
+ * const stats = Stats<'buy' | 'save'>(init);
+ * 
+ * stats.event('buy'); // ✅ No errors
+ * stats.event('delete'); // ❌ Error
+ * ```
  */
-export const Stats = ({ team, project, baseUrl, allowLocalhost = false }: StatsInit) => {
+export const Stats = <CustomEvents extends string>({ team, project, baseUrl, allowLocalhost = false }: StatsInit) => {
+  
+  const requestInit: RequestInit = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    mode: 'no-cors',
+    credentials: 'omit',
+  };
+
+  const url = `${baseUrl || 'https://stats.olafros.com'}/api/${team}/${project}`;
+
+  const isBotOrLocalhost = () => {
+    if (typeof window !== 'undefined') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const isBot = Boolean(window._phantom || window.__nightmare || window.navigator.webdriver || window.Cypress);
+      if ((!allowLocalhost && window.location.host.includes('localhost')) || isBot) return true;
+    }
+    return false;
+  }
 
   /**
    * Track a pageview
    * @param options Optional PageviewOptions
    */
   const pageview = async (options: PageviewOptions = {}): Promise<void> => {
-    if (typeof window !== 'undefined') {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const isBot = Boolean(window._phantom || window.__nightmare || window.navigator.webdriver || window.Cypress);
-      if ((!allowLocalhost && window.location.host.includes('localhost')) || isBot) return;
+    if (isBotOrLocalhost()) {
+      return;
     }
     const pathname = options.pathname || location.pathname;
 
@@ -36,14 +63,22 @@ export const Stats = ({ team, project, baseUrl, allowLocalhost = false }: StatsI
       screen_width: typeof window !== 'undefined' ? window.innerWidth : undefined,
     };
 
-    await fetch(`${baseUrl || 'https://stats.olafros.com'}/api/${team}/${project}/pageview/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-      mode: 'no-cors',
-      credentials: 'omit',
-    });
-  }
+    await fetch(`${url}/pageview/`, { ...requestInit, body: JSON.stringify(data) });
+  };
 
-  return { pageview };
-}
+  /**
+   * Track a custom event
+   * @param name The event name
+   */
+  const event = async (name: CustomEvents): Promise<void> => {
+    if (isBotOrLocalhost()) {
+      return;
+    }
+
+    const data = { name };
+
+    await fetch(`${url}/event/`, { ...requestInit, body: JSON.stringify(data) });
+  };
+
+  return { event, pageview };
+};

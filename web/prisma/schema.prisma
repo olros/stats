@@ -42,6 +42,7 @@ model Project {
 
   team Team @relation(fields: [teamSlug], references: [slug], onDelete: Cascade)
 
+  customEvents CustomEvent[]
   pageViews    PageView[]
   pageVisitors PageVisitor[]
 
@@ -72,6 +73,19 @@ model PageView {
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@id([projectId, date, hour, pathname])
+}
+
+model CustomEvent {
+  projectId String
+  date      DateTime @db.Date
+  hour      Int
+  name      String
+
+  count Int
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, date, hour, name])
 }
 
 model PageVisitor {

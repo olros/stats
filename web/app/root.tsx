@@ -1,9 +1,10 @@
-import { Stats } from '@olros/stats';
 import type { MetaFunction } from '@remix-run/node';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from '@remix-run/react';
 import { ErrorBoundary as BaseErrorBoundary } from '~/components/ErrorBoundary';
 import StylesContext from '~/styles/server.context';
 import { useContext, useEffect } from 'react';
+
+import { stats } from './stats';
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
@@ -20,13 +21,6 @@ export const ErrorBoundary = () => (
 type DocumentProps = {
   children: React.ReactNode;
 };
-
-const stats = Stats({
-  team: 'olros',
-  project: 'stats',
-  allowLocalhost: process.env.NODE_ENV === 'development',
-  baseUrl: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : undefined,
-});
 
 const Document = ({ children }: DocumentProps) => {
   const styleData = useContext(StylesContext);

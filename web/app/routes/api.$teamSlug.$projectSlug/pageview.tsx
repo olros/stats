@@ -3,8 +3,8 @@ import type { ActionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import { screenWidthToDeviceType } from '~/utils';
+import { getDate, getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getHours } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
 import { getClientIPAddress } from 'remix-utils';
 import invariant from 'tiny-invariant';
 
@@ -18,15 +18,6 @@ const parsePageviewInput = async (request: Request): Promise<PageviewInput> => {
   }
 
   return data;
-};
-
-const getDate = (request: Request) => {
-  // As long as the application is hosted on Vercel, x-vercel-ip-timezone
-  // can be used to get the users timezone
-  // https://vercel.com/docs/concepts/edge-network/headers#x-vercel-ip-timezone
-  const timezone = request.headers.get('x-vercel-ip-timezone');
-  const date = timezone ? utcToZonedTime(new Date(), timezone) : new Date();
-  return date;
 };
 
 const trackPageview = async (request: Request, project: Project) => {
@@ -88,7 +79,7 @@ const trackPageVisitor = async (request: Request, project: Project) => {
     return;
   }
 
-  invariant(process.env.SECRET_KEY, 'Missin environment variable "SECRET_KEY"');
+  invariant(process.env.SECRET_KEY, 'Expected environment variable "SECRET_KEY" to be set when tracking page visitors');
   const { createHmac } = await import('crypto');
   const hashed_user_id = createHmac('sha512', process.env.SECRET_KEY).update(`${clientIp}_${userAgent}`).digest('hex');
 
@@ -111,23 +102,7 @@ export const action = async ({ request, params }: ActionArgs) => {
   invariant(params.teamSlug, `Expected params.teamSlug`);
   invariant(params.projectSlug, `Expected params.projectSlug`);
 
-  const project = await prismaClient.project.findFirst({
-    where: {
-      slug: params.projectSlug,
-      teamSlug: params.teamSlug,
-    },
-  });
-
-  if (!project) {
-    return json({ errors: { name: `Can't find the given project` } }, { status: 404 });
-  }
-
-  const host = request.headers.get('host');
-  const allowedHosts = project.allowed_hosts.split(',').filter((i) => i.length);
-
-  if (allowedHosts.length > 0 && (!host || !allowedHosts.includes(host))) {
-    return json({ errors: { host: `The host is either not in headers or not declared as one of the allowed hosts` } }, { status: 404 });
-  }
+  const { project } = await getProjectAndCheckPermissions(request, params.teamSlug, params.projectSlug);
 
   await Promise.all([trackPageview(request, project), trackPageVisitor(request, project)]);
 

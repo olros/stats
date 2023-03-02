@@ -3,6 +3,7 @@ import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { Form, Link, useLoaderData } from '@remix-run/react';
 import { authenticator } from '~/auth.server';
+import { stats } from '~/stats';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -88,7 +89,7 @@ export default function Index() {
             </Button>
           </Box>
         )}
-        <Button component='a' href='https://stats.olafros.com/public/olros/stats' target='_blank' variant='outlined'>
+        <Button component='a' href='https://stats.olafros.com/public/olros/stats' onClick={() => stats.event('live-demo')} target='_blank' variant='outlined'>
           Live demo
         </Button>
       </Stack>
