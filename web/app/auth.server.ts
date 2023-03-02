@@ -1,8 +1,10 @@
 import type { Team, User } from '@prisma/client';
 import { authSession } from '~/cookies.server';
+import { differenceInSeconds, minutesToSeconds } from 'date-fns';
 import { redirect } from 'react-router';
 import { Authenticator } from 'remix-auth';
 import { GitHubStrategy } from 'remix-auth-github';
+import slugify from 'slugify';
 import invariant from 'tiny-invariant';
 
 import { prismaClient } from './prismaClient';
@@ -20,8 +22,8 @@ const gitHubStrategy = new GitHubStrategy(
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
     callbackURL: process.env.NODE_ENV === 'production' ? 'https://stats.olafros.com/auth/github/callback' : 'http://localhost:3000/auth/github/callback',
   },
-  async ({ profile }) =>
-    await prismaClient.user
+  async ({ profile }) => {
+    const user = await prismaClient.user
       .upsert({
         create: {
           id: `${profile._json.id}`,
@@ -43,7 +45,28 @@ const gitHubStrategy = new GitHubStrategy(
       .catch((e) => {
         console.error('GitHubStrategy', e);
         throw e;
-      }),
+      });
+    try {
+      const isNewUser = differenceInSeconds(new Date(), user.createdAt) < minutesToSeconds(2);
+      if (isNewUser) {
+        await prismaClient.team.create({
+          data: {
+            name: `${user.github_username}`,
+            slug: slugify(`${user.github_username}`),
+            teamUsers: {
+              create: {
+                userId: user.id,
+              },
+            },
+          },
+        });
+      }
+    } catch {
+      // There already exists a team with the same name as the user's github username
+      console.log("There already exists a team with the same name as the user's github username");
+    }
+    return user;
+  },
 );
 
 authenticator.use(gitHubStrategy);

@@ -1,5 +1,5 @@
 import { Button, Card, FormControl, FormLabel, Input, Stack, Typography } from '@mui/joy';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import type { ActionArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData, useNavigation, useParams } from '@remix-run/react';

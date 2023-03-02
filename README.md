@@ -1,6 +1,6 @@
 ![Logo](logo.png)
 
-A simple, free and easy to use analytics-tool for all types of applications.
+A simple and easy to use analytics-tool for all types of applications.
 
 Sign in with your GitHub-account at [stats.olafros.com](https://stats.olafros.com/) to get started.
 
