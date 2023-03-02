@@ -10,13 +10,17 @@ import { TopPages } from '~/components/pageviews/TopPages';
 import type { PageviewsTrendProps } from '~/components/pageviews/Trend';
 import { PageviewsTrend } from '~/components/pageviews/Trend';
 
-export type PageviewsStatisticsProps = FiltersProps & AggregatedProps & PageviewsTrendProps & HoursOfTheDayProps & TopPagesProps;
+import type { TopCustomEventsProps } from './TopCustomEvents';
+import { TopCustomEvents } from './TopCustomEvents';
+
+export type PageviewsStatisticsProps = FiltersProps & AggregatedProps & PageviewsTrendProps & HoursOfTheDayProps & TopPagesProps & TopCustomEventsProps;
 
 export const PageviewsStatistics = ({
   pageViews,
   totalPageviews,
   topPages,
   topHours,
+  topCustomEvents,
   mostPopularHour,
   uniqueVisitorsCount,
   dateGte,
@@ -42,13 +46,20 @@ export const PageviewsStatistics = ({
           <TopPages topPages={topPages} />
         </Card>
         <Card>
-          <Typography level='h3'>Hours of the day</Typography>
+          <Typography level='h3'>Top custom events</Typography>
           <Typography gutterBottom level='body2'>
-            What times during the day has most pageviews
+            Number of events per custom event
           </Typography>
-          <HoursOfTheDay topHours={topHours} />
+          <TopCustomEvents topCustomEvents={topCustomEvents} />
         </Card>
       </Box>
+      <Card>
+        <Typography level='h3'>Hours of the day</Typography>
+        <Typography gutterBottom level='body2'>
+          What times during the day has most pageviews
+        </Typography>
+        <HoursOfTheDay topHours={topHours} />
+      </Card>
     </Stack>
   );
 };

@@ -2,11 +2,9 @@ import { Box, Card, Typography, useTheme } from '@mui/joy';
 import { ResponsiveBar } from '@nivo/bar';
 import { Suspense } from 'react';
 
-export type Hour = {
-  hour: string;
-  percentage: number;
-  label: string;
-};
+import type { getTopHours } from './loaders';
+
+export type Hour = Awaited<ReturnType<typeof getTopHours>>[number];
 
 export type HoursOfTheDayProps = {
   topHours: Hour[];

@@ -1,10 +1,8 @@
 import type { BarDatum } from '@nivo/bar';
 import type { Serie } from '@nivo/line';
-import type { PageView, Prisma } from '@prisma/client';
+import type { CustomEvent, PageView, Prisma } from '@prisma/client';
 import { prismaClient } from '~/prismaClient';
 import { addDays, eachDayOfInterval, format, isDate, isSameDay, set } from 'date-fns';
-
-import type { Hour } from './HoursOfTheDay';
 
 const getDateFromSearchParam = (param: string | null) => {
   if (!param) return undefined;
@@ -109,7 +107,7 @@ export const getTopHours = (topHoursQuery: ReturnType<typeof getTopHoursQuery>) 
       .map((_, i) => {
         const count = data.find((hour) => hour.hour === i)?._sum.count || 0;
         const percentage = Number(((count / totalCount) * 100).toFixed(1));
-        return { hour: String(i).padStart(2, '0'), percentage, label: percentage > 0 ? `${percentage}% (${count})` : '0' } satisfies Hour;
+        return { hour: String(i).padStart(2, '0'), percentage, label: percentage > 0 ? `${percentage}% (${count})` : '0' };
       })
       .reverse() satisfies BarDatum[];
   });
@@ -126,3 +124,19 @@ export const getUniqueVisitorsCount = async (request: Request, teamSlug: string,
   });
   return uniqueVisitors.length;
 };
+
+export const getTopCustomEventsQuery = (request: Request, teamSlug: string, projectSlug: string) => {
+  const { date, project } = getWhereQuery(request, teamSlug, projectSlug);
+  return prismaClient.customEvent.groupBy({
+    by: ['name'],
+    where: { date, project },
+    _sum: { count: true },
+    orderBy: { _sum: { count: 'desc' } },
+    take: 20,
+  });
+};
+
+export const getTopCustomEvents = (topCustomEventsQuery: ReturnType<typeof getTopCustomEventsQuery>) =>
+  topCustomEventsQuery.then((data) =>
+    data.map<Pick<CustomEvent, 'name' | 'count'>>((customEvent) => ({ name: customEvent.name, count: customEvent._sum.count || 0 })),
+  );

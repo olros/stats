@@ -1,11 +1,11 @@
 import { AspectRatio, Card, CardContent, Stack, Typography } from '@mui/joy';
 
-import type { Hour } from './HoursOfTheDay';
+import type { getMostPopularHour, getTotalPageviews, getUniqueVisitorsCount } from './loaders';
 
 export type AggregatedProps = {
-  totalPageviews: number;
-  mostPopularHour: Hour;
-  uniqueVisitorsCount: number;
+  totalPageviews: Awaited<ReturnType<typeof getTotalPageviews>>;
+  mostPopularHour: Awaited<ReturnType<typeof getMostPopularHour>>;
+  uniqueVisitorsCount: Awaited<ReturnType<typeof getUniqueVisitorsCount>>;
 };
 
 export const Aggregated = ({ totalPageviews, mostPopularHour, uniqueVisitorsCount }: AggregatedProps) => {

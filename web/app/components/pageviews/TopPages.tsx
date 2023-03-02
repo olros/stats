@@ -1,9 +1,10 @@
 import { Box, Divider, Typography } from '@mui/joy';
-import type { PageView } from '@prisma/client';
 import { Fragment } from 'react';
 
+import type { getTopPages } from './loaders';
+
 export type TopPagesProps = {
-  topPages: Pick<PageView, 'pathname' | 'count'>[];
+  topPages: Awaited<ReturnType<typeof getTopPages>>;
 };
 
 export const TopPages = ({ topPages }: TopPagesProps) => {

@@ -28,7 +28,7 @@ export default function ProjectSetup() {
     <>
       <Card>
         <Typography level='h3'>{`Javascript snippet`}</Typography>
-        <Description>{`Include this snippet in the <head> of your website.`}</Description>
+        <Description>{`Include this snippet in the <head> of your website to register pageviews`}</Description>
         <Code gutterBottom={false}>
           {`<script data-project='${projectSlug}' data-team='${teamSlug}' defer src='https://stats.olafros.com/script.js'></script>`}
         </Code>
@@ -61,11 +61,11 @@ export const stats = Stats({ team: TEAM, project: PROJECT });`}
           -method on each pagenavigation to track pageviews. Example from React with React-Router:
         </Description>
         <Code gutterBottom={false}>
-          {`// routes/a-random-page.ts
+          {`// route.ts
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { stats } from 'utils/stats'; // The instance created in the previous step
+import { stats } from 'utils/stats'; // Import the stats-instance
 
 // ...
 
@@ -75,11 +75,30 @@ useEffect(() => {
   stats.pageview();
 }, [location.pathname, location.search]);`}
         </Code>
+        <Description>
+          Use the{' '}
+          <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
+            {`stats.event`}
+          </Typography>
+          -method to track custom events:
+        </Description>
+        <Code gutterBottom={false}>
+          {`// route.ts
+import { stats } from 'utils/stats'; // Import the stats-instance
+
+// ...
+
+const handleClick = () => {
+  stats.event('buy');
+}`}
+        </Code>
       </Card>
       <Card>
         <Typography level='h3'>{`HTTP-request`}</Typography>
+        <Description>{`You can also manually send a HTTP-request to our api to register pageviews or custom events.`}</Description>
+        <Typography level='h4'>{`Pageviews`}</Typography>
         <Description>
-          {`You can also manually send a HTTP-request to `}
+          Send POST-request to{' '}
           <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
             {`https://stats.olafros.com/api/${teamSlug}/${projectSlug}/pageview/`}
           </Typography>
@@ -95,6 +114,28 @@ useEffect(() => {
 };
 
 fetch('https://stats.olafros.com/api/${teamSlug}/${projectSlug}/pageview/', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(data),
+  mode: 'no-cors',
+  credentials: 'omit',
+});`}
+        </Code>
+        <Typography level='h4' sx={{ mt: 2 }}>{`Custom events`}</Typography>
+        <Description>
+          Send POST-request to{' '}
+          <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
+            {`https://stats.olafros.com/api/${teamSlug}/${projectSlug}/event/`}
+          </Typography>
+          {' with a body containing name of the custom event.'}
+        </Description>
+        <Description>{`Example using Javascript fetch:`}</Description>
+        <Code gutterBottom={false}>
+          {`const data = {
+  name: 'buy',
+};
+
+fetch('https://stats.olafros.com/api/${teamSlug}/${projectSlug}/event/', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(data),

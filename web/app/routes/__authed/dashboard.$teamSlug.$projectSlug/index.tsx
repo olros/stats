@@ -8,6 +8,8 @@ import {
   getMostPopularHour,
   getPageViewsQuery,
   getPageViewsTrend,
+  getTopCustomEvents,
+  getTopCustomEventsQuery,
   getTopHours,
   getTopHoursQuery,
   getTopPages,
@@ -29,6 +31,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   const pageViewsQuery = getPageViewsQuery(request, params.teamSlug, params.projectSlug);
   const topPagesQuery = getTopPagesQuery(request, params.teamSlug, params.projectSlug);
+  const topCustomEventsQuery = getTopCustomEventsQuery(request, params.teamSlug, params.projectSlug);
   const topHoursQuery = getTopHoursQuery(request, params.teamSlug, params.projectSlug);
 
   const { dateGte, dateLte, pathname } = getFilteringParams(request);
@@ -37,6 +40,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     pageViews: await getPageViewsTrend(pageViewsQuery, dateGte, dateLte),
     totalPageviews: await getTotalPageviews(pageViewsQuery),
     topPages: await getTopPages(topPagesQuery),
+    topCustomEvents: await getTopCustomEvents(topCustomEventsQuery),
     topHours: await getTopHours(topHoursQuery),
     mostPopularHour: await getMostPopularHour(topHoursQuery),
     uniqueVisitorsCount: await getUniqueVisitorsCount(request, params.teamSlug, params.projectSlug),
@@ -47,7 +51,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 };
 
 export default function ProjectPageviewsStatistics() {
-  const { pageViews, totalPageviews, topPages, topHours, mostPopularHour, uniqueVisitorsCount, dateGte, dateLte, pathname } = useLoaderData<typeof loader>();
+  const { pageViews, totalPageviews, topPages, topCustomEvents, topHours, mostPopularHour, uniqueVisitorsCount, dateGte, dateLte, pathname } =
+    useLoaderData<typeof loader>();
 
   const { revalidate } = useRevalidator();
 
@@ -62,6 +67,7 @@ export default function ProjectPageviewsStatistics() {
       mostPopularHour={mostPopularHour}
       pageViews={pageViews}
       pathname={pathname}
+      topCustomEvents={topCustomEvents}
       topHours={topHours}
       topPages={topPages}
       totalPageviews={totalPageviews}
