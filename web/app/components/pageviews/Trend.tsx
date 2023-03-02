@@ -22,9 +22,7 @@ export const PageviewsTrend = ({ pageViews, dateGte, dateLte }: PageviewsTrendPr
             tickRotation: -45,
           }}
           axisLeft={{
-            format: (val: number) => {
-              Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 }).format(val);
-            },
+            format: (val: number) => Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 }).format(val),
           }}
           colors={{ scheme: 'paired' }}
           curve='monotoneX'
@@ -56,7 +54,7 @@ export const PageviewsTrend = ({ pageViews, dateGte, dateLte }: PageviewsTrendPr
               ],
             },
           ]}
-          margin={{ top: 10, right: 20, bottom: 65, left: 40 }}
+          margin={{ top: 10, right: 20, bottom: 65, left: 45 }}
           pointBorderColor={{ from: 'serieColor' }}
           pointBorderWidth={3}
           pointColor={{ theme: 'background' }}

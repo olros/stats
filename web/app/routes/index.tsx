@@ -32,10 +32,15 @@ const FEATURES: { emoji: string; heading: string; description: string }[] = [
     description: 'No cookie-usage. Can be self-hosted. Generated data is saved in an aggregated manner, making it impossible to track individual users',
   },
   {
-    emoji: '🆓',
+    emoji: '💲',
     heading: 'Free',
     description:
       'The way pageviews, events and unique users are stored makes the consumed storage low. This makes hosting cheap and Stats can be free! (At least for now)',
+  },
+  {
+    emoji: '✏️',
+    heading: 'Custom events',
+    description: 'Want to know how many times particular button is clicked? Track custom events and view how your application is used.',
   },
   {
     emoji: '🧮',
@@ -43,11 +48,6 @@ const FEATURES: { emoji: string; heading: string; description: string }[] = [
     description:
       'View how many unique users visits your application. Visitors are counted by storing a combination of the user IP adress and user-agent, SHA512-hashed with a secret key.',
   },
-  // {
-  //   emoji: '✏️',
-  //   heading: 'Custom events (soon)',
-  //   description: 'Want to know how many clicks a particular button? Track custom events and view how the engagement evolves through time.',
-  // },
 ];
 
 export default function Index() {
@@ -69,9 +69,9 @@ export default function Index() {
         Stats
       </Typography>
       <Typography gutterBottom level='h2' textAlign='center'>
-        A simple, free and easy to use analytics-tool
+        A simple and easy to use analytics-tool
         <br />
-        for all of your applications.
+        for all applications.
       </Typography>
       <Typography level='body1' sx={{ mb: 4, px: 2 }} textAlign='center'>
         No need for a cookie-banner as no cookies are used, ever. Easy to add to your website with a lightweight script, NPM-package or by manually sending
@@ -89,7 +89,7 @@ export default function Index() {
             </Button>
           </Box>
         )}
-        <Button component='a' href='https://stats.olafros.com/public/olros/stats' onClick={() => stats.event('live-demo')} target='_blank' variant='outlined'>
+        <Button component='a' href='/public/olros/stats' onClick={() => stats.event('live-demo')} target='_blank' variant='outlined'>
           Live demo
         </Button>
       </Stack>
@@ -115,7 +115,7 @@ export default function Index() {
           </Card>
         ))}
       </Box>
-      <Typography component='a' href='https://github.com/olros/stats' sx={{ my: 2 }} target='_blank'>
+      <Typography component='a' href='https://github.com/olros/stats' sx={{ textAlign: 'center', my: 2 }} target='_blank'>
         @olros/stats
       </Typography>
     </Container>

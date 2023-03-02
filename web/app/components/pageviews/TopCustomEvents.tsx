@@ -10,6 +10,7 @@ export type TopCustomEventsProps = {
 export const TopCustomEvents = ({ topCustomEvents }: TopCustomEventsProps) => {
   return (
     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto', columnGap: 0.5 }}>
+      {topCustomEvents.length === 0 && <Typography>Found none custom events registered with the given filters</Typography>}
       {topCustomEvents.map((customEvent, i) => (
         <Fragment key={customEvent.name}>
           <Typography sx={{ ml: 0.5, overflowWrap: 'anywhere' }}>{customEvent.name}</Typography>

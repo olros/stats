@@ -97,6 +97,9 @@ export default function PublicPageviewsStatistics() {
         totalPageviews={totalPageviews}
         uniqueVisitorsCount={uniqueVisitorsCount}
       />
+      <Typography component='a' href='https://github.com/olros/stats' sx={{ textAlign: 'center', my: 2 }} target='_blank'>
+        @olros/stats
+      </Typography>
     </Container>
   );
 }
