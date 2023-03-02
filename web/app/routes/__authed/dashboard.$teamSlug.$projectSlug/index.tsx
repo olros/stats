@@ -34,7 +34,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const { dateGte, dateLte, pathname } = getFilteringParams(request);
 
   return jsonHash({
-    pageViews: await getPageViewsTrend(pageViewsQuery),
+    pageViews: await getPageViewsTrend(pageViewsQuery, dateGte, dateLte),
     totalPageviews: await getTotalPageviews(pageViewsQuery),
     topPages: await getTopPages(topPagesQuery),
     topHours: await getTopHours(topHoursQuery),

@@ -2,7 +2,7 @@ import type { BarDatum } from '@nivo/bar';
 import type { Serie } from '@nivo/line';
 import type { PageView, Prisma } from '@prisma/client';
 import { prismaClient } from '~/prismaClient';
-import { addDays, format, isDate, set } from 'date-fns';
+import { addDays, eachDayOfInterval, format, isDate, isSameDay, set } from 'date-fns';
 
 import type { Hour } from './HoursOfTheDay';
 
@@ -59,13 +59,19 @@ export const getPageViewsQuery = (request: Request, teamSlug: string, projectSlu
   });
 };
 
-export const getPageViewsTrend = (pageViewsQuery: ReturnType<typeof getPageViewsQuery>): Promise<Serie[]> =>
-  pageViewsQuery.then((data) => [
-    { id: 'Mobile devices', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.mobile_count || 0 })) },
-    { id: 'Tablet devices', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.tablet_count || 0 })) },
-    { id: 'Desktop devices', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.dekstop_count || 0 })) },
-    { id: 'Total amount', data: data.map((item) => ({ x: item.date.toJSON().substring(0, 10), y: item._sum.count || 0 })) },
-  ]);
+export const getPageViewsTrend = (pageViewsQuery: ReturnType<typeof getPageViewsQuery>, dateGte: Date, dateLte: Date): Promise<Serie[]> =>
+  pageViewsQuery.then((data) => {
+    const days = eachDayOfInterval({ start: dateGte, end: dateLte }).map((day) => set(day, { hours: 12 }));
+    const getData = (item: keyof (typeof data)[number]['_sum']): { x: string; y: number }[] => {
+      return days.map((day) => ({ x: day.toJSON().substring(0, 10), y: data.find((entry) => isSameDay(entry.date, day))?._sum[item] || 0 }));
+    };
+    return [
+      { id: 'Mobile', data: getData('mobile_count') },
+      { id: 'Tablet', data: getData('tablet_count') },
+      { id: 'Desktop', data: getData('dekstop_count') },
+      { id: 'Total', data: getData('count') },
+    ];
+  });
 
 export const getTotalPageviews = (pageViewsQuery: ReturnType<typeof getPageViewsQuery>): Promise<number> =>
   pageViewsQuery.then((data) => data.reduce((prev, cur) => prev + (cur._sum.count || 0), 0));

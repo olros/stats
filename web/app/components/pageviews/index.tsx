@@ -29,7 +29,7 @@ export const PageviewsStatistics = ({
       <Aggregated mostPopularHour={mostPopularHour} totalPageviews={totalPageviews} uniqueVisitorsCount={uniqueVisitorsCount} />
       <Card sx={{ p: 2 }}>
         <Typography gutterBottom level='h3'>
-          Trend
+          Pageviews trend
         </Typography>
         <PageviewsTrend dateGte={dateGte} dateLte={dateLte} pageViews={pageViews} />
       </Card>
