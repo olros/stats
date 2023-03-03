@@ -10,11 +10,8 @@ export type Usage = {
 
 export type TeamUsage = {
   pageViews: Usage;
-  // withinPageViewsLimit: boolean;
   pageVisitors: Usage;
-  // withinPageVisitorsLimit: boolean;
   customEvents: Usage;
-  // withinCustomEventsLimit: boolean;
 };
 
 export const USAGE_LIMITS: Record<keyof TeamUsage, number> = {
