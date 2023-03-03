@@ -3,6 +3,7 @@ import type { ActionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import { getDate, getProjectAndCheckPermissions } from '~/utils_api.server';
+import { getCustomEventsUsage } from '~/utils_usage.server';
 import { getHours } from 'date-fns';
 import invariant from 'tiny-invariant';
 
@@ -18,6 +19,12 @@ const parseCustomEventInput = async (request: Request): Promise<CustomEventInput
 };
 
 const trackCustomEvent = async (request: Request, project: Project) => {
+  const { customEvents } = await getCustomEventsUsage(project.teamSlug);
+
+  if (!customEvents.withinLimit) {
+    return;
+  }
+
   const data = await parseCustomEventInput(request);
 
   const date = getDate(request);

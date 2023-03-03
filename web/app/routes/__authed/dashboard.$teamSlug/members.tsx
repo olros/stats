@@ -61,7 +61,7 @@ export const action = async ({ request, params }: ActionArgs) => {
         where: {
           userId_teamId: {
             teamId: team.id,
-            userId: Number(userId),
+            userId,
           },
         },
       });

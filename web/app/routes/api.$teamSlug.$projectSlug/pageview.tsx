@@ -4,6 +4,7 @@ import { json } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import { screenWidthToDeviceType } from '~/utils';
 import { getDate, getProjectAndCheckPermissions } from '~/utils_api.server';
+import { getPageViewsUsage, getPageVisitorsUsage } from '~/utils_usage.server';
 import { getHours } from 'date-fns';
 import { getClientIPAddress } from 'remix-utils';
 import invariant from 'tiny-invariant';
@@ -21,6 +22,12 @@ const parsePageviewInput = async (request: Request): Promise<PageviewInput> => {
 };
 
 const trackPageview = async (request: Request, project: Project) => {
+  const { pageViews } = await getPageViewsUsage(project.teamSlug);
+
+  if (!pageViews.withinLimit) {
+    return;
+  }
+
   const data = await parsePageviewInput(request);
 
   const date = getDate(request);
@@ -69,6 +76,12 @@ const trackPageview = async (request: Request, project: Project) => {
 
 const trackPageVisitor = async (request: Request, project: Project) => {
   if (!project.track_page_visitors) {
+    return;
+  }
+
+  const { pageVisitors } = await getPageVisitorsUsage(project.teamSlug);
+
+  if (!pageVisitors.withinLimit) {
     return;
   }
 

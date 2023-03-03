@@ -1,7 +1,7 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { useLoaderData, useRevalidator } from '@remix-run/react';
 import { ensureIsTeamMember } from '~/auth.server';
-import { PageviewsStatistics } from '~/components/pageviews';
+import { PageviewsStatistics } from '~/components/statistics';
 import {
   formatFilterDate,
   getFilteringParams,
@@ -16,7 +16,7 @@ import {
   getTopPagesQuery,
   getTotalPageviews,
   getUniqueVisitorsCount,
-} from '~/components/pageviews/loaders';
+} from '~/components/statistics/loaders';
 import { secondsToMilliseconds } from 'date-fns';
 import { jsonHash } from 'remix-utils';
 import invariant from 'tiny-invariant';

@@ -1,14 +1,14 @@
 import { Box, Card, Stack, Typography } from '@mui/joy';
-import type { AggregatedProps } from '~/components/pageviews/Aggregated';
-import { Aggregated } from '~/components/pageviews/Aggregated';
-import type { FiltersProps } from '~/components/pageviews/Filters';
-import { Filters } from '~/components/pageviews/Filters';
-import type { HoursOfTheDayProps } from '~/components/pageviews/HoursOfTheDay';
-import { HoursOfTheDay } from '~/components/pageviews/HoursOfTheDay';
-import type { TopPagesProps } from '~/components/pageviews/TopPages';
-import { TopPages } from '~/components/pageviews/TopPages';
-import type { PageviewsTrendProps } from '~/components/pageviews/Trend';
-import { PageviewsTrend } from '~/components/pageviews/Trend';
+import type { AggregatedProps } from '~/components/statistics/Aggregated';
+import { Aggregated } from '~/components/statistics/Aggregated';
+import type { FiltersProps } from '~/components/statistics/Filters';
+import { Filters } from '~/components/statistics/Filters';
+import type { HoursOfTheDayProps } from '~/components/statistics/HoursOfTheDay';
+import { HoursOfTheDay } from '~/components/statistics/HoursOfTheDay';
+import type { TopPagesProps } from '~/components/statistics/TopPages';
+import { TopPages } from '~/components/statistics/TopPages';
+import type { PageviewsTrendProps } from '~/components/statistics/Trend';
+import { PageviewsTrend } from '~/components/statistics/Trend';
 
 import type { TopCustomEventsProps } from './TopCustomEvents';
 import { TopCustomEvents } from './TopCustomEvents';

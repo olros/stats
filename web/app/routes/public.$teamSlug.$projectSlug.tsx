@@ -2,7 +2,7 @@ import { Container, Typography } from '@mui/joy';
 import type { LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { useLoaderData, useRevalidator } from '@remix-run/react';
-import { PageviewsStatistics } from '~/components/pageviews';
+import { PageviewsStatistics } from '~/components/statistics';
 import {
   formatFilterDate,
   getFilteringParams,
@@ -17,7 +17,7 @@ import {
   getTopPagesQuery,
   getTotalPageviews,
   getUniqueVisitorsCount,
-} from '~/components/pageviews/loaders';
+} from '~/components/statistics/loaders';
 import { prismaClient } from '~/prismaClient';
 import { secondsToMilliseconds } from 'date-fns';
 import { jsonHash } from 'remix-utils';
