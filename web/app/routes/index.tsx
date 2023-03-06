@@ -80,12 +80,12 @@ export default function Index() {
       <Stack direction='row' gap={2} justifyContent='center'>
         {isAuthenticated ? (
           <Button color='info' component={Link} to='/dashboard'>
-            Open your dashboard
+            Open dashboard
           </Button>
         ) : (
           <Box action='/auth/github' component={Form} method='post'>
             <Button color='info' type='submit'>
-              Login with GitHub
+              Continue with GitHub
             </Button>
           </Box>
         )}
