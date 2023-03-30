@@ -23,28 +23,27 @@ const gitHubStrategy = new GitHubStrategy(
     callbackURL: process.env.NODE_ENV === 'production' ? 'https://stats.olafros.com/auth/github/callback' : 'http://localhost:3000/auth/github/callback',
   },
   async ({ profile }) => {
+    const fields: Omit<User, 'id' | 'createdAt'> = {
+      name: profile.name.givenName || profile.displayName,
+      github_username: profile.displayName,
+      avatar_url: profile.photos[0]?.value || '',
+      email: profile.emails[0]?.value || '',
+    };
+    console.info('[GitHubStrategy-login]', { profile, fields });
     const user = await prismaClient.user
       .upsert({
         create: {
-          id: `${profile._json.id}`,
-          name: profile._json.name,
-          github_username: profile._json.login,
-          avatar_url: profile._json.avatar_url,
-          email: profile._json.email || profile.emails[0]?.value || '',
+          id: profile.displayName,
+          ...fields,
         },
         where: {
-          id: `${profile._json.id}`,
+          id: profile.displayName,
         },
-        update: {
-          name: profile._json.name,
-          github_username: profile._json.login,
-          avatar_url: profile._json.avatar_url,
-          email: profile._json.email || profile.emails[0]?.value || '',
-        },
+        update: fields,
       })
-      .catch((e) => {
-        console.error('GitHubStrategy', e);
-        throw e;
+      .catch((error) => {
+        console.error('[GitHubStrategy-error]', error);
+        throw error;
       });
     try {
       const isNewUser = differenceInSeconds(new Date(), user.createdAt) < minutesToSeconds(2);
