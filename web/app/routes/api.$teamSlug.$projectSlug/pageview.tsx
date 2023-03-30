@@ -1,6 +1,6 @@
 import type { Prisma, Project } from '@prisma/client';
-import type { ActionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { ActionArgs } from '@remix-run/server-runtime';
+import { json } from '@remix-run/server-runtime';
 import { prismaClient } from '~/prismaClient';
 import { screenWidthToDeviceType } from '~/utils';
 import { getDate, getProjectAndCheckPermissions } from '~/utils_api.server';
