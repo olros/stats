@@ -1,6 +1,6 @@
 import type { Prisma, Project } from '@prisma/client';
-import type { ActionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { ActionArgs } from '@vercel/remix';
+import { json } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
 import { getDate, getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getCustomEventsUsage } from '~/utils_usage.server';

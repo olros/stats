@@ -1,5 +1,5 @@
 import type { Project, Team } from '@prisma/client';
-import { json } from '@remix-run/node';
+import { json } from '@vercel/remix';
 import { utcToZonedTime } from 'date-fns-tz';
 
 import { prismaClient } from './prismaClient';

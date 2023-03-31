@@ -1,4 +1,4 @@
-import type { MetaFunction } from '@remix-run/node';
+import type { MetaFunction } from '@vercel/remix';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from '@remix-run/react';
 import { ErrorBoundary as BaseErrorBoundary } from '~/components/ErrorBoundary';
 import StylesContext from '~/styles/server.context';

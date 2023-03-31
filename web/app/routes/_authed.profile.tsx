@@ -1,5 +1,5 @@
 import { Avatar, Button, Card, Container, Stack, Typography } from '@mui/joy';
-import type { LoaderArgs } from '@remix-run/node';
+import type { LoaderArgs } from '@vercel/remix';
 import { Link, useLoaderData } from '@remix-run/react';
 import { getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';

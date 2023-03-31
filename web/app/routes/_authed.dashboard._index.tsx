@@ -1,6 +1,6 @@
 import { Box, Button, Card, Stack, Typography } from '@mui/joy';
-import type { LoaderArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { LoaderArgs } from '@vercel/remix';
+import { json } from '@vercel/remix';
 import { Link, useLoaderData } from '@remix-run/react';
 import { getUserOrRedirect } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
