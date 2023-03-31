@@ -1,6 +1,6 @@
 import { Avatar, Button, Card, Container, Stack, Typography } from '@mui/joy';
-import type { LoaderArgs } from '@vercel/remix';
 import { Link, useLoaderData } from '@remix-run/react';
+import type { LoaderArgs, V2_MetaFunction } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';
@@ -8,6 +8,8 @@ import { parseJSON } from 'date-fns';
 import { jsonHash } from 'remix-utils';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
+
+export const meta: V2_MetaFunction = () => [{ title: 'Profile | Stats' }];
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = await getUserOrRedirect(request);

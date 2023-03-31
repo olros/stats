@@ -1,5 +1,5 @@
-import type { LoaderArgs } from '@vercel/remix';
 import { useLoaderData, useRevalidator } from '@remix-run/react';
+import type { LoaderArgs } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { PageviewsStatistics } from '~/components/statistics';
 import {

@@ -1,8 +1,8 @@
 import { Button, Card, FormControl, FormLabel, Input, Stack, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Form, Link, useActionData, useNavigation, useParams } from '@remix-run/react';
 import type { ActionArgs } from '@vercel/remix';
 import { json, redirect } from '@vercel/remix';
-import { Form, Link, useActionData, useNavigation, useParams } from '@remix-run/react';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import { slugify } from '~/utils';

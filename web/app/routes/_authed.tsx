@@ -1,5 +1,5 @@
-import type { LoaderArgs } from '@vercel/remix';
 import { Outlet } from '@remix-run/react';
+import type { LoaderArgs } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';

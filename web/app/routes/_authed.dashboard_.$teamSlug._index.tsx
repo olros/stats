@@ -1,7 +1,7 @@
 import { Box, Card, Typography } from '@mui/joy';
+import { Link, useLoaderData } from '@remix-run/react';
 import type { LoaderArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
-import { Link, useLoaderData } from '@remix-run/react';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import invariant from 'tiny-invariant';

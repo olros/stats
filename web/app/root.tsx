@@ -1,16 +1,9 @@
-import type { MetaFunction } from '@vercel/remix';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from '@remix-run/react';
 import { ErrorBoundary as BaseErrorBoundary } from '~/components/ErrorBoundary';
 import StylesContext from '~/styles/server.context';
 import { useContext, useEffect } from 'react';
 
 import { stats } from './stats';
-
-export const meta: MetaFunction = () => ({
-  charset: 'utf-8',
-  title: 'Stats',
-  viewport: 'width=device-width,initial-scale=1',
-});
 
 export const ErrorBoundary = () => (
   <Document>
@@ -39,6 +32,9 @@ const Document = ({ children }: DocumentProps) => {
         <link href='/favicon-16.png' rel='icon' sizes='16x16' type='image/png' />
         <link href='/manifest.json' rel='manifest' />
         <Meta />
+        <meta charSet='utf-8' />
+        <title>Stats</title>
+        <meta content='width=device-width,initial-scale=1' name='viewport' />
         <Links />
         {styleData?.map(({ key, ids, css }) => (
           <style

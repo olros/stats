@@ -1,8 +1,8 @@
 import { Card, Container, Stack, Tab, TabList, Tabs, Typography } from '@mui/joy';
-import type { LoaderArgs } from '@vercel/remix';
+import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react';
+import type { LoaderArgs, V2_MetaFunction } from '@vercel/remix';
 import { redirect } from '@vercel/remix';
 import { json } from '@vercel/remix';
-import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { ensureIsTeamMember, getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';
@@ -10,6 +10,8 @@ import { parseJSON } from 'date-fns';
 import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
+
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: `${data.project.name} | Stats` }];
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');

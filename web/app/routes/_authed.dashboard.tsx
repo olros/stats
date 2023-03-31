@@ -1,14 +1,16 @@
 import { Container } from '@mui/joy';
-import type { LoaderArgs } from '@vercel/remix';
+import { Outlet, useLoaderData } from '@remix-run/react';
+import type { LoaderArgs, V2_MetaFunction } from '@vercel/remix';
 import { redirect } from '@vercel/remix';
 import { json } from '@vercel/remix';
-import { Outlet, useLoaderData } from '@remix-run/react';
 import { getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';
 import { parseJSON } from 'date-fns';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
+
+export const meta: V2_MetaFunction = () => [{ title: 'Dashboard | Stats' }];
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const teamSlug = params.teamSlug?.toLowerCase();

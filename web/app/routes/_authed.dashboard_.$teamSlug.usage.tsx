@@ -1,7 +1,7 @@
 import { Alert, Card, LinearProgress, Stack, Typography } from '@mui/joy';
+import { useLoaderData } from '@remix-run/react';
 import type { LoaderArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
-import { useLoaderData } from '@remix-run/react';
 import { ensureIsTeamMember } from '~/auth.server';
 import type { Usage } from '~/utils_usage.server';
 import { getTeamUsage } from '~/utils_usage.server';

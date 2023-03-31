@@ -1,7 +1,7 @@
 import { Box, Button, Card, Container, Divider, Stack, Typography } from '@mui/joy';
+import { Form, Link, useLoaderData } from '@remix-run/react';
 import type { LoaderArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
-import { Form, Link, useLoaderData } from '@remix-run/react';
 import { authenticator } from '~/auth.server';
 import { stats } from '~/stats';
 

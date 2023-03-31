@@ -1,7 +1,7 @@
 import { Container, Typography } from '@mui/joy';
-import type { LoaderArgs } from '@vercel/remix';
-import { redirect } from '@vercel/remix';
 import { useLoaderData, useRevalidator } from '@remix-run/react';
+import type { LoaderArgs, V2_MetaFunction } from '@vercel/remix';
+import { redirect } from '@vercel/remix';
 import { PageviewsStatistics } from '~/components/statistics';
 import {
   formatFilterDate,
@@ -25,6 +25,8 @@ import invariant from 'tiny-invariant';
 import { useInterval } from 'usehooks-ts';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
+
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: `${data.project.team.name}/${data.project.name} | Stats` }];
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
