@@ -33,11 +33,11 @@ const gitHubStrategy = new GitHubStrategy(
     const user = await prismaClient.user
       .upsert({
         create: {
-          id: profile.displayName,
+          id: profile.id,
           ...fields,
         },
         where: {
-          id: profile.displayName,
+          id: profile.id,
         },
         update: fields,
       })
