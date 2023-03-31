@@ -118,8 +118,6 @@ const trackPageVisitor = async (request: Request, project: Project) => {
   });
 };
 
-export const config = { runtime: 'edge' };
-
 export const action = async ({ request, params }: ActionArgs) => {
   invariant(params.teamSlug, `Expected params.teamSlug`);
   invariant(params.projectSlug, `Expected params.projectSlug`);
