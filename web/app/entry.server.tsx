@@ -1,9 +1,9 @@
 import { CacheProvider } from '@emotion/react';
-import createEmotionServer from '@emotion/server/create-instance';
 import { CssBaseline, CssVarsProvider } from '@mui/joy';
 import { RemixServer } from '@remix-run/react';
 import type { EntryContext } from '@vercel/remix';
 import { handleRequest } from '@vercel/remix';
+import { createEmotionServer } from '~/createEmotionServer';
 import { createEmotionCache } from '~/styles/createEmotionCache';
 import StylesContext from '~/styles/server.context';
 import { theme } from '~/theme';
