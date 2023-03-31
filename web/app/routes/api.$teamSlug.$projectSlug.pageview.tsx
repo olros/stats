@@ -74,6 +74,15 @@ const trackPageview = async (request: Request, project: Project) => {
   });
 };
 
+const hashPageVisitorIdentifier = async (clientIp: string, userAgent: string) => {
+  invariant(process.env.SECRET_KEY, 'Expected environment variable "SECRET_KEY" to be set when tracking page visitors');
+  const msgUint8 = new TextEncoder().encode(`${clientIp}_${userAgent}_${process.env.SECRET_KEY}`); // encode as (utf-8) Uint8Array
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8); // hash the message
+  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+  return hashHex;
+};
+
 const trackPageVisitor = async (request: Request, project: Project) => {
   if (!project.track_page_visitors) {
     return;
@@ -88,13 +97,11 @@ const trackPageVisitor = async (request: Request, project: Project) => {
   const clientIp = getClientIPAddress(request.headers);
   const userAgent = request.headers.get('user-agent');
 
-  if (!clientIp) {
+  if (!clientIp || !userAgent) {
     return;
   }
 
-  invariant(process.env.SECRET_KEY, 'Expected environment variable "SECRET_KEY" to be set when tracking page visitors');
-  const { createHmac } = await import('crypto');
-  const hashed_user_id = createHmac('sha512', process.env.SECRET_KEY).update(`${clientIp}_${userAgent}`).digest('hex');
+  const hashed_user_id = await hashPageVisitorIdentifier(clientIp, userAgent);
 
   const pageVisitorCompoundUnique: Prisma.PageVisitorProjectIdDateHashed_user_idCompoundUniqueInput = {
     projectId: project.id,
