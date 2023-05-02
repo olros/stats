@@ -17,7 +17,7 @@ export type TeamUsage = {
 export const USAGE_LIMITS: Record<keyof TeamUsage, number> = {
   customEvents: 500_000,
   pageViews: 1_000_000,
-  pageVisitors: 100_000,
+  pageVisitors: 1_00_000,
 };
 
 export const getPageViewsUsage = async (teamSlug: Team['slug']): Promise<Pick<TeamUsage, 'pageViews'>> => {
