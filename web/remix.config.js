@@ -1,16 +1,14 @@
 /** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
   ignoredRouteFiles: ['**/.*'],
-  serverDependenciesToBundle: ['d3-time-format'],
+  serverDependenciesToBundle: ['d3-time-format', 'd3-color', '@nivo/colors', '@nivo/line', '@nivo/bar', '@nivo/core', '@nivo/legends'],
   serverMinify: true,
+  postcss: true,
   future: {
-    unstable_cssSideEffectImports: true,
     v2_errorBoundary: true,
-    unstable_postcss: true,
-    unstable_cssModules: true,
-    unstable_tailwind: true,
-    unstable_vanillaExtract: true,
     v2_routeConvention: true,
     v2_meta: true,
+    v2_normalizeFormMethod: true,
+    unstable_dev: true,
   },
 };
