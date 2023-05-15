@@ -1,12 +1,13 @@
 import { Box, Button, Card, FormControl, FormHelperText, FormLabel, Input, Switch, Textarea, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
+import { Form, useActionData, useLoaderData, useNavigation, useSubmit } from '@remix-run/react';
 import type { ActionArgs, LoaderArgs } from '@vercel/remix';
 import { redirect } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
+import { ConfirmDialog } from '~/components/ConfirmDialog';
 import { prismaClient } from '~/prismaClient';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import invariant from 'tiny-invariant';
 import { useIsClient } from 'usehooks-ts';
 
@@ -34,6 +35,43 @@ export const action = async ({ request, params }: ActionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
   await ensureIsTeamMember(request, params.teamSlug);
+  if (request.method === 'POST') {
+    console.log('POST');
+    const formData = await request.formData();
+    const deleteResource = formData.get('deleteResource');
+    console.log(`Delete ${deleteResource}`);
+    if (deleteResource === 'events') {
+      await prismaClient.customEvent.deleteMany({
+        where: {
+          project: {
+            slug: params.projectSlug.toLowerCase(),
+            teamSlug: params.teamSlug.toLowerCase(),
+          },
+        },
+      });
+    }
+    if (deleteResource === 'pageviews') {
+      await prismaClient.pageView.deleteMany({
+        where: {
+          project: {
+            slug: params.projectSlug.toLowerCase(),
+            teamSlug: params.teamSlug.toLowerCase(),
+          },
+        },
+      });
+    }
+    if (deleteResource === 'visitors') {
+      await prismaClient.pageVisitor.deleteMany({
+        where: {
+          project: {
+            slug: params.projectSlug.toLowerCase(),
+            teamSlug: params.teamSlug.toLowerCase(),
+          },
+        },
+      });
+    }
+    return redirect(`/dashboard/${params.teamSlug}/${params.projectSlug}/settings`);
+  }
   if (request.method === 'PUT') {
     const formData = await request.formData();
     const name = formData.get('name') as string;
@@ -82,6 +120,11 @@ export default function ProjectSettings() {
   const { project } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const { state } = useNavigation();
+  const submit = useSubmit();
+
+  const deleteProjectEvents = useCallback(() => submit({ deleteResource: 'events' }, { method: 'POST', replace: true }), [submit]);
+  const deleteProjectPageviews = useCallback(() => submit({ deleteResource: 'pageviews' }, { method: 'POST', replace: true }), [submit]);
+  const deleteProjectVisitors = useCallback(() => submit({ deleteResource: 'visitors' }, { method: 'POST', replace: true }), [submit]);
 
   const [deleteName, setDeleteName] = useState('');
 
@@ -134,6 +177,30 @@ export default function ProjectSettings() {
         <Button loading={state === 'submitting'} type='submit'>
           Save
         </Button>
+      </Card>
+
+      <Card color='danger' sx={{ gap: 1 }}>
+        <Typography color='danger' level='h3'>
+          Delete project-data
+        </Typography>
+        <ConfirmDialog
+          description='All stored data about this projects unique visitors will get permanently deleted'
+          onConfirm={deleteProjectVisitors}
+          title='Delete unique visitors data'>
+          Delete unique visitors data
+        </ConfirmDialog>
+        <ConfirmDialog
+          description='All stored data about this projects pageviews will get permanently deleted'
+          onConfirm={deleteProjectPageviews}
+          title='Delete pageviews data'>
+          Delete pageviews data
+        </ConfirmDialog>
+        <ConfirmDialog
+          description='All stored data about this projects custom events will get permanently deleted'
+          onConfirm={deleteProjectEvents}
+          title='Delete custom events data'>
+          Delete custom events data
+        </ConfirmDialog>
       </Card>
 
       <Card color='danger' component={Form} method='delete' sx={{ gap: 1 }}>
