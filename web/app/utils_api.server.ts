@@ -30,10 +30,10 @@ export const getProjectAndCheckPermissions = async (request: Request, teamSlug: 
     throw json({ errors: { name: `Can't find the given project` } }, { status: 404 });
   }
 
-  const host = request.headers.get('origin');
-  const allowedHosts = project.allowed_hosts.split(',').filter((i) => i.length);
+  const origin = request.headers.get('origin');
+  const allowedOrigins = project.allowed_hosts.split(',').filter((_origin) => _origin.length > 0);
 
-  if (allowedHosts.length > 0 && (!host || !allowedHosts.includes(host))) {
+  if (allowedOrigins.length > 0 && (!origin || !allowedOrigins.some((_origin) => _origin.includes(origin)))) {
     throw json({ errors: { host: `The host is either not in headers or not declared as one of the allowed hosts` } }, { status: 404 });
   }
 
