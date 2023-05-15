@@ -102,9 +102,12 @@ export default function ProjectSettings() {
           <Input defaultValue={project.url} disabled={state === 'submitting'} name='url' type='url' />
         </FormControl>
         <FormControl id='allowed_hosts'>
-          <FormLabel id='allowed_hosts-label'>Allowed hosts</FormLabel>
+          <FormLabel id='allowed_hosts-label'>Allowed orgins</FormLabel>
           <Textarea defaultValue={project.allowed_hosts} disabled={state === 'submitting'} minRows={2} name='allowed_hosts' placeholder='stats.olafros.com' />
-          <FormHelperText>Separate multiple hosts with commas. Leave empty to allow all hosts</FormHelperText>
+          <FormHelperText>
+            Specify which origins that are allowed to track pageviews and events for this project. Separate multiple origins with commas. Leave empty to allow
+            all orgins
+          </FormHelperText>
         </FormControl>
         <FormControl id='track_page_visitors' orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
           <Box>
