@@ -19,6 +19,7 @@ jobs:
           url: 'https://stats.olafros.com/api/olros/stats/event/'
           method: 'POST'
           timeout: 20000
+          customHeaders: '{"Origin": "https://stats.olafros.com"}'
           data: '{"name": "keep-awake"}'
       - name: Respons
         run: |
