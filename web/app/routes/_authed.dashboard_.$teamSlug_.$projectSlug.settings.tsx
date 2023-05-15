@@ -36,10 +36,8 @@ export const action = async ({ request, params }: ActionArgs) => {
   invariant(params.projectSlug, 'Expected params.projectSlug');
   await ensureIsTeamMember(request, params.teamSlug);
   if (request.method === 'POST') {
-    console.log('POST');
     const formData = await request.formData();
     const deleteResource = formData.get('deleteResource');
-    console.log(`Delete ${deleteResource}`);
     if (deleteResource === 'events') {
       await prismaClient.customEvent.deleteMany({
         where: {
