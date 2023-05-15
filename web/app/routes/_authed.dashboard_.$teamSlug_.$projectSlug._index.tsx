@@ -8,6 +8,8 @@ import {
   getMostPopularHour,
   getPageViewsQuery,
   getPageViewsTrend,
+  getPageVisitorsQuery,
+  getPageVisitorsTrend,
   getTopCustomEvents,
   getTopCustomEventsQuery,
   getTopHours,
@@ -33,6 +35,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const topPagesQuery = getTopPagesQuery(request, params.teamSlug, params.projectSlug);
   const topCustomEventsQuery = getTopCustomEventsQuery(request, params.teamSlug, params.projectSlug);
   const topHoursQuery = getTopHoursQuery(request, params.teamSlug, params.projectSlug);
+  const pageVisitorsQuery = getPageVisitorsQuery(request, params.teamSlug, params.projectSlug);
 
   const { dateGte, dateLte, pathname } = getFilteringParams(request);
 
@@ -43,6 +46,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     topCustomEvents: await getTopCustomEvents(topCustomEventsQuery),
     topHours: await getTopHours(topHoursQuery),
     mostPopularHour: await getMostPopularHour(topHoursQuery),
+    pageVisitorsTrend: await getPageVisitorsTrend(pageVisitorsQuery, dateGte, dateLte),
     uniqueVisitorsCount: await getUniqueVisitorsCount(request, params.teamSlug, params.projectSlug),
     dateGte: formatFilterDate(dateGte),
     dateLte: formatFilterDate(dateLte),
@@ -51,8 +55,19 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 };
 
 export default function ProjectPageviewsStatistics() {
-  const { pageViews, totalPageviews, topPages, topCustomEvents, topHours, mostPopularHour, uniqueVisitorsCount, dateGte, dateLte, pathname } =
-    useLoaderData<typeof loader>();
+  const {
+    pageViews,
+    totalPageviews,
+    topPages,
+    topCustomEvents,
+    topHours,
+    mostPopularHour,
+    pageVisitorsTrend,
+    uniqueVisitorsCount,
+    dateGte,
+    dateLte,
+    pathname,
+  } = useLoaderData<typeof loader>();
 
   const { revalidate } = useRevalidator();
 
@@ -66,6 +81,7 @@ export default function ProjectPageviewsStatistics() {
       dateLte={dateLte}
       mostPopularHour={mostPopularHour}
       pageViews={pageViews}
+      pageVisitorsTrend={pageVisitorsTrend}
       pathname={pathname}
       topCustomEvents={topCustomEvents}
       topHours={topHours}

@@ -5,15 +5,23 @@ import type { FiltersProps } from '~/components/statistics/Filters';
 import { Filters } from '~/components/statistics/Filters';
 import type { HoursOfTheDayProps } from '~/components/statistics/HoursOfTheDay';
 import { HoursOfTheDay } from '~/components/statistics/HoursOfTheDay';
+import type { PageviewsTrendProps } from '~/components/statistics/PageviewsTrend';
+import { PageviewsTrend } from '~/components/statistics/PageviewsTrend';
 import type { TopPagesProps } from '~/components/statistics/TopPages';
 import { TopPages } from '~/components/statistics/TopPages';
-import type { PageviewsTrendProps } from '~/components/statistics/Trend';
-import { PageviewsTrend } from '~/components/statistics/Trend';
 
 import type { TopCustomEventsProps } from './TopCustomEvents';
 import { TopCustomEvents } from './TopCustomEvents';
+import type { VisitorsTrendProps } from './VisitorsTrend';
+import { VisitorsTrend } from './VisitorsTrend';
 
-export type PageviewsStatisticsProps = FiltersProps & AggregatedProps & PageviewsTrendProps & HoursOfTheDayProps & TopPagesProps & TopCustomEventsProps;
+export type PageviewsStatisticsProps = FiltersProps &
+  AggregatedProps &
+  PageviewsTrendProps &
+  VisitorsTrendProps &
+  HoursOfTheDayProps &
+  TopPagesProps &
+  TopCustomEventsProps;
 
 export const PageviewsStatistics = ({
   pageViews,
@@ -23,6 +31,7 @@ export const PageviewsStatistics = ({
   topCustomEvents,
   mostPopularHour,
   uniqueVisitorsCount,
+  pageVisitorsTrend,
   dateGte,
   dateLte,
   pathname,
@@ -59,6 +68,12 @@ export const PageviewsStatistics = ({
           What times during the day has most pageviews
         </Typography>
         <HoursOfTheDay topHours={topHours} />
+      </Card>
+      <Card sx={{ p: 2 }}>
+        <Typography gutterBottom level='h3'>
+          Unique visitors trend
+        </Typography>
+        <VisitorsTrend dateGte={dateGte} dateLte={dateLte} pageVisitorsTrend={pageVisitorsTrend} />
       </Card>
     </Stack>
   );

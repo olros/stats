@@ -115,6 +115,23 @@ export const getTopHours = (topHoursQuery: ReturnType<typeof getTopHoursQuery>) 
 export const getMostPopularHour = (topHoursQuery: ReturnType<typeof getTopHoursQuery>) =>
   getTopHours(topHoursQuery).then((data) => [...data].sort((a, b) => b.percentage - a.percentage)[0]);
 
+export const getPageVisitorsQuery = (request: Request, teamSlug: string, projectSlug: string) => {
+  const { date, project } = getWhereQuery(request, teamSlug, projectSlug);
+  return prismaClient.pageVisitor.groupBy({
+    by: ['date'],
+    where: { date, project },
+    _count: { _all: true },
+    orderBy: { date: 'asc' },
+  });
+};
+
+export const getPageVisitorsTrend = (pageVisitorsQuery: ReturnType<typeof getPageVisitorsQuery>, dateGte: Date, dateLte: Date): Promise<Serie[]> =>
+  pageVisitorsQuery.then((data) => {
+    const days = eachDayOfInterval({ start: dateGte, end: dateLte }).map((day) => set(day, { hours: 12 }));
+    const visitorsData = days.map((day) => ({ x: day.toJSON().substring(0, 10), y: data.find((entry) => isSameDay(entry.date, day))?._count._all || 0 }));
+    return [{ id: 'Visitors', data: visitorsData }];
+  });
+
 export const getUniqueVisitorsCount = async (request: Request, teamSlug: string, projectSlug: string) => {
   const { date, project } = getWhereQuery(request, teamSlug, projectSlug);
   const uniqueVisitors = await prismaClient.pageVisitor.groupBy({

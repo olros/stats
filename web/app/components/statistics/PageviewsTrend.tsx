@@ -66,7 +66,7 @@ export const PageviewsTrend = ({ pageViews, dateGte, dateLte }: PageviewsTrendPr
               </Typography>
               {slice.points.map((point) => (
                 <Typography fontSize='sm' key={point.serieId}>
-                  {point.serieId}: {point.data.yFormatted}
+                  {point.serieId}: {Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 2 }).format(Number(point.data.yFormatted))}
                 </Typography>
               ))}
             </Card>
