@@ -9,6 +9,8 @@ import {
   getMostPopularHour,
   getPageViewsQuery,
   getPageViewsTrend,
+  getPageVisitorsQuery,
+  getPageVisitorsTrend,
   getTopCustomEvents,
   getTopCustomEventsQuery,
   getTopHours,
@@ -26,7 +28,7 @@ import { useInterval } from 'usehooks-ts';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: `${data.project.team.name}/${data.project.name} | Stats` }];
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: `${data?.project.team.name}/${data?.project.name} | Stats` }];
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
@@ -56,6 +58,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const topPagesQuery = getTopPagesQuery(request, params.teamSlug, params.projectSlug);
   const topCustomEventsQuery = getTopCustomEventsQuery(request, params.teamSlug, params.projectSlug);
   const topHoursQuery = getTopHoursQuery(request, params.teamSlug, params.projectSlug);
+  const pageVisitorsQuery = getPageVisitorsQuery(request, params.teamSlug, params.projectSlug);
 
   const { dateGte, dateLte, pathname } = getFilteringParams(request);
 
@@ -67,6 +70,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     topHours: await getTopHours(topHoursQuery),
     mostPopularHour: await getMostPopularHour(topHoursQuery),
     uniqueVisitorsCount: await getUniqueVisitorsCount(request, params.teamSlug, params.projectSlug),
+    pageVisitorsTrend: await getPageVisitorsTrend(pageVisitorsQuery, dateGte, dateLte),
     dateGte: formatFilterDate(dateGte),
     dateLte: formatFilterDate(dateLte),
     pathname,
@@ -75,8 +79,20 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 };
 
 export default function PublicPageviewsStatistics() {
-  const { pageViews, totalPageviews, topPages, topCustomEvents, uniqueVisitorsCount, topHours, mostPopularHour, dateGte, dateLte, pathname, project } =
-    useLoaderData<typeof loader>();
+  const {
+    pageViews,
+    totalPageviews,
+    topPages,
+    topCustomEvents,
+    uniqueVisitorsCount,
+    topHours,
+    mostPopularHour,
+    pageVisitorsTrend,
+    dateGte,
+    dateLte,
+    pathname,
+    project,
+  } = useLoaderData<typeof loader>();
 
   const { revalidate } = useRevalidator();
 
@@ -86,12 +102,13 @@ export default function PublicPageviewsStatistics() {
 
   return (
     <Container sx={{ py: 2 }}>
-      <Typography level='h1' sx={{ pb: 4 }} textAlign='center'>{`Stats for ${project.team.name}/${project.name}`}</Typography>
+      <Typography level='h1' sx={{ pb: 4, wordBreak: 'break-word' }} textAlign='center'>{`Stats for ${project.team.name}/${project.name}`}</Typography>
       <PageviewsStatistics
         dateGte={dateGte}
         dateLte={dateLte}
         mostPopularHour={mostPopularHour}
         pageViews={pageViews}
+        pageVisitorsTrend={pageVisitorsTrend}
         pathname={pathname}
         topCustomEvents={topCustomEvents}
         topHours={topHours}

@@ -33,9 +33,9 @@ const FEATURES: { emoji: string; heading: string; description: string }[] = [
   },
   {
     emoji: '💰',
-    heading: 'Free',
+    heading: 'Cheap',
     description:
-      'The way pageviews, events and unique users are stored makes the consumed storage low. This makes hosting cheap and Stats can be free! (At least for now)',
+      'With the structure pageviews, events and unique users are stored makes the storage-usage low. This makes hosting cheap and Stats can be free! (At least for now)',
   },
   {
     emoji: '✏️',
