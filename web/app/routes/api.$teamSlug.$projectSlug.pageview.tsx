@@ -77,8 +77,7 @@ const trackPageview = async (request: Request, project: Project) => {
 const hashPageVisitorIdentifier = async (clientIp: string, userAgent: string) => {
   invariant(process.env.SECRET_KEY, 'Expected environment variable "SECRET_KEY" to be set when tracking page visitors');
   const msgUint8 = new TextEncoder().encode(`${clientIp}_${userAgent}_${process.env.SECRET_KEY}`); // encode as (utf-8) Uint8Array
-  const { subtle } = await import('crypto');
-  const hashBuffer = await subtle.digest('SHA-256', msgUint8); // hash the message
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8); // hash the message
   const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
   const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
   return hashHex;
