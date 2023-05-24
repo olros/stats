@@ -16,8 +16,8 @@ export const action = async ({ request, params, context }: ActionArgs) => {
     ctx.waitUntil(
       (async () => {
         const body = await request.json();
-        console.info('Edge-function pageview body', body);
-        console.info('Edge-function pageview VERCEL_URL', process.env.VERCEL_URL);
+        console.info('Edge-function pageview body:', body);
+        console.info('Edge-function pageview VERCEL_URL:', process.env.VERCEL_URL);
         const response = await fetch(`https://stats.olafros.com/api/${params.teamSlug}/${params.projectSlug}/pageview/`, {
           method: 'POST',
           body: JSON.stringify(body),
@@ -29,7 +29,7 @@ export const action = async ({ request, params, context }: ActionArgs) => {
           // },
         });
         const returnData = await response.json();
-        console.info('Edge-function pageview response', returnData);
+        console.info('Edge-function pageview response:', returnData);
       })(),
     );
     return json({ ok: true }, { status: 200 });
