@@ -22,11 +22,11 @@ export const action = async ({ request, params, context }: ActionArgs) => {
           method: 'POST',
           body: JSON.stringify(body),
           headers: request.headers,
-          // headers: {
+          //headers: {
           //   origin: request.headers.get('origin')! ?? `http://localhost:3000`,
           //   'user-agent': request.headers.get('user-agent')!,
           //   'x-vercel-ip-timezone': request.headers.get('x-vercel-ip-timezone')!,
-          // },
+          //},
         });
         const returnData = await response.json();
         console.info('Edge-function pageview response:', returnData);
