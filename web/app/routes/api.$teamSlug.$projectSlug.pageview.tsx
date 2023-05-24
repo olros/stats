@@ -5,7 +5,6 @@ import { prismaClient } from '~/prismaClient';
 import { screenWidthToDeviceType } from '~/utils';
 import { getDate, getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getPageViewsUsage, getPageVisitorsUsage } from '~/utils_usage.server';
-import crypto from 'crypto';
 import { getHours } from 'date-fns';
 import { getClientIPAddress } from 'remix-utils';
 import invariant from 'tiny-invariant';
@@ -78,7 +77,8 @@ const trackPageview = async (request: Request, project: Project) => {
 const hashPageVisitorIdentifier = async (clientIp: string, userAgent: string) => {
   invariant(process.env.SECRET_KEY, 'Expected environment variable "SECRET_KEY" to be set when tracking page visitors');
   const msgUint8 = new TextEncoder().encode(`${clientIp}_${userAgent}_${process.env.SECRET_KEY}`); // encode as (utf-8) Uint8Array
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8); // hash the message
+  const { subtle } = await import('crypto');
+  const hashBuffer = await subtle.digest('SHA-256', msgUint8); // hash the message
   const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
   const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
   return hashHex;
