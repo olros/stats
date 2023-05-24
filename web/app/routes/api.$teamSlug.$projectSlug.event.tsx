@@ -1,68 +1,26 @@
-import type { Prisma, Project } from '@prisma/client';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import type { RequestContext } from '@vercel/edge';
 import type { ActionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
-import { prismaClient } from '~/prismaClient';
-import { getDate, getProjectAndCheckPermissions } from '~/utils_api.server';
-import { getCustomEventsUsage } from '~/utils_usage.server';
-import { getHours } from 'date-fns';
+import { forwardRequestToInternalApi } from '~/utils_edge.server';
 import invariant from 'tiny-invariant';
 
-import type { CustomEventInput } from '~/types';
+export const config = { runtime: 'edge' };
 
-const parseCustomEventInput = async (request: Request): Promise<CustomEventInput> => {
-  const data = (await request.json()) as CustomEventInput;
-  if (!data.name) {
-    throw json({ errors: { name: `Name isn't defined` } }, { status: 400 });
-  }
-
-  return data;
-};
-
-const trackCustomEvent = async (request: Request, project: Project) => {
-  const { customEvents } = await getCustomEventsUsage(project.teamSlug);
-
-  if (!customEvents.withinLimit) {
-    return;
-  }
-
-  const data = await parseCustomEventInput(request);
-
-  const date = getDate(request);
-  const hour = getHours(date);
-
-  const customEventCompoundUnique: Prisma.CustomEventProjectIdDateHourNameCompoundUniqueInput = {
-    date,
-    hour,
-    projectId: project.id,
-    name: data.name,
-  };
-
-  await prismaClient.customEvent.upsert({
-    create: {
-      ...customEventCompoundUnique,
-      count: 1,
-    },
-    where: {
-      projectId_date_hour_name: customEventCompoundUnique,
-    },
-    update: {
-      count: { increment: 1 },
-    },
-  });
-};
-
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ request, params, context }: ActionArgs) => {
   try {
     invariant(params.teamSlug, `Expected params.teamSlug`);
     invariant(params.projectSlug, `Expected params.projectSlug`);
+    const ctx = context as unknown as RequestContext;
 
-    const { project } = await getProjectAndCheckPermissions(request, params.teamSlug, params.projectSlug);
-
-    await trackCustomEvent(request, project);
-
-    return json({ ok: true }, { status: 202 });
+    if ('waitUntil' in ctx) {
+      ctx.waitUntil(forwardRequestToInternalApi(request, `${params.teamSlug}/${params.projectSlug}/event/`));
+    } else {
+      await forwardRequestToInternalApi(request, `${params.teamSlug}/${params.projectSlug}/event/`);
+    }
+    return json({ ok: true }, { status: 200 });
   } catch (e) {
     console.error(e);
-    return json({ ok: false }, { status: 400 });
+    return json({ ok: false }, { status: 200 });
   }
 };
