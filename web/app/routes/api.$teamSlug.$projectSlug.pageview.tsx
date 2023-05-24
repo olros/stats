@@ -5,6 +5,7 @@ import { prismaClient } from '~/prismaClient';
 import { screenWidthToDeviceType } from '~/utils';
 import { getDate, getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getPageViewsUsage, getPageVisitorsUsage } from '~/utils_usage.server';
+import crypto from 'crypto';
 import { getHours } from 'date-fns';
 import { getClientIPAddress } from 'remix-utils';
 import invariant from 'tiny-invariant';
