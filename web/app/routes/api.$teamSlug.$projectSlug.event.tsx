@@ -52,12 +52,17 @@ const trackCustomEvent = async (request: Request, project: Project) => {
 };
 
 export const action = async ({ request, params }: ActionArgs) => {
-  invariant(params.teamSlug, `Expected params.teamSlug`);
-  invariant(params.projectSlug, `Expected params.projectSlug`);
+  try {
+    invariant(params.teamSlug, `Expected params.teamSlug`);
+    invariant(params.projectSlug, `Expected params.projectSlug`);
 
-  const { project } = await getProjectAndCheckPermissions(request, params.teamSlug, params.projectSlug);
+    const { project } = await getProjectAndCheckPermissions(request, params.teamSlug, params.projectSlug);
 
-  await trackCustomEvent(request, project);
+    await trackCustomEvent(request, project);
 
-  return json({}, { status: 202 });
+    return json({ ok: true }, { status: 202 });
+  } catch (e) {
+    console.error(e);
+    return json({ ok: false }, { status: 400 });
+  }
 };

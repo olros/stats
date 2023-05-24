@@ -6,34 +6,43 @@ import invariant from 'tiny-invariant';
 
 export const config = { runtime: 'edge' };
 
+const forwardPageview = async (request: Request, teamSlug: string, projectSlug: string) => {
+  const host = process.env.NODE_ENV === 'production' ? 'https://stats.olafros.com' : 'http://localhost:3000';
+  const body = await request.json();
+  return fetch(`${host}/api/${teamSlug}/${projectSlug}/pageview/`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: request.headers,
+  });
+};
+
 export const action = async ({ request, params, context }: ActionArgs) => {
-  invariant(params.teamSlug, `Expected params.teamSlug`);
-  invariant(params.projectSlug, `Expected params.projectSlug`);
-  const ctx = context as unknown as RequestContext;
+  try {
+    invariant(params.teamSlug, `Expected params.teamSlug`);
+    invariant(params.projectSlug, `Expected params.projectSlug`);
+    const ctx = context as unknown as RequestContext;
 
-  console.info('Edge-function pageview waitUntil', 'waitUntil' in ctx);
-  if ('waitUntil' in ctx) {
-    ctx.waitUntil(
-      (async () => {
-        const body = await request.json();
-        console.info('Edge-function pageview body:', body);
-        console.info('Edge-function pageview VERCEL_URL:', process.env.VERCEL_URL);
-        const response = await fetch(`https://stats.olafros.com/api/${params.teamSlug}/${params.projectSlug}/pageview/`, {
-          method: 'POST',
-          body: JSON.stringify(body),
-          headers: request.headers,
-          //headers: {
-          //   origin: request.headers.get('origin')! ?? `http://localhost:3000`,
-          //   'user-agent': request.headers.get('user-agent')!,
-          //   'x-vercel-ip-timezone': request.headers.get('x-vercel-ip-timezone')!,
-          //},
-        });
-        const returnData = await response.json();
-        console.info('Edge-function pageview response:', returnData);
-      })(),
-    );
+    if ('waitUntil' in ctx) {
+      // ctx.waitUntil(
+      //   (async () => {
+      //     const host = process.env.NODE_ENV === 'production' ? 'https://stats.olafros.com' : 'http://localhost:3000';
+      //     const body = await request.json();
+      //     const response = await fetch(`${host}/api/${params.teamSlug}/${params.projectSlug}/pageview/`, {
+      //       method: 'POST',
+      //       body: JSON.stringify(body),
+      //       headers: request.headers,
+      //     });
+      //     const returnData = await response.json();
+      //     console.info('Edge-function pageview response:', returnData);
+      //   })(),
+      // );
+      ctx.waitUntil(forwardPageview(request, params.teamSlug, params.projectSlug));
+    } else {
+      await forwardPageview(request, params.teamSlug, params.projectSlug);
+    }
     return json({ ok: true }, { status: 200 });
+  } catch (e) {
+    console.error(e);
+    return json({ ok: false }, { status: 200 });
   }
-
-  return json({ ok: false }, { status: 200 });
 };
