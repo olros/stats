@@ -12,6 +12,8 @@ const hydrate = () => {
   startTransition(() => {
     hydrateRoot(
       document,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       <StrictMode>
         <CacheProvider value={emotionCache}>
           <CssVarsProvider defaultColorScheme='dark' defaultMode='dark' theme={theme}>

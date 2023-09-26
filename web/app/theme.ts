@@ -6,10 +6,22 @@ export const theme = extendTheme({
     display: 'Public Sans',
     body: 'Public Sans',
   },
+  radius: {
+    xs: '8px',
+    sm: '12px',
+    md: '16px',
+    lg: '20px',
+    xl: '26px',
+  },
   components: {
     JoyCard: {
       defaultProps: {
         variant: 'outlined',
+      },
+      styleOverrides: {
+        root: ({ theme }) => ({
+          '--Card-radius': theme.radius.lg,
+        }),
       },
     },
     JoyTabList: {
@@ -19,9 +31,8 @@ export const theme = extendTheme({
       },
       styleOverrides: {
         root: ({ theme }) => ({
-          gap: theme.spacing(0.5),
+          gap: theme.spacing(0.25),
           borderRadius: theme.vars.radius.lg,
-          padding: 0,
         }),
       },
     },
@@ -33,7 +44,6 @@ export const theme = extendTheme({
       styleOverrides: {
         root: ({ theme }) => ({
           border: `1px solid ${theme.palette.neutral.outlinedBorder}`,
-          padding: theme.spacing(0.25),
           borderRadius: theme.vars.radius.lg,
           [`& .${tabClasses.root}`]: {
             whiteSpace: 'nowrap',

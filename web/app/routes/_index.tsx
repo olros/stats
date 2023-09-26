@@ -79,14 +79,12 @@ export default function Index() {
       </Typography>
       <Stack direction='row' gap={2} justifyContent='center'>
         {isAuthenticated ? (
-          <Button color='info' component={Link} to='/dashboard'>
+          <Button component={Link} to='/dashboard'>
             Open dashboard
           </Button>
         ) : (
           <Box action='/auth/github' component={Form} method='post'>
-            <Button color='info' type='submit'>
-              Continue with GitHub
-            </Button>
+            <Button type='submit'>Continue with GitHub</Button>
           </Box>
         )}
         <Button component='a' href='/public/olros/stats' onClick={() => stats.event('live-demo')} target='_blank' variant='outlined'>

@@ -29,6 +29,8 @@ const Content = ({ request, remixContext }: { request: Request; remixContext: En
 
   // Render the component to a string.
   const html = renderToString(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     <StylesContext.Provider value={null}>
       <MuiRemixServer />
     </StylesContext.Provider>,
