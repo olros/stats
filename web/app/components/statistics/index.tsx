@@ -49,14 +49,14 @@ export const PageviewsStatistics = ({
       <Box sx={{ display: 'grid', gap: 1, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
         <Card>
           <Typography level='h3'>Top pages</Typography>
-          <Typography gutterBottom level='body2'>
+          <Typography gutterBottom level='body-md'>
             Which pages get more pageviews
           </Typography>
           <TopPages topPages={topPages} />
         </Card>
         <Card>
           <Typography level='h3'>Top custom events</Typography>
-          <Typography gutterBottom level='body2'>
+          <Typography gutterBottom level='body-md'>
             Number of events per custom event
           </Typography>
           <TopCustomEvents topCustomEvents={topCustomEvents} />
@@ -64,7 +64,7 @@ export const PageviewsStatistics = ({
       </Box>
       <Card>
         <Typography level='h3'>Hours of the day</Typography>
-        <Typography gutterBottom level='body2'>
+        <Typography gutterBottom level='body-md'>
           What times during the day has most pageviews
         </Typography>
         <HoursOfTheDay topHours={topHours} />

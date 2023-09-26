@@ -102,7 +102,7 @@ export const Navbar = ({ user, teams, project }: NavbarProps) => {
                 </MenuItem>
               ))}
               {!teams.length && (
-                <Typography level='body2' sx={{ px: 2, py: 1 }}>
+                <Typography level='body-md' sx={{ px: 2, py: 1 }}>
                   You're not member of any teams
                 </Typography>
               )}

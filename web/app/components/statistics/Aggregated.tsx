@@ -15,8 +15,8 @@ export const Aggregated = ({ totalPageviews, mostPopularHour, uniqueVisitorsCoun
         <AspectRatio ratio='1' sx={{ width: 55, background: 'transparent' }}>
           <Typography fontSize='xl'>👀</Typography>
         </AspectRatio>
-        <CardContent sx={{ px: 2, gap: 0.25 }}>
-          <Typography level='body2'>Pageviews</Typography>
+        <CardContent sx={{ gap: 0.25 }}>
+          <Typography level='body-md'>Pageviews</Typography>
           <Typography fontSize='xl' fontWeight='bold'>
             {Intl.NumberFormat('en-GB', { notation: 'compact' }).format(totalPageviews)}
           </Typography>
@@ -26,8 +26,8 @@ export const Aggregated = ({ totalPageviews, mostPopularHour, uniqueVisitorsCoun
         <AspectRatio ratio='1' sx={{ width: 55, background: 'transparent' }}>
           <Typography fontSize='xl'>🧑</Typography>
         </AspectRatio>
-        <CardContent sx={{ px: 2, gap: 0.25 }}>
-          <Typography level='body2'>Unique visitors</Typography>
+        <CardContent sx={{ gap: 0.25 }}>
+          <Typography level='body-md'>Unique visitors</Typography>
           <Typography fontSize='xl' fontWeight='bold'>
             {Intl.NumberFormat('en-GB', { notation: 'compact' }).format(uniqueVisitorsCount)}
           </Typography>
@@ -37,8 +37,8 @@ export const Aggregated = ({ totalPageviews, mostPopularHour, uniqueVisitorsCoun
         <AspectRatio ratio='1' sx={{ width: 55, background: 'transparent' }}>
           <Typography fontSize='xl'>🕓</Typography>
         </AspectRatio>
-        <CardContent sx={{ px: 2, gap: 0.25 }}>
-          <Typography level='body2'>Most popular hour</Typography>
+        <CardContent sx={{ gap: 0.25 }}>
+          <Typography level='body-md'>Most popular hour</Typography>
           <Typography fontSize='xl' fontWeight='bold'>
             {`${mostPopularHour.hour}-${String(Number(mostPopularHour.hour) + 1).padStart(2, '0')} (${mostPopularHour.percentage}%)`}
           </Typography>

@@ -38,8 +38,8 @@ export default function Profile() {
             </Avatar>
             <Typography level='h1'>{user.name}</Typography>
           </Stack>
-          <Typography level='body1'>Email: {user.email}</Typography>
-          <Typography level='body1'>GitHub: {user.github_username}</Typography>
+          <Typography level='body-lg'>Email: {user.email}</Typography>
+          <Typography level='body-lg'>GitHub: {user.github_username}</Typography>
           <Button color='danger' component={Link} sx={{ mt: 2 }} to='/auth/logout' variant='outlined'>
             Log out
           </Button>

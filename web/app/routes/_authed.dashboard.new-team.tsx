@@ -27,7 +27,7 @@ export const action = async ({ request }: ActionArgs) => {
     });
     return redirect(`/dashboard/${team.slug}`);
   } catch (e) {
-    console.error(e);
+    console.error('[New Team]', e);
     if (e instanceof PrismaClientKnownRequestError) {
       return json({ errors: { name: 'This team name is already taken' } }, { status: 400 });
     }

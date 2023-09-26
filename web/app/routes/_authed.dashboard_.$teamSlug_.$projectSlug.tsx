@@ -7,11 +7,12 @@ import { ensureIsTeamMember, getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';
 import { parseJSON } from 'date-fns';
+import { useState } from 'react';
 import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: `${data.project.name} | Stats` }];
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: `${data?.project.name} | Stats` }];
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
@@ -48,6 +49,7 @@ const TABS = [
 export default function ProjectDashboard() {
   const { teams, team, project, user } = useLoaderData<typeof loader>();
   const location = useLocation();
+  const [defaultLocation] = useState(location.pathname);
   const baseLocation = `/dashboard/${team.slug}/${project.slug}`;
 
   return (
@@ -66,14 +68,10 @@ export default function ProjectDashboard() {
             {project.url}
           </Typography>
         </Stack>
-        <Tabs aria-label='Select team page' sx={{ width: '100%', borderRadius: 'lg' }}>
+        <Tabs aria-label='Select team page' defaultValue={defaultLocation}>
           <TabList>
             {TABS.map((tab) => (
-              <Tab
-                component={Link}
-                key={tab.url}
-                to={tab.url}
-                variant={location.pathname === `${baseLocation}${tab.url.length ? `/${tab.url}` : ''}` ? 'soft' : 'plain'}>
+              <Tab component={Link} key={tab.url} to={tab.url} value={`${baseLocation}${tab.url.length ? `/${tab.url}` : ''}`}>
                 {tab.label}
               </Tab>
             ))}

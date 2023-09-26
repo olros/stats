@@ -22,17 +22,17 @@ export const UsageDisplay = ({ label, description, usage }: { label: string; des
   return (
     <Card sx={{ gap: 1 }}>
       <Typography level='h3'>{label}</Typography>
-      {description && <Typography level='body2'>{description}</Typography>}
+      {description && <Typography level='body-md'>{description}</Typography>}
       <Stack direction='row' gap={1}>
-        <Typography level='body2' textColor='common.white'>
+        <Typography level='body-md' textColor='common.white'>
           0
         </Typography>
         <LinearProgress color={usage.withinLimit ? 'success' : 'warning'} determinate thickness={24} value={percentage} variant='outlined'>
-          <Typography level='body2' sx={{ mixBlendMode: 'difference' }} textColor='common.white'>
+          <Typography level='body-md' sx={{ mixBlendMode: 'difference' }} textColor='common.white'>
             {`${Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 2 }).format(usage.count)} (${percentage.toFixed(2)}%)`}
           </Typography>
         </LinearProgress>
-        <Typography level='body2' textColor='common.white'>
+        <Typography level='body-md' textColor='common.white'>
           {Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 }).format(usage.limit)}
         </Typography>
       </Stack>
@@ -48,7 +48,7 @@ export default function TeamMembers() {
     <>
       <Card sx={{ gap: 1 }}>
         <Typography level='h3'>Quota usage</Typography>
-        <Typography level='body1'>
+        <Typography level='body-lg'>
           The quota usage is measured per team aggregated across all the team's projects. The usage is measured as rows stored in the database. Each team can
           have as many projects as needed, but the quota don't increase with each project. If you reach the quota, requests will still respond with a 202-status
           in order to not break your applications, but the data will not be persisted to the database.

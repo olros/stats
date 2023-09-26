@@ -86,7 +86,7 @@ export default function TeamMembers() {
     <>
       <Card component={Form} method='post' sx={{ gap: 1 }}>
         <Typography level='h3'>Add member</Typography>
-        <Typography level='body2'>
+        <Typography level='body-md'>
           The member to be added must have already logged in to Stats with their GitHub-profile before they can be added to teams. All team members have the
           same rights within the team to create, edit and delete projects and the team itself.
         </Typography>

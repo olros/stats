@@ -62,7 +62,7 @@ export const action = async ({ request, params }: ActionArgs) => {
 
     return json({ ok: true }, { status: 202 });
   } catch (e) {
-    console.error(e);
+    console.error('[API-Internal - Event]', e);
     return json({ ok: false }, { status: 400 });
   }
 };
