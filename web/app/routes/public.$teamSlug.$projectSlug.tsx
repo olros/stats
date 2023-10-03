@@ -62,20 +62,25 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   const { dateGte, dateLte, pathname } = getFilteringParams(request);
 
-  return jsonHash({
-    pageViews: await getPageViewsTrend(pageViewsQuery, dateGte, dateLte),
-    totalPageviews: await getTotalPageviews(pageViewsQuery),
-    topPages: await getTopPages(topPagesQuery),
-    topCustomEvents: await getTopCustomEvents(topCustomEventsQuery),
-    topHours: await getTopHours(topHoursQuery),
-    mostPopularHour: await getMostPopularHour(topHoursQuery),
-    uniqueVisitorsCount: await getUniqueVisitorsCount(request, params.teamSlug, params.projectSlug),
-    pageVisitorsTrend: await getPageVisitorsTrend(pageVisitorsQuery, dateGte, dateLte),
-    dateGte: formatFilterDate(dateGte),
-    dateLte: formatFilterDate(dateLte),
-    pathname,
-    project,
-  });
+  try {
+    return jsonHash({
+      pageViews: getPageViewsTrend(pageViewsQuery, dateGte, dateLte),
+      totalPageviews: getTotalPageviews(pageViewsQuery),
+      topPages: getTopPages(topPagesQuery),
+      topCustomEvents: getTopCustomEvents(topCustomEventsQuery),
+      topHours: getTopHours(topHoursQuery),
+      mostPopularHour: getMostPopularHour(topHoursQuery),
+      uniqueVisitorsCount: getUniqueVisitorsCount(request, params.teamSlug, params.projectSlug),
+      pageVisitorsTrend: getPageVisitorsTrend(pageVisitorsQuery, dateGte, dateLte),
+      dateGte: formatFilterDate(dateGte),
+      dateLte: formatFilterDate(dateLte),
+      pathname,
+      project,
+    });
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
 };
 
 export default function PublicPageviewsStatistics() {
