@@ -40,14 +40,14 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const { dateGte, dateLte, pathname } = getFilteringParams(request);
 
   return jsonHash({
-    pageViews: await getPageViewsTrend(pageViewsQuery, dateGte, dateLte),
-    totalPageviews: await getTotalPageviews(pageViewsQuery),
-    topPages: await getTopPages(topPagesQuery),
-    topCustomEvents: await getTopCustomEvents(topCustomEventsQuery),
-    topHours: await getTopHours(topHoursQuery),
-    mostPopularHour: await getMostPopularHour(topHoursQuery),
-    pageVisitorsTrend: await getPageVisitorsTrend(pageVisitorsQuery, dateGte, dateLte),
-    uniqueVisitorsCount: await getUniqueVisitorsCount(request, params.teamSlug, params.projectSlug),
+    pageViews: getPageViewsTrend(pageViewsQuery, dateGte, dateLte),
+    totalPageviews: getTotalPageviews(pageViewsQuery),
+    topPages: getTopPages(topPagesQuery),
+    topCustomEvents: getTopCustomEvents(topCustomEventsQuery),
+    topHours: getTopHours(topHoursQuery),
+    mostPopularHour: getMostPopularHour(topHoursQuery),
+    pageVisitorsTrend: getPageVisitorsTrend(pageVisitorsQuery, dateGte, dateLte),
+    uniqueVisitorsCount: getUniqueVisitorsCount(request, params.teamSlug, params.projectSlug),
     dateGte: formatFilterDate(dateGte),
     dateLte: formatFilterDate(dateLte),
     pathname,
