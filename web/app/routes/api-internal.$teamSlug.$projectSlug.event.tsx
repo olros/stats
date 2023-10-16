@@ -1,5 +1,5 @@
 import type { Prisma, Project } from '@prisma/client';
-import type { ActionArgs } from '@vercel/remix';
+import type { ActionFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
 import { getDate, getProjectAndCheckPermissions } from '~/utils_api.server';
@@ -51,7 +51,7 @@ const trackCustomEvent = async (request: Request, project: Project) => {
   });
 };
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   try {
     invariant(params.teamSlug, `Expected params.teamSlug`);
     invariant(params.projectSlug, `Expected params.projectSlug`);

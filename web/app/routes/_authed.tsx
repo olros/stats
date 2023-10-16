@@ -1,10 +1,10 @@
 import { Outlet } from '@remix-run/react';
-import type { LoaderArgs } from '@vercel/remix';
+import type { LoaderFunctionArgs } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   await getUserOrRedirect(request);
   return null;
 };
