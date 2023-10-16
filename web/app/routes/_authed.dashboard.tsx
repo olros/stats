@@ -1,6 +1,6 @@
 import { Container } from '@mui/joy';
 import { Outlet, useLoaderData } from '@remix-run/react';
-import type { LoaderArgs, V2_MetaFunction } from '@vercel/remix';
+import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
 import { redirect } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
@@ -10,9 +10,9 @@ import { parseJSON } from 'date-fns';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const meta: V2_MetaFunction = () => [{ title: 'Dashboard | Stats' }];
+export const meta: MetaFunction = () => [{ title: 'Dashboard | Stats' }];
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const teamSlug = params.teamSlug?.toLowerCase();
   const projectSlug = params.projectSlug?.toLowerCase();
   const user = await getUserOrRedirect(request);

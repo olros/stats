@@ -1,7 +1,7 @@
 import { Button, Card, FormControl, FormLabel, Input, Stack, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Form, Link, useActionData, useNavigation, useParams } from '@remix-run/react';
-import type { ActionArgs } from '@vercel/remix';
+import type { ActionFunctionArgs } from '@vercel/remix';
 import { json, redirect } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
@@ -10,7 +10,7 @@ import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   const team = await ensureIsTeamMember(request, params.teamSlug);
   const formData = await request.formData();

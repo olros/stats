@@ -1,6 +1,6 @@
 import { Typography } from '@mui/joy';
 import { Await, useLoaderData, useRevalidator } from '@remix-run/react';
-import { defer, type LoaderArgs } from '@vercel/remix';
+import { defer, type LoaderFunctionArgs } from '@vercel/remix';
 import { PageviewsStatistics } from '~/components/statistics';
 import {
   formatFilterDate,
@@ -26,7 +26,7 @@ import { useInterval } from 'usehooks-ts';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
 
@@ -87,7 +87,11 @@ export default function PublicPageviewsStatistics() {
             dateGte={dateGte}
             dateLte={dateLte}
             mostPopularHour={mostPopularHour}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             pageViews={pageViews}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             pageVisitorsTrend={pageVisitorsTrend}
             pathname={pathname}
             topCustomEvents={topCustomEvents}

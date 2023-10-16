@@ -1,13 +1,13 @@
 import { Box, Button, Card, Container, Divider, Stack, Typography } from '@mui/joy';
 import { Form, Link, useLoaderData } from '@remix-run/react';
-import type { LoaderArgs } from '@vercel/remix';
+import type { LoaderFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { authenticator } from '~/auth.server';
 import { stats } from '~/stats';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const isAuthenticated = await authenticator.isAuthenticated(request);
 
   return json({ isAuthenticated });

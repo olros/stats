@@ -1,5 +1,5 @@
 import { useLoaderData, useRevalidator } from '@remix-run/react';
-import type { LoaderArgs } from '@vercel/remix';
+import type { LoaderFunctionArgs } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { PageviewsStatistics } from '~/components/statistics';
 import {
@@ -20,13 +20,13 @@ import {
   getUniqueVisitorsCount,
 } from '~/components/statistics/loaders';
 import { secondsToMilliseconds } from 'date-fns';
-import { jsonHash } from 'remix-utils';
+import { jsonHash } from 'remix-utils/json-hash';
 import invariant from 'tiny-invariant';
 import { useInterval } from 'usehooks-ts';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
   await ensureIsTeamMember(request, params.teamSlug);
@@ -80,7 +80,11 @@ export default function ProjectPageviewsStatistics() {
       dateGte={dateGte}
       dateLte={dateLte}
       mostPopularHour={mostPopularHour}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       pageViews={pageViews}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       pageVisitorsTrend={pageVisitorsTrend}
       pathname={pathname}
       topCustomEvents={topCustomEvents}

@@ -1,6 +1,6 @@
 import { Avatar, Button, Card, FormControl, FormHelperText, FormLabel, Input, Tooltip, Typography } from '@mui/joy';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
-import type { ActionArgs, LoaderArgs } from '@vercel/remix';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
@@ -8,7 +8,7 @@ import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   await ensureIsTeamMember(request, params.teamSlug);
   const members = prismaClient.teamUser.findMany({
@@ -25,7 +25,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   return json({ members: await members });
 };
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   const team = await ensureIsTeamMember(request, params.teamSlug);
 

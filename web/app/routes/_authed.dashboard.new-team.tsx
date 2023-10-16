@@ -1,7 +1,7 @@
 import { Button, Card, FormControl, FormLabel, Input, Stack, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
-import type { ActionArgs } from '@vercel/remix';
+import type { ActionFunctionArgs } from '@vercel/remix';
 import { json, redirect } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
@@ -9,7 +9,7 @@ import { slugify } from '~/utils';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const user = await getUserOrRedirect(request);
   const formData = await request.formData();
   const name = formData.get('name') as string;

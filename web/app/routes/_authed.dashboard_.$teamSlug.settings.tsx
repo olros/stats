@@ -1,7 +1,7 @@
 import { Button, Card, FormControl, FormLabel, Input, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
-import type { ActionArgs, LoaderArgs } from '@vercel/remix';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
 import { redirect } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
@@ -11,13 +11,13 @@ import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   const team = await ensureIsTeamMember(request, params.teamSlug);
   return json({ team });
 };
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   await ensureIsTeamMember(request, params.teamSlug);
   if (request.method === 'PUT') {

@@ -1,17 +1,17 @@
 import { Avatar, Button, Card, Container, Stack, Typography } from '@mui/joy';
 import { Link, useLoaderData } from '@remix-run/react';
-import type { LoaderArgs, V2_MetaFunction } from '@vercel/remix';
+import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';
 import { parseJSON } from 'date-fns';
-import { jsonHash } from 'remix-utils';
+import { jsonHash } from 'remix-utils/json-hash';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const meta: V2_MetaFunction = () => [{ title: 'Profile | Stats' }];
+export const meta: MetaFunction = () => [{ title: 'Profile | Stats' }];
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await getUserOrRedirect(request);
   const teams = prismaClient.team.findMany({
     where: {

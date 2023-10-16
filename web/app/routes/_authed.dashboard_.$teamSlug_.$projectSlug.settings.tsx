@@ -1,7 +1,7 @@
 import { Box, Button, Card, FormControl, FormHelperText, FormLabel, Input, Switch, Textarea, Typography } from '@mui/joy';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Form, useActionData, useLoaderData, useNavigation, useSubmit } from '@remix-run/react';
-import type { ActionArgs, LoaderArgs } from '@vercel/remix';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
 import { redirect } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
@@ -13,7 +13,7 @@ import { useIsClient } from 'usehooks-ts';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
   await ensureIsTeamMember(request, params.teamSlug);
@@ -31,7 +31,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   return json({ project });
 };
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
   await ensureIsTeamMember(request, params.teamSlug);

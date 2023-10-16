@@ -1,6 +1,6 @@
 import { Alert, Card, LinearProgress, Stack, Typography } from '@mui/joy';
 import { useLoaderData } from '@remix-run/react';
-import type { LoaderArgs } from '@vercel/remix';
+import type { LoaderFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import type { Usage } from '~/utils_usage.server';
@@ -9,7 +9,7 @@ import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   await ensureIsTeamMember(request, params.teamSlug);
   const usage = await getTeamUsage(params.teamSlug);

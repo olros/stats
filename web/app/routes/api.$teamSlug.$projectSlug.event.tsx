@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { RequestContext } from '@vercel/edge';
-import type { ActionArgs } from '@vercel/remix';
+import type { ActionFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { forwardRequestToInternalApi } from '~/utils_edge.server';
 import invariant from 'tiny-invariant';
 
 export const config = { runtime: 'edge' };
 
-export const action = async ({ request, params, context }: ActionArgs) => {
+export const action = async ({ request, params, context }: ActionFunctionArgs) => {
   try {
     invariant(params.teamSlug, `Expected params.teamSlug`);
     invariant(params.projectSlug, `Expected params.projectSlug`);

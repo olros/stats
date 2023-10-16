@@ -1,16 +1,16 @@
 import { Container, Typography } from '@mui/joy';
 import { Outlet, useLoaderData } from '@remix-run/react';
-import type { LoaderArgs, V2_MetaFunction } from '@vercel/remix';
+import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
 import { redirect } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
-import { jsonHash } from 'remix-utils';
+import { jsonHash } from 'remix-utils/json-hash';
 import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: `${data?.project.team.name}/${data?.project.name} | Stats` }];
+export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: `${data?.project.team.name}/${data?.project.name} | Stats` }];
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
 
