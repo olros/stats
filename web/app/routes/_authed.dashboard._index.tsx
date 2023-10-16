@@ -1,13 +1,13 @@
 import { Box, Button, Card, Stack, Typography } from '@mui/joy';
 import { Link, useLoaderData } from '@remix-run/react';
-import type { LoaderFunctionArgs } from '@vercel/remix';
+import type { LoaderArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: LoaderArgs) => {
   const user = await getUserOrRedirect(request);
   const teams = await prismaClient.team.findMany({
     where: {

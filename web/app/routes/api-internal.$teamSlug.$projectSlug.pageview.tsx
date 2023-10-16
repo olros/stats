@@ -1,5 +1,5 @@
 import type { Prisma, Project } from '@prisma/client';
-import type { ActionFunctionArgs } from '@vercel/remix';
+import type { ActionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
 import { screenWidthToDeviceType } from '~/utils';
@@ -7,7 +7,7 @@ import { getDate, getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getPageViewsUsage, getPageVisitorsUsage } from '~/utils_usage.server';
 import crypto from 'crypto';
 import { getHours } from 'date-fns';
-import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
+import { getClientIPAddress } from 'remix-utils';
 import invariant from 'tiny-invariant';
 
 import { DeviceType } from '~/types';
@@ -119,7 +119,7 @@ const trackPageVisitor = async (request: Request, project: Project) => {
   });
 };
 
-export const action = async ({ request, params }: ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionArgs) => {
   try {
     invariant(params.teamSlug, `Expected params.teamSlug`);
     invariant(params.projectSlug, `Expected params.projectSlug`);
