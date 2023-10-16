@@ -2,7 +2,6 @@
 module.exports = {
   ignoredRouteFiles: ['**/.*'],
   serverDependenciesToBundle: [
-    'prisma',
     '@prisma/client',
     '@prisma/client/runtime/library',
     'd3-time-format',
