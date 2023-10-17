@@ -49,7 +49,7 @@ export default function CreateTeam() {
           <Input disabled={state === 'submitting'} error={Boolean(actionData?.errors.name)} name='name' />
         </FormControl>
         <Stack direction='row' gap={1}>
-          <Button loading={state === 'submitting'} type='submit'>
+          <Button loading={state === 'submitting'} sx={{ viewTransitionName: 'create-team' }} type='submit'>
             Save
           </Button>
           <Button component={Link} to='/dashboard' variant='plain'>

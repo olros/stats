@@ -1,5 +1,5 @@
 import { Box, Button, Card, Stack, Typography } from '@mui/joy';
-import { Link, useLoaderData } from '@remix-run/react';
+import { Link, NavLink, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
@@ -25,15 +25,26 @@ export default function Dashboard() {
   const { teams } = useLoaderData<typeof loader>();
   return (
     <>
-      <Stack component={Card} direction={{ sm: 'row' }} gap={1} justifyContent='space-between' sx={{ alignItems: 'center' }}>
-        <Typography level='h1'>Your teams</Typography>
-        <Button component={Link} to='new-team'>
+      <Stack component={Card} direction={{ sm: 'row' }} gap={1} justifyContent='space-between' sx={{ alignItems: 'center', viewTransitionName: 'header-old' }}>
+        <Typography level='h1' sx={{ viewTransitionName: 'header-old-text' }}>
+          Your teams
+        </Typography>
+        <Button component={Link} sx={{ viewTransitionName: 'create-team' }} to='new-team' unstable_viewTransition>
           New team
         </Button>
       </Stack>
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 1 }}>
         {teams.map((team) => (
-          <Card component={Link} key={team.slug} sx={{ textDecoration: 'none', '&:hover': { borderColor: 'neutral.outlinedHoverBorder' } }} to={team.slug}>
+          <Card
+            component={NavLink}
+            key={team.slug}
+            sx={{
+              '&.transitioning': { viewTransitionName: 'team-card', '& h2': { viewTransitionName: 'team-name' } },
+              textDecoration: 'none',
+              '&:hover': { borderColor: 'neutral.outlinedHoverBorder' },
+            }}
+            to={team.slug}
+            unstable_viewTransition>
             <Typography fontSize='xl' level='h2'>
               {team.name}
             </Typography>

@@ -87,11 +87,7 @@ export default function PublicPageviewsStatistics() {
             dateGte={dateGte}
             dateLte={dateLte}
             mostPopularHour={mostPopularHour}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             pageViews={pageViews}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             pageVisitorsTrend={pageVisitorsTrend}
             pathname={pathname}
             topCustomEvents={topCustomEvents}

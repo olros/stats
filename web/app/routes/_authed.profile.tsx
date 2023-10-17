@@ -33,7 +33,7 @@ export default function Profile() {
       <Container sx={{ py: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
         <Card>
           <Stack alignItems='center' direction='row' gap={1}>
-            <Avatar alt={`Profile image of ${user.name}`} size='lg' src={user.avatar_url || undefined}>
+            <Avatar alt={`Profile image of ${user.name}`} size='lg' src={user.avatar_url || undefined} sx={{ viewTransitionName: 'avatar' }}>
               {user.name[0]}
             </Avatar>
             <Typography level='h1'>{user.name}</Typography>

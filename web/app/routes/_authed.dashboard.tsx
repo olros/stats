@@ -1,8 +1,7 @@
 import { Container } from '@mui/joy';
 import { Outlet, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
-import { redirect } from '@vercel/remix';
-import { json } from '@vercel/remix';
+import { json, redirect } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';

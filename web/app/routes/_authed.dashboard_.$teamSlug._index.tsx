@@ -1,5 +1,5 @@
 import { Box, Card, Typography } from '@mui/joy';
-import { Link, useLoaderData } from '@remix-run/react';
+import { NavLink, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
@@ -27,10 +27,20 @@ export default function TeamDashboard() {
       {projects.length === 0 && <Typography>This team hasn't created any projects yet</Typography>}
       {projects.map((project) => (
         <Card
-          component={Link}
+          component={NavLink}
           key={project.slug}
-          sx={{ overflowWrap: 'anywhere', textDecoration: 'none', '&:hover': { borderColor: 'neutral.outlinedHoverBorder' } }}
-          to={project.slug}>
+          sx={{
+            overflowWrap: 'anywhere',
+            textDecoration: 'none',
+            '&:hover': { borderColor: 'neutral.outlinedHoverBorder' },
+            '&.transitioning': {
+              viewTransitionName: 'project-card',
+              '& h3': { viewTransitionName: 'project-name' },
+              '& p': { viewTransitionName: 'project-url' },
+            },
+          }}
+          to={project.slug}
+          unstable_viewTransition>
           <Typography fontSize='xl' level='h3'>
             {project.name}
           </Typography>

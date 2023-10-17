@@ -15,7 +15,7 @@ import {
   typographyClasses,
 } from '@mui/joy';
 import type { Project, Team, User } from '@prisma/client';
-import { Link, useParams } from '@remix-run/react';
+import { Link, useLocation, useParams } from '@remix-run/react';
 import { useState } from 'react';
 
 import { Add, Check, UnfoldMore } from './Icons';
@@ -43,6 +43,7 @@ export type NavbarProps = {
 
 export const Navbar = ({ user, teams, project }: NavbarProps) => {
   const { teamSlug } = useParams();
+  const location = useLocation();
 
   const selectedTeam = teams.find((team) => team.slug === teamSlug);
   const [teamSelectorAnchorEl, setTeamSelectorAnchorEl] = useState<HTMLAnchorElement | null>(null);
@@ -64,7 +65,7 @@ export const Navbar = ({ user, teams, project }: NavbarProps) => {
         borderBottom: ({ palette }) => `1px solid ${palette.neutral.outlinedBorder}`,
       }}>
       <Stack alignItems='center' direction='row' sx={{ overflow: 'hidden' }}>
-        <Box component={Link} sx={{ height: 44 }} to={selectedTeam ? `/dashboard/${selectedTeam.slug}` : '/dashboard'}>
+        <Box component={Link} sx={{ height: 44 }} to={selectedTeam ? `/dashboard/${selectedTeam.slug}` : '/dashboard'} unstable_viewTransition>
           <Box alt='' component='img' src='/favicon-192.png' sx={{ height: 44 }} />
         </Box>
         <Separator />
@@ -107,7 +108,8 @@ export const Navbar = ({ user, teams, project }: NavbarProps) => {
                   key={team.slug}
                   onClick={closeTeamSelector}
                   selected={selectedTeam?.slug === team.slug}
-                  to={`/dashboard/${team.slug}`}>
+                  to={`/dashboard/${team.slug}`}
+                  unstable_viewTransition>
                   <ListItemDecorator>{selectedTeam?.slug === team.slug && <Check />}</ListItemDecorator>
                   {team.name}
                 </MenuItem>
@@ -122,7 +124,7 @@ export const Navbar = ({ user, teams, project }: NavbarProps) => {
           <ListDivider />
           <ListItem nested>
             <List>
-              <MenuItem component={Link} onClick={closeTeamSelector} to='/dashboard/new-team'>
+              <MenuItem component={Link} onClick={closeTeamSelector} to='/dashboard/new-team' unstable_viewTransition>
                 <ListItemDecorator>
                   <Add />
                 </ListItemDecorator>
@@ -140,11 +142,16 @@ export const Navbar = ({ user, teams, project }: NavbarProps) => {
           </>
         )}
       </Stack>
-      <Link to='/profile'>
-        <Avatar alt='Link to profile' src={user.avatar_url || undefined} sx={{ ':hover': { scale: '1.1', transition: 'scale 0.1s' } }}>
-          {user.name[0]}
-        </Avatar>
-      </Link>
+      {location.pathname !== '/profile' && (
+        <Link to='/profile' unstable_viewTransition>
+          <Avatar
+            alt='Link to profile'
+            src={user.avatar_url || undefined}
+            sx={{ viewTransitionName: 'avatar', ':hover': { scale: '1.1', transition: 'scale 0.1s' } }}>
+            {user.name[0]}
+          </Avatar>
+        </Link>
+      )}
     </Sheet>
   );
 };

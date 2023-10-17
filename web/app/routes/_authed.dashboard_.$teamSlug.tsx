@@ -47,8 +47,10 @@ export default function ProjectDashboard() {
     <>
       <Navbar teams={teams.map((team) => ({ ...team, createdAt: parseJSON(team.createdAt) }))} user={user} />
       <Container sx={{ py: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <Stack component={Card} direction={{ sm: 'row' }} gap={1} justifyContent='space-between' sx={{ alignItems: 'center' }}>
-          <Typography level='h1'>{team.name}</Typography>
+        <Stack component={Card} direction={{ sm: 'row' }} gap={1} justifyContent='space-between' sx={{ alignItems: 'center', viewTransitionName: 'team-card' }}>
+          <Typography level='h1' sx={{ viewTransitionName: 'team-name' }}>
+            {team.name}
+          </Typography>
           <Button component={Link} to='new-project'>
             New project
           </Button>
@@ -56,7 +58,7 @@ export default function ProjectDashboard() {
         <Tabs aria-label='Select project page' defaultValue={defaultLocation}>
           <TabList>
             {TABS.map((tab) => (
-              <Tab component={Link} key={tab.url} to={tab.url} value={`${baseLocation}${tab.url.length ? `/${tab.url}` : ''}`}>
+              <Tab component={Link} key={tab.url} to={tab.url} unstable_viewTransition value={`${baseLocation}${tab.url.length ? `/${tab.url}` : ''}`}>
                 {tab.label}
               </Tab>
             ))}

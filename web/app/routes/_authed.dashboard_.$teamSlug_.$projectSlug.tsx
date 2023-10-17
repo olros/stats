@@ -1,8 +1,7 @@
 import { Card, Container, Stack, Tab, TabList, Tabs, Typography } from '@mui/joy';
 import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
-import { redirect } from '@vercel/remix';
-import { json } from '@vercel/remix';
+import { json, redirect } from '@vercel/remix';
 import { ensureIsTeamMember, getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';
@@ -60,18 +59,23 @@ export default function ProjectDashboard() {
         user={user}
       />
       <Container sx={{ py: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <Stack component={Card} direction={{ sm: 'row' }} gap={1} justifyContent='space-between' sx={{ alignItems: 'center' }}>
-          <Typography level='h1' sx={{ overflowWrap: 'anywhere' }}>
+        <Stack
+          component={Card}
+          direction={{ sm: 'row' }}
+          gap={1}
+          justifyContent='space-between'
+          sx={{ alignItems: 'center', viewTransitionName: 'project-card' }}>
+          <Typography level='h1' sx={{ overflowWrap: 'anywhere', viewTransitionName: 'project-name' }}>
             {project.name}
           </Typography>
-          <Typography component='a' fontSize='md' href={project.url} sx={{ overflowWrap: 'anywhere' }} target='_blank'>
+          <Typography component='a' fontSize='md' href={project.url} sx={{ overflowWrap: 'anywhere', viewTransitionName: 'project-url' }} target='_blank'>
             {project.url}
           </Typography>
         </Stack>
         <Tabs aria-label='Select team page' defaultValue={defaultLocation}>
           <TabList>
             {TABS.map((tab) => (
-              <Tab component={Link} key={tab.url} to={tab.url} value={`${baseLocation}${tab.url.length ? `/${tab.url}` : ''}`}>
+              <Tab component={Link} key={tab.url} to={tab.url} unstable_viewTransition value={`${baseLocation}${tab.url.length ? `/${tab.url}` : ''}`}>
                 {tab.label}
               </Tab>
             ))}
