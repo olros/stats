@@ -136,7 +136,11 @@ export const Navbar = ({ user, teams, project }: NavbarProps) => {
         {project && (
           <>
             <Separator />
-            <Typography component={Link} sx={{ textDecoration: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} to='.'>
+            <Typography
+              component={Link}
+              sx={{ textDecoration: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+              to='.'
+              unstable_viewTransition>
               {project.name}
             </Typography>
           </>

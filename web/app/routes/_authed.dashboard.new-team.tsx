@@ -52,7 +52,7 @@ export default function CreateTeam() {
           <Button loading={state === 'submitting'} sx={{ viewTransitionName: 'create-team' }} type='submit'>
             Save
           </Button>
-          <Button component={Link} to='/dashboard' variant='plain'>
+          <Button component={Link} to='/dashboard' unstable_viewTransition variant='plain'>
             Cancel
           </Button>
         </Stack>

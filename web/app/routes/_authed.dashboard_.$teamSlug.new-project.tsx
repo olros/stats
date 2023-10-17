@@ -63,7 +63,7 @@ export default function CreateProject() {
           <Button loading={state === 'submitting'} type='submit'>
             Save
           </Button>
-          <Button component={Link} to={`/dashboard/${teamSlug}`} variant='plain'>
+          <Button component={Link} to={`/dashboard/${teamSlug}`} unstable_viewTransition variant='plain'>
             Cancel
           </Button>
         </Stack>

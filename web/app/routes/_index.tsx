@@ -79,7 +79,7 @@ export default function Index() {
       </Typography>
       <Stack direction='row' gap={2} justifyContent='center'>
         {isAuthenticated ? (
-          <Button component={Link} to='/dashboard'>
+          <Button component={Link} to='/dashboard' unstable_viewTransition>
             Open dashboard
           </Button>
         ) : (

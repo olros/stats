@@ -51,7 +51,7 @@ export default function ProjectDashboard() {
           <Typography level='h1' sx={{ viewTransitionName: 'team-name' }}>
             {team.name}
           </Typography>
-          <Button component={Link} to='new-project'>
+          <Button component={Link} to='new-project' unstable_viewTransition>
             New project
           </Button>
         </Stack>
