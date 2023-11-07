@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { RequestContext } from '@vercel/edge';
 import type { ActionFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
