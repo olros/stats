@@ -20,7 +20,7 @@ declare global {
 const getPrismaClient = () => {
   const pool = new Pool({ connectionString });
   const adapter = new PrismaNeon(pool);
-  return new PrismaClient({ adapter, log: IS_PRODUCTION ? ['warn', 'error'] : ['query', 'info', 'warn', 'error'] });
+  return new PrismaClient({ adapter, log: IS_PRODUCTION ? [] : ['query', 'info', 'warn', 'error'] });
 };
 
 export const prismaClient = IS_PRODUCTION ? getPrismaClient() : global.prisma || getPrismaClient();
