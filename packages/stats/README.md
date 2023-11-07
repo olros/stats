@@ -1,6 +1,6 @@
 # Stats
 
-Simple tool to track analytics to Stats (https://stats.olafros.com).
+Simple tool to track analytics to Stats (https://stats.olafros.com). This package is only exported as an ESM-module.
 
 ## Usage
 

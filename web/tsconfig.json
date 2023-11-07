@@ -1,14 +1,14 @@
 {
   "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx", "app/routes/__authed"],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
-    "target": "ES2020",
-    "module": "ES2020",
+    "target": "ES2022",
+    "module": "ES2022",
     "strict": true,
     "allowJs": false,
     "forceConsistentCasingInFileNames": true,

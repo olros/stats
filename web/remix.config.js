@@ -9,6 +9,7 @@ module.exports = {
     '@nivo/bar',
     '@nivo/core',
     '@nivo/legends',
+    '@olros/stats',
     /^remix-utils.*/,
     'is-ip',
     'ip-regex',

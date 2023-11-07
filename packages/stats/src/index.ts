@@ -28,13 +28,6 @@ export type StatsInit = {
  * ```
  */
 export const Stats = <CustomEvents extends string>({ team, project, baseUrl, allowLocalhost = false }: StatsInit) => {
-  
-  const requestInit: RequestInit = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    mode: 'no-cors',
-    credentials: 'omit',
-  };
 
   const url = `${baseUrl || 'https://stats.olafros.com'}/api/${team}/${project}`;
 
@@ -52,9 +45,9 @@ export const Stats = <CustomEvents extends string>({ team, project, baseUrl, all
    * Track a pageview
    * @param options Optional PageviewOptions
    */
-  const pageview = async (options: PageviewOptions = {}): Promise<void> => {
+  const pageview = (options: PageviewOptions = {}): boolean => {
     if (isBotOrLocalhost()) {
-      return;
+      return false;
     }
     const pathname = options.pathname || location.pathname;
 
@@ -63,21 +56,21 @@ export const Stats = <CustomEvents extends string>({ team, project, baseUrl, all
       screen_width: typeof window !== 'undefined' ? window.innerWidth : undefined,
     };
 
-    await fetch(`${url}/pageview/`, { ...requestInit, body: JSON.stringify(data) });
+    return navigator.sendBeacon(`${url}/pageview/`, JSON.stringify(data));
   };
 
   /**
    * Track a custom event
    * @param name The event name
    */
-  const event = async (name: CustomEvents): Promise<void> => {
+  const event = (name: CustomEvents): boolean => {
     if (isBotOrLocalhost()) {
-      return;
+      return false;
     }
 
     const data = { name };
 
-    await fetch(`${url}/event/`, { ...requestInit, body: JSON.stringify(data) });
+    return navigator.sendBeacon(`${url}/event/`, JSON.stringify(data));
   };
 
   return { event, pageview };

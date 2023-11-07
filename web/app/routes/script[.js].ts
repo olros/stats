@@ -20,13 +20,7 @@ const pageviewScript = () => {
       screen_width: window.innerWidth,
     };
 
-    fetch(`${baseUrl}/api/` + team + '/' + project + '/pageview/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-      mode: 'no-cors',
-      credentials: 'omit',
-    });
+    navigator.sendBeacon(`${baseUrl}/api/` + team + '/' + project + '/pageview/', JSON.stringify(data));
   } catch {}
 };
 
