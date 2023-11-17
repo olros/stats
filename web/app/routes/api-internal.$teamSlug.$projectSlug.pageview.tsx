@@ -202,7 +202,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     const { project } = await getProjectAndCheckPermissions(request, params.teamSlug, params.projectSlug);
 
-    await Promise.all([trackPageview(request, project), trackPageVisitor(request, project), trackPageviewNext(request, project)]);
+    const req1 = request.clone();
+    const req2 = request.clone();
+    const req3 = request.clone();
+
+    await Promise.all([trackPageview(req1, project), trackPageVisitor(req2, project), trackPageviewNext(req3, project)]);
 
     return json({ ok: true }, { status: 202 });
   } catch (e) {
