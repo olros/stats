@@ -128,5 +128,5 @@ model Location {
 
   pageViews PageViewNext[]
 
-  @@unique([flag, country, city])
+  @@unique([country, city])
 }

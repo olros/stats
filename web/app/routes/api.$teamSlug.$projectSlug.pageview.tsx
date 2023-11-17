@@ -44,8 +44,6 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
   const ua = userAgent(request);
   const date = getDate(request);
 
-  console.info('[API - PageViewNext]', { geo, ua, ip });
-
   const geoData: PageviewRequestData['geo'] | undefined =
     geo.city && geo.country && geo.flag && geo.latitude && geo.longitude ? (geo as PageviewRequestData['geo']) : undefined;
   if (!geoData || !ip || ua.isBot) {
