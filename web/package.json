@@ -71,7 +71,7 @@
     "node": ">=18"
   },
   "resolutions": {
-    "@remix-run/node": "2.1.0",
-    "@remix-run/server-runtime": "2.1.0"
+    "@remix-run/node": "^2.3.0",
+    "@remix-run/server-runtime": "^2.3.0"
   }
 }
