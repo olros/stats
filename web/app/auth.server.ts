@@ -61,8 +61,7 @@ const gitHubStrategy = new GitHubStrategy(
         });
       }
     } catch {
-      // There already exists a team with the same name as the user's github username
-      console.log("There already exists a team with the same name as the user's github username");
+      console.warn("There already exists a team with the same name as the user's github username");
     }
     return user;
   },

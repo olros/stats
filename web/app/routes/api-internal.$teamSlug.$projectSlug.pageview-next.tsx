@@ -53,15 +53,9 @@ const getLocation = async (geo: PageviewRequestData['geo']): Promise<Location> =
 };
 
 const trackPageviewNext = async (request: Request, project: Project) => {
-  console.info('[API-Internal - TrackPageviewNext] 0');
-
   const { data, date, geo, userAgentData, user_hash } = await parsePageviewRequestData(request);
 
-  console.info('[API-Internal - TrackPageviewNext] 1', { data, date, geo, userAgentData, user_hash });
-
   const location = await getLocation(geo);
-
-  console.info('[API-Internal - TrackPageviewNext] 2', { location });
 
   await prismaClient.pageViewNext.create({
     data: {

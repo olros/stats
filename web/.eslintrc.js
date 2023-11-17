@@ -26,6 +26,6 @@ module.exports = {
         ignoreCase: true,
       },
     ],
-    'no-console': ['warn', { allow: ['error', 'info'] }],
+    'no-console': ['warn', { allow: ['error', 'info', 'warn'] }],
   },
 };

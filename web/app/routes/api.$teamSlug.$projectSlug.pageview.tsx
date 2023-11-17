@@ -26,7 +26,6 @@ export const getPageViewUserIdHash = async (ip: string, userAgent: string, date:
     const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
     return hashHex;
   } catch (e) {
-    console.info('[API - UserIdHash]', e);
     return userId;
   }
 };
@@ -43,18 +42,17 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
   const ip = ipAddress(request);
   const ua = userAgent(request);
   const date = getDate(request);
-  console.info('[API - getPageViewNextRequest] 0', { geo, ip, ua, date });
 
   const geoData: PageviewRequestData['geo'] | undefined =
     geo.city && geo.country && geo.flag && geo.latitude && geo.longitude ? (geo as PageviewRequestData['geo']) : undefined;
   if (!geoData || !ip || ua.isBot) {
-    console.error(
-      '[API - getPageViewNextRequest] 1',
+    console.warn(
+      '[API - getPageViewNextRequest]',
       new Error(
         JSON.stringify({
-          location: geoData ? undefined : `Location could not be found`,
+          location: geoData ? undefined : `Location could not be found: ${JSON.stringify(geo)}`,
           ip: ip ? undefined : `IP-address could not be found`,
-          isBot: ua.isBot ? `Bot detected` : undefined,
+          isBot: ua.isBot ? `Bot detected: ${ua.ua}` : undefined,
         }),
       ),
     );
@@ -71,8 +69,6 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
     user_hash,
     userAgentData,
   } satisfies PageviewRequestData;
-
-  console.info('[API - getPageViewNextRequest] 2', body);
 
   return new Request(request.url, {
     headers: new Headers(request.headers),
