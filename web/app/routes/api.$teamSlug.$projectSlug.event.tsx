@@ -19,7 +19,7 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
     }
     return json({ ok: true }, { status: 200 });
   } catch (e) {
-    console.error('[API] - Event', e);
+    console.error('[API - Event]', e);
     return json({ ok: false }, { status: 200 });
   }
 };

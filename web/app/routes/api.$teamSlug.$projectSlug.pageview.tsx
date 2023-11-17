@@ -43,31 +43,40 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
   const ip = ipAddress(request);
   const ua = userAgent(request);
   const date = getDate(request);
+  console.error('[API - getPageViewNextRequest] 0', { geo, ip, ua, date });
 
   const geoData: PageviewRequestData['geo'] | undefined =
     geo.city && geo.country && geo.flag && geo.latitude && geo.longitude ? (geo as PageviewRequestData['geo']) : undefined;
   if (!geoData || !ip || ua.isBot) {
-    throw new Error(
-      JSON.stringify({
-        location: geoData ? undefined : `Location could not be found`,
-        ip: ip ? undefined : `IP-address could not be found`,
-        isBot: ua.isBot ? `Bot detected` : undefined,
-      }),
+    console.error(
+      '[API - getPageViewNextRequest] 1',
+      new Error(
+        JSON.stringify({
+          location: geoData ? undefined : `Location could not be found`,
+          ip: ip ? undefined : `IP-address could not be found`,
+          isBot: ua.isBot ? `Bot detected` : undefined,
+        }),
+      ),
     );
+    return undefined;
   }
 
   const userAgentData = getPageViewUserAgentData(ua);
   const user_hash = await getPageViewUserIdHash(ip, ua.ua, date);
 
+  const body = {
+    data: (await request.json()) as PageviewInput,
+    date: date.toJSON(),
+    geo: geoData,
+    user_hash,
+    userAgentData,
+  } satisfies PageviewRequestData;
+
+  console.error('[API - getPageViewNextRequest] 2', body);
+
   return new Request('https://stats.olafros.com/api/pageview-next', {
     method: 'POST',
-    body: JSON.stringify({
-      data: (await request.json()) as PageviewInput,
-      date: date.toJSON(),
-      geo: geoData,
-      user_hash,
-      userAgentData,
-    } satisfies PageviewRequestData),
+    body: JSON.stringify(body),
   });
 };
 
@@ -90,9 +99,9 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
     } else {
       await promise;
     }
-    return json({ ok: true }, { status: 200 });
   } catch (e) {
-    console.error('[API] - Pageview', e);
+    console.error('[API - Pageview]', e);
     return json({ ok: false }, { status: 200 });
   }
+  return json({ ok: true }, { status: 200 });
 };
