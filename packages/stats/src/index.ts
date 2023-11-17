@@ -54,6 +54,7 @@ export const Stats = <CustomEvents extends string>({ team, project, baseUrl, all
     const data = {
       pathname,
       screen_width: typeof window !== 'undefined' ? window.innerWidth : undefined,
+      referrer: typeof window !== 'undefined' ? window.document.referrer : null,
     };
 
     return navigator.sendBeacon(`${url}/pageview/`, JSON.stringify(data));

@@ -18,6 +18,7 @@ const pageviewScript = () => {
     const data = {
       pathname,
       screen_width: window.innerWidth,
+      referrer: window.document.referrer || null,
     };
 
     navigator.sendBeacon(`${baseUrl}/api/` + team + '/' + project + '/pageview/', JSON.stringify(data));

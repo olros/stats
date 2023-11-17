@@ -8,6 +8,7 @@ export enum DeviceType {
 
 export type PageviewInput = Pick<PageView, 'pathname'> & {
   screen_width: number | null | undefined;
+  referrer: string | null | undefined;
 };
 
 export type CustomEventInput = Pick<CustomEvent, 'name'>;

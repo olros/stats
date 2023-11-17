@@ -1,8 +1,8 @@
-version: "3"
+version: '3'
 services:
   postgres:
     container_name: stats_db
-    image: postgres:15
+    image: postgres:16
     restart: always
     environment:
       POSTGRES_USER: root
@@ -10,23 +10,23 @@ services:
       POSTGRES_DB: stats_db
       POSTGRES_HOST: postgres
     ports:
-      - "5432:5432"
+      - '5432:5432'
   pgadmin:
     container_name: stats_pgadmin
-    image: "dpage/pgadmin4:6"
+    image: 'dpage/pgadmin4:7.8'
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
     volumes:
-       - pgadmin:/var/lib/pgadmin
-       - ./docker_pgadmin_servers.json:/pgadmin4/servers.json
+      - pgadmin:/var/lib/pgadmin
+      - ./docker_pgadmin_servers.json:/pgadmin4/servers.json
     ports:
-      - "15433:80"
+      - '15433:80'
     entrypoint:
-      - "/bin/sh"
-      - "-c"
+      - '/bin/sh'
+      - '-c'
       - "/bin/echo 'postgres:5432:*:root:password' > /tmp/pgpassfile && chmod 600 /tmp/pgpassfile && /entrypoint.sh"
     restart: unless-stopped
 

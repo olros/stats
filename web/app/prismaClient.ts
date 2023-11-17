@@ -8,7 +8,7 @@ dotenv.config();
 neonConfig.webSocketConstructor = WebSocket;
 const connectionString = `${process.env.DATABASE_URL}`;
 
-const IS_PRODUCTION = process.env.NODE_ENV !== 'production';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 declare global {
   // allow global `var` declarations
@@ -18,9 +18,12 @@ declare global {
 }
 
 const getPrismaClient = () => {
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaNeon(pool);
-  return new PrismaClient({ adapter, log: IS_PRODUCTION ? [] : ['query', 'info', 'warn', 'error'] });
+  if (IS_PRODUCTION) {
+    const pool = new Pool({ connectionString });
+    const adapter = new PrismaNeon(pool);
+    return new PrismaClient({ adapter, log: IS_PRODUCTION ? [] : ['query', 'info', 'warn', 'error'] });
+  }
+  return new PrismaClient({ log: ['query', 'info', 'warn', 'error'], datasourceUrl: connectionString });
 };
 
 export const prismaClient = IS_PRODUCTION ? getPrismaClient() : global.prisma || getPrismaClient();
