@@ -54,7 +54,8 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
   const userAgentData = getPageViewUserAgentData(ua);
   const user_hash = await getPageViewUserIdHash(ip, ua.ua, date);
 
-  return new Request('', {
+  return new Request('/pageview-next', {
+    method: 'POST',
     body: JSON.stringify({
       data: (await request.json()) as PageviewInput,
       date: date.toJSON(),
