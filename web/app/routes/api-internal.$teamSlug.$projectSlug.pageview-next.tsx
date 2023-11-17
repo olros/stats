@@ -82,7 +82,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     return json({ ok: true }, { status: 202 });
   } catch (e) {
-    console.error('[API-Internal - Pageview]', e);
+    console.error('[API-Internal - PageviewNext]', e);
     return json({ ok: false }, { status: 400 });
   }
 };

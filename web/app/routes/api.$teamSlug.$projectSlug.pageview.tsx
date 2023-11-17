@@ -18,11 +18,17 @@ export const config = { runtime: 'edge' };
 export const getPageViewUserIdHash = async (ip: string, userAgent: string, date: Date): Promise<PageviewRequestData['user_hash']> => {
   invariant(process.env.SECRET_KEY, 'Expected environment variable "SECRET_KEY" to be set when tracking page visitors');
   const day = format(date, 'yyyy-MM-dd');
-  const msgUint8 = new TextEncoder().encode(`${ip}_${userAgent}_${day}_${process.env.SECRET_KEY}`); // encode as (utf-8) Uint8Array
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8); // hash the message
-  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
-  return hashHex;
+  const userId = `${ip}_${userAgent}_${day}_${process.env.SECRET_KEY}`;
+  try {
+    const msgUint8 = new TextEncoder().encode(userId); // encode as (utf-8) Uint8Array
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8); // hash the message
+    const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+    return hashHex;
+  } catch (e) {
+    console.error('[API - UserIdHash]', e);
+    return userId;
+  }
 };
 
 export const getPageViewUserAgentData = (ua: UserAgentData): PageviewRequestData['userAgentData'] => {
@@ -40,7 +46,8 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
 
   console.info('[API - PageViewNext]', { geo, ua, ip });
 
-  const geoData = geo.city && geo.country && geo.flag && geo.latitude && geo.longitude ? (geo as PageviewRequestData['geo']) : undefined;
+  const geoData: PageviewRequestData['geo'] | undefined =
+    geo.city && geo.country && geo.flag && geo.latitude && geo.longitude ? (geo as PageviewRequestData['geo']) : undefined;
   if (!geoData || !ip || ua.isBot) {
     throw new Error(
       JSON.stringify({
@@ -54,7 +61,7 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
   const userAgentData = getPageViewUserAgentData(ua);
   const user_hash = await getPageViewUserIdHash(ip, ua.ua, date);
 
-  return new Request('/pageview-next', {
+  return new Request('https://stats.olafros.com/api/pageview-next', {
     method: 'POST',
     body: JSON.stringify({
       data: (await request.json()) as PageviewInput,
