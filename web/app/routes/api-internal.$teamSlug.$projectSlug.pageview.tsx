@@ -1,16 +1,12 @@
-import type { Location, Prisma, Project } from '@prisma/client';
-import type { Geo } from '@vercel/edge';
-import { geolocation, ipAddress } from '@vercel/edge';
+import type { Prisma, Project } from '@prisma/client';
 import type { ActionFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
-import type { UserAgentData } from '~/user-agent';
-import { userAgent } from '~/user-agent';
 import { screenWidthToDeviceType } from '~/utils';
 import { getDate, getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getPageViewsUsage, getPageVisitorsUsage } from '~/utils_usage.server';
 import crypto from 'crypto';
-import { format, getHours } from 'date-fns';
+import { getHours } from 'date-fns';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import invariant from 'tiny-invariant';
 
@@ -123,78 +119,6 @@ const trackPageVisitor = async (request: Request, project: Project) => {
   });
 };
 
-const getPageViewUserIdHash = async (ip: string, userAgent: string, date: Date) => {
-  invariant(process.env.SECRET_KEY, 'Expected environment variable "SECRET_KEY" to be set when tracking page visitors');
-  const day = format(date, 'yyyy-MM-dd');
-  const msgUint8 = new TextEncoder().encode(`${ip}_${userAgent}_${day}_${process.env.SECRET_KEY}`); // encode as (utf-8) Uint8Array
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8); // hash the message
-  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
-  return hashHex;
-};
-
-const getPageViewUserAgentData = (ua: UserAgentData): Pick<Prisma.PageViewNextCreateInput, 'browser' | 'device' | 'os'> => {
-  const browser = ua.browser.name || null;
-  const device = [ua.device.vendor, ua.device.model].filter(Boolean).join(' ') || null;
-  const os = ua.os.name || null;
-  return { browser, device, os };
-};
-
-const getLocation = async (geo: Geo): Promise<Location | undefined> => {
-  if (!geo.city || !geo.country || !geo.flag || !geo.latitude || !geo.longitude) {
-    return undefined;
-  }
-  const flag_country_city: Prisma.LocationFlagCountryCityCompoundUniqueInput = { flag: geo.flag, country: geo.country, city: geo.city };
-  const location: Prisma.LocationCreateWithoutPageViewsInput = {
-    ...flag_country_city,
-    latitude: Number(geo.latitude),
-    longitude: Number(geo.longitude),
-  };
-  return await prismaClient.location.upsert({
-    create: location,
-    update: {},
-    where: { flag_country_city },
-  });
-};
-
-const trackPageviewNext = async (request: Request, project: Project) => {
-  const geo = geolocation(request);
-  const ip = ipAddress(request);
-  const ua = userAgent(request);
-
-  console.info('[API-Internal - PageViewNext]', { geo, ua, ip });
-
-  const location = await getLocation(geo);
-
-  if (!location || !ip || ua.isBot) {
-    throw new Error(
-      JSON.stringify({
-        location: location ? undefined : `Location could not be found`,
-        ip: ip ? undefined : `IP-address could not be found`,
-        isBot: ua.isBot ? `Bot detected` : undefined,
-      }),
-    );
-  }
-
-  const date = getDate(request);
-  const { browser, device, os } = getPageViewUserAgentData(ua);
-  const [data, user_hash] = await Promise.all([parsePageviewInput(request), getPageViewUserIdHash(ip, ua.ua, date)]);
-
-  await prismaClient.pageViewNext.create({
-    data: {
-      date,
-      pathname: data.pathname,
-      referrer: data.referrer,
-      user_hash,
-      browser,
-      device,
-      os,
-      projectId: project.id,
-      locationId: location.id,
-    },
-  });
-};
-
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   try {
     invariant(params.teamSlug, `Expected params.teamSlug`);
@@ -202,11 +126,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     const { project } = await getProjectAndCheckPermissions(request, params.teamSlug, params.projectSlug);
 
-    const req1 = request.clone();
-    const req2 = request.clone();
-    const req3 = request.clone();
-
-    await Promise.all([trackPageview(req1, project), trackPageVisitor(req2, project), trackPageviewNext(req3, project)]);
+    await Promise.all([trackPageview(request, project), trackPageVisitor(request, project)]);
 
     return json({ ok: true }, { status: 202 });
   } catch (e) {
