@@ -1309,10 +1309,10 @@
   dependencies:
     which "^3.0.0"
 
-"@olros/stats@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@olros/stats/-/stats-2.1.1.tgz#eafb617adf5a58f6062f8f8b985c721cf7f54f06"
-  integrity sha512-c+a5Vyvtc/7nDBC+NJF44ekyDA3QRm4T0+6XhHROHLvbfO2ZvnZmuwjhMDyhvAXMRLY/tjgriNwlpRsOqM1ZQA==
+"@olros/stats@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@olros/stats/-/stats-2.2.0.tgz#448b805e10cdb6876bf06703e2d816b83e32f812"
+  integrity sha512-1n3NAa91qhe6xa/zSOe1vONwR6jdgdsaEMMevNppHUwtYw02F4xM7YLodXTrbGxBksnwuhSponadcqGJcBh9ag==
 
 "@pkgjs/parseargs@^0.11.0":
   version "0.11.0"
