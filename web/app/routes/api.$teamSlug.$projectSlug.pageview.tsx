@@ -26,7 +26,7 @@ export const getPageViewUserIdHash = async (ip: string, userAgent: string, date:
     const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
     return hashHex;
   } catch (e) {
-    console.error('[API - UserIdHash]', e);
+    console.info('[API - UserIdHash]', e);
     return userId;
   }
 };
@@ -43,7 +43,7 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
   const ip = ipAddress(request);
   const ua = userAgent(request);
   const date = getDate(request);
-  console.error('[API - getPageViewNextRequest] 0', { geo, ip, ua, date });
+  console.info('[API - getPageViewNextRequest] 0', { geo, ip, ua, date });
 
   const geoData: PageviewRequestData['geo'] | undefined =
     geo.city && geo.country && geo.flag && geo.latitude && geo.longitude ? (geo as PageviewRequestData['geo']) : undefined;
@@ -72,9 +72,10 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
     userAgentData,
   } satisfies PageviewRequestData;
 
-  console.error('[API - getPageViewNextRequest] 2', body);
+  console.info('[API - getPageViewNextRequest] 2', body);
 
-  return new Request('https://stats.olafros.com/api/pageview-next', {
+  return new Request(request.url, {
+    headers: new Headers(request.headers),
     method: 'POST',
     body: JSON.stringify(body),
   });

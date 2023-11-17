@@ -1,5 +1,4 @@
 import type { Project, Team } from '@prisma/client';
-import { json } from '@vercel/remix';
 import { utcToZonedTime } from 'date-fns-tz';
 
 import { prismaClient } from './prismaClient';
@@ -27,7 +26,7 @@ export const getProjectAndCheckPermissions = async (request: Request, teamSlug: 
   });
 
   if (!project) {
-    throw json({ errors: { name: `Can't find the given project` } }, { status: 404 });
+    throw new Error(JSON.stringify({ errors: { name: `Can't find the given project` } }));
   }
 
   const origin = request.headers.get('origin');
@@ -35,7 +34,7 @@ export const getProjectAndCheckPermissions = async (request: Request, teamSlug: 
   const allowedOrigins = project.allowed_hosts.split(',').filter((_origin) => _origin.length > 0);
 
   if (allowedOrigins.length > 0 && (!originURL || !allowedOrigins.some((_origin) => originURL.host === _origin))) {
-    throw json({ errors: { host: `The host is either not in headers or not declared as one of the allowed hosts` } }, { status: 404 });
+    throw new Error(JSON.stringify({ errors: { host: `The host is either not in headers or not declared as one of the allowed hosts` } }));
   }
 
   return { project };
