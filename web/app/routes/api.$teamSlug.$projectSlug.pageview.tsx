@@ -2,16 +2,35 @@ import { geolocation, ipAddress } from '@vercel/edge';
 import type { RequestContext } from '@vercel/edge';
 import type { ActionFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
+import type { UserAgentData } from '~/user-agent';
 import { userAgent } from '~/user-agent';
 import { getDate } from '~/utils_api.server';
 import { forwardRequestToInternalApi } from '~/utils_edge.server';
+import { format } from 'date-fns';
 import invariant from 'tiny-invariant';
 
 import type { PageviewInput } from '~/types';
 
-import { getPageViewUserAgentData, getPageViewUserIdHash, type PageviewRequestData } from './api-internal.$teamSlug.$projectSlug.pageview-next';
+import type { PageviewRequestData } from './api-internal.$teamSlug.$projectSlug.pageview-next';
 
 export const config = { runtime: 'edge' };
+
+export const getPageViewUserIdHash = async (ip: string, userAgent: string, date: Date): Promise<PageviewRequestData['user_hash']> => {
+  invariant(process.env.SECRET_KEY, 'Expected environment variable "SECRET_KEY" to be set when tracking page visitors');
+  const day = format(date, 'yyyy-MM-dd');
+  const msgUint8 = new TextEncoder().encode(`${ip}_${userAgent}_${day}_${process.env.SECRET_KEY}`); // encode as (utf-8) Uint8Array
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8); // hash the message
+  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+  return hashHex;
+};
+
+export const getPageViewUserAgentData = (ua: UserAgentData): PageviewRequestData['userAgentData'] => {
+  const browser = ua.browser.name || null;
+  const device = [ua.device.vendor, ua.device.model].filter(Boolean).join(' ') || null;
+  const os = ua.os.name || null;
+  return { browser, device, os };
+};
 
 const getPageViewNextRequest = async (request: Request): Promise<Request | undefined> => {
   const geo = geolocation(request);

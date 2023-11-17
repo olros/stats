@@ -3,18 +3,15 @@ import type { Geo } from '@vercel/edge';
 import type { ActionFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
-import type { UserAgentData } from '~/user-agent';
 import { getProjectAndCheckPermissions } from '~/utils_api.server';
-import crypto from 'crypto';
-import { format } from 'date-fns';
 import invariant from 'tiny-invariant';
 
 import type { PageviewInput } from '~/types';
 
 export type PageviewRequestData = {
   data: PageviewInput;
-  userAgentData: ReturnType<typeof getPageViewUserAgentData>;
-  user_hash: Awaited<ReturnType<typeof getPageViewUserIdHash>>;
+  userAgentData: Pick<Prisma.PageViewNextCreateInput, 'browser' | 'device' | 'os'>;
+  user_hash: string;
   date: string;
   geo: Required<Pick<Geo, 'city' | 'country' | 'flag' | 'latitude' | 'longitude'>>;
 };
@@ -40,23 +37,6 @@ const parsePageviewRequestData = async (request: Request): Promise<PageviewReque
   return data;
 };
 
-export const getPageViewUserIdHash = async (ip: string, userAgent: string, date: Date) => {
-  invariant(process.env.SECRET_KEY, 'Expected environment variable "SECRET_KEY" to be set when tracking page visitors');
-  const day = format(date, 'yyyy-MM-dd');
-  const msgUint8 = new TextEncoder().encode(`${ip}_${userAgent}_${day}_${process.env.SECRET_KEY}`); // encode as (utf-8) Uint8Array
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8); // hash the message
-  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
-  return hashHex;
-};
-
-export const getPageViewUserAgentData = (ua: UserAgentData): Pick<Prisma.PageViewNextCreateInput, 'browser' | 'device' | 'os'> => {
-  const browser = ua.browser.name || null;
-  const device = [ua.device.vendor, ua.device.model].filter(Boolean).join(' ') || null;
-  const os = ua.os.name || null;
-  return { browser, device, os };
-};
-
 const getLocation = async (geo: PageviewRequestData['geo']): Promise<Location> => {
   const flag_country_city: Prisma.LocationFlagCountryCityCompoundUniqueInput = { flag: geo.flag, country: geo.country, city: geo.city };
   const location: Prisma.LocationCreateWithoutPageViewsInput = {
@@ -78,7 +58,7 @@ const trackPageviewNext = async (request: Request, project: Project) => {
 
   await prismaClient.pageViewNext.create({
     data: {
-      date: date,
+      date,
       pathname: data.pathname,
       referrer: data.referrer,
       user_hash,
