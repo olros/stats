@@ -1,8 +1,9 @@
 import { Box, Card, Typography, useTheme } from '@mui/joy';
-import { ResponsiveBar } from '@nivo/bar';
-import { Suspense } from 'react';
+import { Suspense, lazy } from 'react';
 
 import type { getTopHours } from './loaders';
+
+const ResponsiveBar = lazy(() => import('~/components/nivo/ResponsiveBar'));
 
 export type Hour = Awaited<ReturnType<typeof getTopHours>>[number];
 
@@ -12,6 +13,7 @@ export type HoursOfTheDayProps = {
 
 export const HoursOfTheDay = ({ topHours }: HoursOfTheDayProps) => {
   const theme = useTheme();
+  return null;
   return (
     <Suspense fallback={null}>
       <Box sx={{ position: 'relative', height: 400 }}>
@@ -27,12 +29,14 @@ export const HoursOfTheDay = ({ topHours }: HoursOfTheDayProps) => {
           margin={{ top: 0, right: 20, bottom: 20, left: 35 }}
           padding={0.05}
           theme={{
-            textColor: theme.palette.text.primary,
             axis: {
               domain: { line: { stroke: theme.palette.background.level1 } },
             },
             grid: {
               line: { stroke: theme.palette.background.level1 },
+            },
+            text: {
+              fill: theme.palette.text.primary,
             },
           }}
           tooltip={({ value }) => (

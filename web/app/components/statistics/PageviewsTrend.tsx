@@ -1,8 +1,10 @@
 import { Box, Card, Typography, useTheme } from '@mui/joy';
-import { ResponsiveLine } from '@nivo/line';
-import { Suspense } from 'react';
+import { Suspense, lazy } from 'react';
 
 import type { getPageViewsTrend } from './loaders';
+import { useIsClient } from '~/hooks/useIsClient';
+
+const ResponsiveLine = lazy(() => import('~/components/nivo/ResponsiveLine'));
 
 export type PageviewsTrendProps = {
   pageViews: Awaited<ReturnType<typeof getPageViewsTrend>>;
@@ -12,6 +14,10 @@ export type PageviewsTrendProps = {
 
 export const PageviewsTrend = ({ pageViews, dateGte, dateLte }: PageviewsTrendProps) => {
   const theme = useTheme();
+  const isClient = useIsClient();
+  if (!isClient) {
+    return null;
+  }
   return (
     <Suspense fallback={null}>
       <Box sx={{ position: 'relative', height: 400 }}>
@@ -72,7 +78,6 @@ export const PageviewsTrend = ({ pageViews, dateGte, dateLte }: PageviewsTrendPr
             </Card>
           )}
           theme={{
-            textColor: theme.palette.text.primary,
             axis: {
               domain: { line: { stroke: theme.palette.background.level1 } },
             },
@@ -81,6 +86,9 @@ export const PageviewsTrend = ({ pageViews, dateGte, dateLte }: PageviewsTrendPr
             },
             legends: {
               text: { fill: theme.palette.text.primary },
+            },
+            text: {
+              fill: theme.palette.text.primary,
             },
           }}
           xFormat='time:%Y-%m-%d'
