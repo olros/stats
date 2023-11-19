@@ -1,8 +1,9 @@
 import { Box, Card, Typography, useTheme } from '@mui/joy';
-import { ResponsiveLine } from '@nivo/line';
-import { Suspense } from 'react';
+import { Suspense, lazy } from 'react';
 
 import type { getPageVisitorsTrend } from './loaders';
+
+const ResponsiveLine = lazy(() => import('~/components/nivo/ResponsiveLine'));
 
 export type VisitorsTrendProps = {
   pageVisitorsTrend: Awaited<ReturnType<typeof getPageVisitorsTrend>>;
@@ -13,8 +14,8 @@ export type VisitorsTrendProps = {
 export const VisitorsTrend = ({ pageVisitorsTrend, dateGte, dateLte }: VisitorsTrendProps) => {
   const theme = useTheme();
   return (
-    <Suspense fallback={null}>
-      <Box sx={{ position: 'relative', height: 400 }}>
+    <Box sx={{ position: 'relative', height: 400 }}>
+      <Suspense fallback={null}>
         <ResponsiveLine
           axisBottom={{
             format: '%b %d',
@@ -72,7 +73,6 @@ export const VisitorsTrend = ({ pageVisitorsTrend, dateGte, dateLte }: VisitorsT
             </Card>
           )}
           theme={{
-            textColor: theme.palette.text.primary,
             axis: {
               domain: { line: { stroke: theme.palette.background.level1 } },
             },
@@ -81,6 +81,9 @@ export const VisitorsTrend = ({ pageVisitorsTrend, dateGte, dateLte }: VisitorsT
             },
             legends: {
               text: { fill: theme.palette.text.primary },
+            },
+            text: {
+              fill: theme.palette.text.primary,
             },
           }}
           xFormat='time:%Y-%m-%d'
@@ -94,7 +97,7 @@ export const VisitorsTrend = ({ pageVisitorsTrend, dateGte, dateLte }: VisitorsT
           }}
           yScale={{ type: 'linear' }}
         />
-      </Box>
-    </Suspense>
+      </Suspense>
+    </Box>
   );
 };
