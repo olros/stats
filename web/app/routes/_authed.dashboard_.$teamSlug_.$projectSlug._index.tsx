@@ -22,7 +22,7 @@ import {
 import { secondsToMilliseconds } from 'date-fns';
 import { jsonHash } from 'remix-utils/json-hash';
 import invariant from 'tiny-invariant';
-import { useInterval } from 'usehooks-ts';
+import { useInterval } from '~/hooks/useInterval';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 

@@ -9,7 +9,7 @@ import { ConfirmDialog } from '~/components/ConfirmDialog';
 import { prismaClient } from '~/prismaClient';
 import { useCallback, useState } from 'react';
 import invariant from 'tiny-invariant';
-import { useIsClient } from 'usehooks-ts';
+import { useIsClient } from '~/hooks/useIsClient';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
