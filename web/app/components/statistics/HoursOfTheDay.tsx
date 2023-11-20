@@ -1,5 +1,5 @@
 import { Box, Card, Typography, useTheme } from '@mui/joy';
-import { Suspense, lazy } from 'react';
+import { lazy, Suspense } from 'react';
 
 import type { getTopHours } from './loaders';
 
