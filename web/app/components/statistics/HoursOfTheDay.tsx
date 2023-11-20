@@ -1,9 +1,8 @@
 import { Box, Card, Typography, useTheme } from '@mui/joy';
-import { lazy, Suspense } from 'react';
+import { ResponsiveBar } from '@nivo/bar';
+import { Suspense } from 'react';
 
 import type { getTopHours } from './loaders';
-
-const ResponsiveBar = lazy(() => import('~/components/nivo/ResponsiveBar'));
 
 export type Hour = Awaited<ReturnType<typeof getTopHours>>[number];
 

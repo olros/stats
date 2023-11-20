@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "sideEffects": false,
+  "type": "module",
   "scripts": {
-    "build": "remix build",
-    "dev": "remix dev",
+    "build": "vite build && vite build --ssr",
+    "dev": "vite dev",
     "start": "remix-serve build/index.js",
     "typecheck": "tsc -b",
     "db": "docker-compose up -d",
@@ -64,7 +65,9 @@
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^3.0.3",
     "prisma": "^5.6.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0",
+    "vite-tsconfig-paths": "^4.2.1"
   },
   "engines": {
     "node": ">=18"

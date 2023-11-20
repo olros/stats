@@ -1,0 +1,13 @@
+import { unstable_vitePlugin as remix } from '@remix-run/dev';
+import { defineConfig } from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
+
+export default defineConfig({
+  plugins: [remix({ ignoredRouteFiles: ['**/.*'], assetsBuildDirectory: 'dist', serverModuleFormat: 'esm' }), tsconfigPaths()],
+  build: {
+    outDir: 'dist',
+  },
+  ssr: {
+    noExternal: [/@nivo\/.+/, /@react-spring\/.+/, /d3-.+/, 'delaunator', 'internmap', 'react-lifecycles-compat'],
+  },
+});

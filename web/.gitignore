@@ -6,8 +6,11 @@ node_modules
 .output
 
 /build/
+/dist/
 /public/build
 /api/index.js
 /api/index.js.map
+
+*.DS_STORE
 
 *.log
