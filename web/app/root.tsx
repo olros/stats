@@ -1,6 +1,6 @@
 import FontStyles from '@fontsource/public-sans/index.css';
 import type { LinksFunction } from '@remix-run/node';
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from '@remix-run/react';
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLocation, useParams } from '@remix-run/react';
 import { ErrorBoundary as BaseErrorBoundary } from '~/components/ErrorBoundary';
 import StylesContext from '~/styles/server.context';
 import { useContext, useEffect } from 'react';
@@ -28,10 +28,12 @@ const Document = ({ children }: DocumentProps) => {
   const styleData = useContext(StylesContext);
 
   const location = useLocation();
+  const params = useParams<Record<string, string>>();
 
   useEffect(() => {
-    stats.pageview();
-  }, [location.pathname, location.search]);
+    const pathname = Object.entries(params as Record<string, string>).reduce((path, [key, param]) => path.replace(`/${param}`, `/:${key}`), location.pathname);
+    stats.pageview({ pathname });
+  }, [location.pathname, location.search, params]);
 
   return (
     <html data-joy-color-scheme='dark' lang='no'>
