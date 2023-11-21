@@ -10,13 +10,14 @@ export type LoadStatistics = {
 export const loadStatistics = async ({ request, teamSlug, projectSlug }: LoadStatistics) => {
   const { date, project, period } = await getWhereQuery({ request, teamSlug, projectSlug });
 
-  const [hoursOfWeekHeatMap, pageViewsTrend, uniqueUsersTrend] = await Promise.all([
+  const [hoursOfWeekHeatMap, pageViewsTrend, uniqueUsersTrend, topPages] = await Promise.all([
     getHoursOfWeekHeatMap({ project }),
     getPageViewsTrend({ date, project, period }),
     getUniqueUsersTrend({ date, project, period }),
+    getTopPages({ date, project }),
   ]);
 
-  return { period, date, hoursOfWeekHeatMap, pageViewsTrend, uniqueUsersTrend };
+  return { period, date, hoursOfWeekHeatMap, pageViewsTrend, uniqueUsersTrend, topPages };
 };
 
 const getDateFromSearchParam = (param: string | null) => {
@@ -75,6 +76,16 @@ const getUniqueUsersTrend = ({ project, date, period }: Pick<WhereQuery, 'projec
     WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
     GROUP BY "period"
     ORDER BY "period" ASC;
+  `;
+};
+
+const getTopPages = ({ project, date }: Pick<WhereQuery, 'project' | 'date'>) => {
+  return prismaClient.$queryRaw<{ pathname: string; count: number }>`
+    SELECT p.pathname, COUNT(*)::int as "count"
+    FROM public."PageViewNext" p
+    WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
+    GROUP BY p.pathname
+    ORDER BY "count" DESC;
   `;
 };
 
