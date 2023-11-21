@@ -19,7 +19,7 @@ export const Filters = ({ dateGte, dateLte }: FiltersProps) => {
           <Input defaultValue={dateLte} name='lte' type='date' />
         </FormControl>
         <Button sx={{ height: 40, mt: 'auto' }} type='submit'>
-          Oppdater
+          Update
         </Button>
       </Stack>
     </Card>

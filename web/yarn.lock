@@ -1176,6 +1176,22 @@
     d3-time-format "^3.0.0"
     lodash "^4.17.21"
 
+"@nivo/heatmap@^0.84.0":
+  version "0.84.0"
+  resolved "https://registry.yarnpkg.com/@nivo/heatmap/-/heatmap-0.84.0.tgz#212a57bd8d311dde8c8805e3c85783e8bef1f3bc"
+  integrity sha512-E7gj0Kd7DZiQp8tg5bm27uOljAXvBLMtho6d3vPOdAtzLYLUSg6xW/wWIrqvhup9IxWMOlgDvV4xENGhpoEglQ==
+  dependencies:
+    "@nivo/annotations" "0.84.0"
+    "@nivo/axes" "0.84.0"
+    "@nivo/colors" "0.84.0"
+    "@nivo/core" "0.84.0"
+    "@nivo/legends" "0.84.0"
+    "@nivo/scales" "0.84.0"
+    "@nivo/tooltip" "0.84.0"
+    "@react-spring/web" "9.4.5 || ^9.7.2"
+    "@types/d3-scale" "^3.2.3"
+    d3-scale "^3.2.3"
+
 "@nivo/legends@0.84.0":
   version "0.84.0"
   resolved "https://registry.yarnpkg.com/@nivo/legends/-/legends-0.84.0.tgz#d89def3427aaa509721a9b6f38c813dd38401aff"

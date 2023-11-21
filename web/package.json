@@ -25,6 +25,7 @@
     "@neondatabase/serverless": "^0.6.0",
     "@nivo/bar": "^0.84.0",
     "@nivo/core": "^0.84.0",
+    "@nivo/heatmap": "^0.84.0",
     "@nivo/line": "^0.84.0",
     "@olros/stats": "^2.2.1",
     "@prisma/adapter-neon": "^5.5.2",

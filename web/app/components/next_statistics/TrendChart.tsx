@@ -9,7 +9,7 @@ const ResponsiveLine = lazy(() => import('~/components/nivo/ResponsiveLine'));
 
 export type TrendChartProps = {
   period: LoadStatisticsSerialized['period'];
-  trend: TrendSerialized;
+  trend: TrendSerialized[];
   dateGte: string;
   dateLte: string;
   tooltipTitle: string;

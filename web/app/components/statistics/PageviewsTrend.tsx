@@ -13,7 +13,6 @@ export type PageviewsTrendProps = {
 
 export const PageviewsTrend = ({ pageViews, dateGte, dateLte }: PageviewsTrendProps) => {
   const theme = useTheme();
-  console.log(pageViews);
   return (
     <Box sx={{ position: 'relative', height: 400 }}>
       <Suspense fallback={null}>

@@ -20,7 +20,5 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 export default function ProjectPageviewsStatistics() {
   const { statistics } = useLoaderData<typeof loader>();
 
-  console.log(statistics);
-
   return <Statistics statistics={statistics} />;
 }

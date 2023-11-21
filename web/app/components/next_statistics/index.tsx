@@ -1,15 +1,26 @@
-import { Card, Stack, Typography } from '@mui/joy';
+import { Box, Button, ButtonGroup, Card, Stack, Typography } from '@mui/joy';
 import { AggregatedCard } from '~/components/next_statistics/AggregatedCard';
 import { Filters } from '~/components/next_statistics/Filters';
+import { useState } from 'react';
 
-import type { LoadStatisticsSerialized } from './loader';
+import { BarChart } from './BarChart';
+import { HeatMapChart } from './HeatMapChart';
+import type { LoadStatisticsSerialized, TopData } from './loader';
 import { TrendChart } from './TrendChart';
 
 export type StatisticsProps = {
   statistics: LoadStatisticsSerialized;
 };
 
+type DEVICE_STAT = 'Browser' | 'OS' | 'Device';
+
 export const Statistics = ({ statistics }: StatisticsProps) => {
+  const [deviceStat, setDeviceStat] = useState<DEVICE_STAT>('Browser');
+  const deviceStats: Record<DEVICE_STAT, TopData[]> = {
+    Browser: statistics.topBrowsers,
+    OS: statistics.topOS,
+    Device: statistics.topDevices,
+  };
   return (
     <Stack gap={1}>
       <Stack direction={{ xs: 'column-reverse', lg: 'row' }} gap={1}>
@@ -19,8 +30,8 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
         </Stack>
         <Filters dateGte={statistics.date.gte} dateLte={statistics.date.lte} />
       </Stack>
-      <Card sx={{ p: 2 }}>
-        <Typography gutterBottom level='h3'>
+      <Card>
+        <Typography gutterBottom level='h4'>
           Pageviews trend
         </Typography>
         <TrendChart
@@ -31,35 +42,58 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
           trend={statistics.pageViewsTrend}
         />
       </Card>
-      {/* <Box sx={{ display: 'grid', gap: 1, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
+      <Box sx={{ display: 'grid', gap: 1, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
         <Card>
-          <Typography level='h3'>Top pages</Typography>
-          <Typography gutterBottom level='body-md'>
-            Which pages get more pageviews
-          </Typography>
-          <TopPages topPages={topPages} />
+          <Typography level='h4'>Top sources</Typography>
+          <BarChart countTitle='Visitors' data={statistics.topReferrers} maxCount={statistics.totalPageViews.count} nullText='Direct / None' title='Source' />
         </Card>
         <Card>
-          <Typography level='h3'>Top custom events</Typography>
-          <Typography gutterBottom level='body-md'>
-            Number of events per custom event
-          </Typography>
-          <TopCustomEvents topCustomEvents={topCustomEvents} />
+          <Typography level='h4'>Top pages</Typography>
+          <BarChart countTitle='Visitors' data={statistics.topPages} maxCount={statistics.totalPageViews.count} title='Page' />
+        </Card>
+        <Card>
+          <Stack direction='row' justifyContent='space-between'>
+            <Typography level='h4'>Devices</Typography>
+            <ButtonGroup size='sm' variant='plain'>
+              {Object.keys(deviceStats).map((stat) => (
+                <Button key={stat} onClick={() => setDeviceStat(stat as DEVICE_STAT)} variant={stat === deviceStat ? 'soft' : 'plain'}>
+                  {stat}
+                </Button>
+              ))}
+            </ButtonGroup>
+          </Stack>
+          <BarChart countTitle='Visitors' data={deviceStats[deviceStat]} maxCount={statistics.totalPageViews.count} nullText='(Unknown)' title={deviceStat} />
+        </Card>
+        <Card>
+          <Typography level='h4'>Top custom events</Typography>
+          <BarChart countTitle='Count' data={statistics.topCustomEvents} title='Event' />
         </Card>
       </Box>
       <Card>
-        <Typography level='h3'>Hours of the day</Typography>
-        <Typography gutterBottom level='body-md'>
-          What times during the day has most pageviews
-        </Typography>
-        <HoursOfTheDay topHours={topHours} />
-      </Card>
-      <Card sx={{ p: 2 }}>
-        <Typography gutterBottom level='h3'>
+        <Typography gutterBottom level='h4'>
           Unique visitors trend
         </Typography>
-        <VisitorsTrend dateGte={dateGte} dateLte={dateLte} pageVisitorsTrend={pageVisitorsTrend} />
-      </Card> */}
+        <TrendChart
+          dateGte={statistics.date.gte}
+          dateLte={statistics.date.lte}
+          period={statistics.period}
+          tooltipTitle='Unique visitors'
+          trend={statistics.uniqueUsersTrend}
+        />
+      </Card>
+      <Box sx={{ display: 'grid', gap: 1, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
+        <Card>
+          <Typography gutterBottom level='h4'>
+            Locations
+          </Typography>
+        </Card>
+        <Card>
+          <Typography gutterBottom level='h4'>
+            Top time of day / week
+          </Typography>
+          <HeatMapChart data={statistics.hoursOfWeekHeatMap} />
+        </Card>
+      </Box>
     </Stack>
   );
 };

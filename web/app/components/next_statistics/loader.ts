@@ -1,6 +1,6 @@
 import type { SerializeFrom } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
-import { addDays, eachDayOfInterval, endOfDay, format, isDate, isSameDay, set, startOfDay, subMinutes } from 'date-fns';
+import { addDays, eachDayOfInterval, endOfDay, format, isDate, isSameDay, set, setDay, startOfDay, subMinutes } from 'date-fns';
 
 export type LoadStatistics = Awaited<ReturnType<typeof loadStatistics>>;
 export type LoadStatisticsSerialized = SerializeFrom<Awaited<ReturnType<typeof loadStatistics>>>;
@@ -8,8 +8,21 @@ export type LoadStatisticsSerialized = SerializeFrom<Awaited<ReturnType<typeof l
 export type Trend = {
   x: Date;
   y: number;
-}[];
+};
 export type TrendSerialized = SerializeFrom<Trend>;
+
+export type TopData = {
+  name: string | null;
+  count: number;
+};
+
+export type HeatMap = {
+  id: string;
+  data: {
+    x: string;
+    y: number;
+  }[];
+};
 
 export type LoadStatisticsProps = {
   request: Request;
@@ -20,24 +33,46 @@ export type LoadStatisticsProps = {
 export const loadStatistics = async ({ request, teamSlug, projectSlug }: LoadStatisticsProps) => {
   const { date, project, period } = await getWhereQuery({ request, teamSlug, projectSlug });
 
-  const [hoursOfWeekHeatMap, pageViewsTrend, uniqueUsersTrend, topPages, totalPageViews, currentUsers] = await Promise.all([
-    getHoursOfWeekHeatMap({ project }),
+  const [
+    currentUsers,
+    hoursOfWeekHeatMap,
+    pageViewsTrend,
+    topCustomEvents,
+    topBrowsers,
+    topDevices,
+    topOS,
+    topReferrers,
+    topPages,
+    totalPageViews,
+    uniqueUsersTrend,
+  ] = await Promise.all([
+    getCurrentUsers({ project }),
+    getHoursOfWeekHeatMap({ project, date }),
     getPageViewsTrend({ date, project, period }),
-    getUniqueUsersTrend({ date, project, period }),
+    getTopCustomEvents({ date, project }),
+    getTopBrowsers({ date, project }),
+    getTopDevices({ date, project }),
+    getTopOS({ date, project }),
+    getTopReferrers({ date, project }),
     getTopPages({ date, project }),
     getTotalPageViews({ date, project }),
-    getCurrentUsers({ project }),
+    getUniqueUsersTrend({ date, project, period }),
   ]);
 
   return {
-    period,
+    currentUsers,
     date: { gte: formatFilterDate(date.gte), lte: formatFilterDate(date.lte) },
     hoursOfWeekHeatMap,
     pageViewsTrend,
-    uniqueUsersTrend,
+    period,
+    topCustomEvents,
+    topBrowsers,
+    topDevices,
+    topOS,
+    topReferrers,
     topPages,
     totalPageViews,
-    currentUsers,
+    uniqueUsersTrend,
   };
 };
 
@@ -98,7 +133,7 @@ const getCurrentUsers = async ({ project }: Pick<WhereQuery, 'project'>) => {
   `.then((rows) => rows[0]);
 };
 
-const getPageViewsTrend = async ({ project, date, period }: Pick<WhereQuery, 'project' | 'date' | 'period'>): Promise<Trend> => {
+const getPageViewsTrend = async ({ project, date, period }: Pick<WhereQuery, 'project' | 'date' | 'period'>): Promise<Trend[]> => {
   const rows = await prismaClient.$queryRaw<{ period: Date; count: number }[]>`
     SELECT DATE_TRUNC(${period}, p.date) as "period", COUNT(*)::int as "count"
     FROM public."PageViewNext" p
@@ -110,7 +145,7 @@ const getPageViewsTrend = async ({ project, date, period }: Pick<WhereQuery, 'pr
   return days.map((day) => ({ x: day, y: rows.find((point) => isSameDay(point.period, day))?.count || 0 }));
 };
 
-const getUniqueUsersTrend = async ({ project, date, period }: Pick<WhereQuery, 'project' | 'date' | 'period'>): Promise<Trend> => {
+const getUniqueUsersTrend = async ({ project, date, period }: Pick<WhereQuery, 'project' | 'date' | 'period'>): Promise<Trend[]> => {
   const rows = await prismaClient.$queryRaw<{ period: Date; count: number }[]>`
     SELECT DATE_TRUNC(${period}, p.date) as "period", COUNT(DISTINCT p.user_hash)::int as "count"
     FROM public."PageViewNext" p
@@ -122,23 +157,68 @@ const getUniqueUsersTrend = async ({ project, date, period }: Pick<WhereQuery, '
   return days.map((day) => ({ x: day, y: rows.find((point) => isSameDay(point.period, day))?.count || 0 }));
 };
 
-const getTopPages = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>) => {
-  return prismaClient.$queryRaw<{ pathname: string; count: number }[]>`
-    SELECT p.pathname, COUNT(*)::int as "count"
+const getTopPages = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>): Promise<TopData[]> => {
+  return prismaClient.$queryRaw<TopData[]>`
+    SELECT p.pathname as "name", COUNT(*)::int as "count"
     FROM public."PageViewNext" p
     WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
     GROUP BY p.pathname
-    ORDER BY "count" DESC;
+    ORDER BY "count" DESC
+    LIMIT 50;
   `;
 };
 
-const getHoursOfWeekHeatMap = async ({ project }: Pick<WhereQuery, 'project'>) => {
-  return prismaClient.$queryRaw<{ day: number; hour: number; count: number }[]>`
+const getTopReferrers = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>): Promise<TopData[]> => {
+  return prismaClient.$queryRaw<TopData[]>`
+    SELECT p.referrer as "name", COUNT(*)::int as "count"
+    FROM public."PageViewNext" p
+    WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
+    GROUP BY p.referrer
+    ORDER BY "count" DESC
+    LIMIT 50;
+  `;
+};
+
+const getTopBrowsers = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>): Promise<TopData[]> => {
+  return prismaClient.$queryRaw<TopData[]>`
+    SELECT p.browser as "name", COUNT(*)::int as "count"
+    FROM public."PageViewNext" p
+    WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
+    GROUP BY p.browser
+    ORDER BY "count" DESC
+    LIMIT 50;
+  `;
+};
+
+const getTopOS = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>): Promise<TopData[]> => {
+  return prismaClient.$queryRaw<TopData[]>`
+    SELECT p.os as "name", COUNT(*)::int as "count"
+    FROM public."PageViewNext" p
+    WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
+    GROUP BY p.os
+    ORDER BY "count" DESC
+    LIMIT 50;
+  `;
+};
+
+const getTopDevices = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>): Promise<TopData[]> => {
+  return prismaClient.$queryRaw<TopData[]>`
+    SELECT p.device as "name", COUNT(*)::int as "count"
+    FROM public."PageViewNext" p
+    WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
+    GROUP BY p.device
+    ORDER BY "count" DESC
+    LIMIT 50;
+  `;
+};
+
+const getHoursOfWeekHeatMap = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>): Promise<HeatMap[]> => {
+  const rows = await prismaClient.$queryRaw<{ day: number; hour: number; count: number }[]>`
     WITH weekHours AS (
       SELECT a AS "day", b AS "hour" FROM generate_series(0,6) a, generate_series(0,23) b
     ),
     projectPageViews AS (
-      SELECT date FROM public."PageViewNext" WHERE "projectId" = ${project.id}
+      SELECT date FROM public."PageViewNext" p WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
     )
     SELECT
       weekHours."day",
@@ -148,5 +228,27 @@ const getHoursOfWeekHeatMap = async ({ project }: Pick<WhereQuery, 'project'>) =
     LEFT JOIN projectPageViews p ON "day" = EXTRACT(dow FROM p.date) AND "hour" = EXTRACT(hour FROM p.date)
     GROUP BY "day", "hour"
     ORDER BY "day", "hour";
+  `;
+  const heatMap: Record<number, HeatMap> = {};
+  rows.forEach((row) => {
+    if (!heatMap[row.hour]) {
+      const data = [1, 2, 3, 4, 5, 6, 0].map((day) => ({
+        x: format(setDay(new Date(), day), 'eee'),
+        y: rows.find((r) => r.hour === row.hour && r.day === day)?.count || 0,
+      }));
+      heatMap[row.hour] = { id: String(row.hour), data };
+    }
+  });
+  return Object.values(heatMap);
+};
+
+const getTopCustomEvents = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>): Promise<TopData[]> => {
+  return prismaClient.$queryRaw<TopData[]>`
+    SELECT e.name, SUM(e.count)::int as "count"
+    FROM public."CustomEvent" e
+    WHERE e."projectId" = ${project.id} AND e.date BETWEEN ${date.gte} AND ${date.lte}
+    GROUP BY e.name
+    ORDER BY "count" DESC
+    LIMIT 50;
   `;
 };
