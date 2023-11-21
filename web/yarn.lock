@@ -6802,10 +6802,10 @@ typescript@^5.2.2:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.2.2.tgz#5ebb5e5a5b75f085f22bc3f8460fba308310fa78"
   integrity sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==
 
-ua-parser-js@^2.0.0-beta.1:
-  version "2.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-2.0.0-beta.1.tgz#d5d026df62dcdc7ade36b3a8c5ea4f1d66c5bca2"
-  integrity sha512-wc7k9+bsNU4Pk4rSeTcUb25WgZJrEBgSzexKRR+ARTLq0m3PB3SLOCJzqGUtAXamN7gJUqWkyayZ2uFeT5thQg==
+ua-parser-js@^1.0.37:
+  version "1.0.37"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-1.0.37.tgz#b5dc7b163a5c1f0c510b08446aed4da92c46373f"
+  integrity sha512-bhTyI94tZofjo+Dn8SN6Zv8nBDvyXTymAdM3LDI/0IboIUwTu1rEhW7v2TfiVsoYWgkQ4kOVqnI8APUFbIQIFQ==
 
 ufo@^1.1.0:
   version "1.1.0"
