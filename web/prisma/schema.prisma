@@ -103,13 +103,14 @@ model PageVisitor {
 model PageViewNext {
   id String @id @default(uuid()) @db.Uuid
 
-  date      DateTime
-  pathname  String
-  user_hash String
-  referrer  String?
-  browser   String?
-  device    String?
-  os        String?
+  date        DateTime
+  pathname    String
+  user_hash   String
+  referrer    String?
+  browser     String?
+  device      String?
+  device_size String?
+  os          String?
 
   locationId Int
   location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
