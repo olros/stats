@@ -1,6 +1,7 @@
 import { useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
+import { Statistics } from '~/components/next_statistics';
 import { loadStatistics } from '~/components/next_statistics/loader';
 import { jsonHash } from 'remix-utils/json-hash';
 import invariant from 'tiny-invariant';
@@ -11,8 +12,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
   await ensureIsTeamMember(request, params.teamSlug);
-  const statistics = await loadStatistics({ request, teamSlug: params.teamSlug, projectSlug: params.projectSlug });
-  console.log(statistics);
   return jsonHash({
     statistics: loadStatistics({ request, teamSlug: params.teamSlug, projectSlug: params.projectSlug }),
   });
@@ -23,5 +22,5 @@ export default function ProjectPageviewsStatistics() {
 
   console.log(statistics);
 
-  return <p>Statistics</p>;
+  return <Statistics statistics={statistics} />;
 }

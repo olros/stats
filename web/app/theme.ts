@@ -7,11 +7,11 @@ export const theme = extendTheme({
     body: 'Public Sans',
   },
   radius: {
-    xs: '8px',
-    sm: '12px',
-    md: '16px',
-    lg: '20px',
-    xl: '26px',
+    xs: '6px',
+    sm: '10px',
+    md: '14px',
+    lg: '18px',
+    xl: '22px',
   },
   components: {
     JoyCard: {

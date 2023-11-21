@@ -1,24 +1,47 @@
+import type { SerializeFrom } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
-import { addDays, endOfDay, isDate, startOfDay } from 'date-fns';
+import { addDays, eachDayOfInterval, endOfDay, format, isDate, isSameDay, set, startOfDay, subMinutes } from 'date-fns';
 
-export type LoadStatistics = {
+export type LoadStatistics = Awaited<ReturnType<typeof loadStatistics>>;
+export type LoadStatisticsSerialized = SerializeFrom<Awaited<ReturnType<typeof loadStatistics>>>;
+
+export type Trend = {
+  x: Date;
+  y: number;
+}[];
+export type TrendSerialized = SerializeFrom<Trend>;
+
+export type LoadStatisticsProps = {
   request: Request;
   teamSlug: string;
   projectSlug: string;
 };
 
-export const loadStatistics = async ({ request, teamSlug, projectSlug }: LoadStatistics) => {
+export const loadStatistics = async ({ request, teamSlug, projectSlug }: LoadStatisticsProps) => {
   const { date, project, period } = await getWhereQuery({ request, teamSlug, projectSlug });
 
-  const [hoursOfWeekHeatMap, pageViewsTrend, uniqueUsersTrend, topPages] = await Promise.all([
+  const [hoursOfWeekHeatMap, pageViewsTrend, uniqueUsersTrend, topPages, totalPageViews, currentUsers] = await Promise.all([
     getHoursOfWeekHeatMap({ project }),
     getPageViewsTrend({ date, project, period }),
     getUniqueUsersTrend({ date, project, period }),
     getTopPages({ date, project }),
+    getTotalPageViews({ date, project }),
+    getCurrentUsers({ project }),
   ]);
 
-  return { period, date, hoursOfWeekHeatMap, pageViewsTrend, uniqueUsersTrend, topPages };
+  return {
+    period,
+    date: { gte: formatFilterDate(date.gte), lte: formatFilterDate(date.lte) },
+    hoursOfWeekHeatMap,
+    pageViewsTrend,
+    uniqueUsersTrend,
+    topPages,
+    totalPageViews,
+    currentUsers,
+  };
 };
+
+const formatFilterDate = (date: Date) => format(date, 'yyyy-MM-dd');
 
 const getDateFromSearchParam = (param: string | null) => {
   if (!param) return undefined;
@@ -44,7 +67,7 @@ const getFilteringParams = (request: Request) => {
 
 type WhereQuery = Awaited<ReturnType<typeof getWhereQuery>>;
 
-const getWhereQuery = async ({ request, teamSlug, projectSlug }: Pick<LoadStatistics, 'teamSlug' | 'projectSlug' | 'request'>) => {
+const getWhereQuery = async ({ request, teamSlug, projectSlug }: Pick<LoadStatisticsProps, 'teamSlug' | 'projectSlug' | 'request'>) => {
   const { dateGte, dateLte, period } = getFilteringParams(request);
 
   const project = await prismaClient.project.findFirstOrThrow({
@@ -59,28 +82,48 @@ const getWhereQuery = async ({ request, teamSlug, projectSlug }: Pick<LoadStatis
   return { date, project, period };
 };
 
-const getPageViewsTrend = ({ project, date, period }: Pick<WhereQuery, 'project' | 'date' | 'period'>) => {
-  return prismaClient.$queryRaw<{ period: Date; count: number }>`
+const getTotalPageViews = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>) => {
+  return prismaClient.$queryRaw<{ count: number }[]>`
+    SELECT COUNT(*)::int as "count"
+    FROM public."PageViewNext" p
+    WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
+  `.then((rows) => rows[0]);
+};
+
+const getCurrentUsers = async ({ project }: Pick<WhereQuery, 'project'>) => {
+  return prismaClient.$queryRaw<{ count: number }[]>`
+    SELECT COUNT(DISTINCT p.user_hash)::int as "count"
+    FROM public."PageViewNext" p
+    WHERE p."projectId" = ${project.id} AND p.date >= ${subMinutes(new Date(), 2)};
+  `.then((rows) => rows[0]);
+};
+
+const getPageViewsTrend = async ({ project, date, period }: Pick<WhereQuery, 'project' | 'date' | 'period'>): Promise<Trend> => {
+  const rows = await prismaClient.$queryRaw<{ period: Date; count: number }[]>`
     SELECT DATE_TRUNC(${period}, p.date) as "period", COUNT(*)::int as "count"
     FROM public."PageViewNext" p
     WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
     GROUP BY "period"
     ORDER BY "period" ASC;
   `;
+  const days = eachDayOfInterval({ start: date.gte, end: date.lte }).map((day) => set(day, { hours: 12 }));
+  return days.map((day) => ({ x: day, y: rows.find((point) => isSameDay(point.period, day))?.count || 0 }));
 };
 
-const getUniqueUsersTrend = ({ project, date, period }: Pick<WhereQuery, 'project' | 'date' | 'period'>) => {
-  return prismaClient.$queryRaw<{ period: Date; count: number }>`
+const getUniqueUsersTrend = async ({ project, date, period }: Pick<WhereQuery, 'project' | 'date' | 'period'>): Promise<Trend> => {
+  const rows = await prismaClient.$queryRaw<{ period: Date; count: number }[]>`
     SELECT DATE_TRUNC(${period}, p.date) as "period", COUNT(DISTINCT p.user_hash)::int as "count"
     FROM public."PageViewNext" p
     WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
     GROUP BY "period"
     ORDER BY "period" ASC;
   `;
+  const days = eachDayOfInterval({ start: date.gte, end: date.lte }).map((day) => set(day, { hours: 12 }));
+  return days.map((day) => ({ x: day, y: rows.find((point) => isSameDay(point.period, day))?.count || 0 }));
 };
 
-const getTopPages = ({ project, date }: Pick<WhereQuery, 'project' | 'date'>) => {
-  return prismaClient.$queryRaw<{ pathname: string; count: number }>`
+const getTopPages = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>) => {
+  return prismaClient.$queryRaw<{ pathname: string; count: number }[]>`
     SELECT p.pathname, COUNT(*)::int as "count"
     FROM public."PageViewNext" p
     WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
@@ -89,8 +132,8 @@ const getTopPages = ({ project, date }: Pick<WhereQuery, 'project' | 'date'>) =>
   `;
 };
 
-const getHoursOfWeekHeatMap = ({ project }: Pick<WhereQuery, 'project'>) => {
-  return prismaClient.$queryRaw<{ day: number; hour: number; count: number }>`
+const getHoursOfWeekHeatMap = async ({ project }: Pick<WhereQuery, 'project'>) => {
+  return prismaClient.$queryRaw<{ day: number; hour: number; count: number }[]>`
     WITH weekHours AS (
       SELECT a AS "day", b AS "hour" FROM generate_series(0,6) a, generate_series(0,23) b
     ),
