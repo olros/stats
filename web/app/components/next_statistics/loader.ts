@@ -26,7 +26,7 @@ const getDateFromSearchParam = (param: string | null) => {
   return date;
 };
 
-const PERIOD_TYPES = ['month', 'day', 'hour'] as const;
+const PERIOD_TYPES = ['day', 'hour'] as const;
 type PERIOD = (typeof PERIOD_TYPES)[number];
 
 const getFilteringParams = (request: Request) => {
