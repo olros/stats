@@ -5,7 +5,7 @@ import { lazy, Suspense, useMemo } from 'react';
 
 import type { LoadStatisticsSerialized, TrendSerialized } from './loader.server';
 
-const ResponsiveLine = lazy(() => import('~/components/nivo/ResponsiveLine'));
+const ResponsiveLine = lazy(() => import('~/components/lazy/ResponsiveLine'));
 
 export type TrendChartProps = {
   period: LoadStatisticsSerialized['period'];

@@ -38,7 +38,7 @@ const parsePageviewRequestData = async (request: Request): Promise<PageviewReque
 };
 
 const getLocation = async (geo: PageviewRequestData['geo']): Promise<Location> => {
-  const country_city: Prisma.LocationCountryCityCompoundUniqueInput = { country: geo.country, city: geo.city };
+  const country_city: Prisma.LocationCountryCityCompoundUniqueInput = { country: geo.country, city: decodeURIComponent(geo.city) };
   const location: Prisma.LocationCreateWithoutPageViewsInput = {
     ...country_city,
     flag: geo.flag,
@@ -61,7 +61,7 @@ const trackPageviewNext = async (request: Request, project: Project) => {
     data: {
       date,
       pathname: data.pathname,
-      referrer: data.referrer,
+      referrer: data.referrer ? new URL(data.referrer).host : null,
       user_hash,
       browser: userAgentData.browser,
       device: userAgentData.device,

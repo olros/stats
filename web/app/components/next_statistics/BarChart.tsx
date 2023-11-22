@@ -46,7 +46,7 @@ export const BarChart = ({ data, maxCount, title, countTitle, nullText }: BarCha
                 }}
               />
               <Typography level='body-md' sx={{ py: 0.5, px: 1, position: 'relative', zIndex: 2, wordBreak: 'break-word' }}>
-                {row.name || nullText}
+                {decodeURIComponent(row.name || nullText || '')}
               </Typography>
             </Box>
             <Typography level='body-md' sx={{ py: 0.5, textAlign: 'right' }}>

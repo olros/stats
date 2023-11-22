@@ -18,6 +18,11 @@ export type TopData = {
   count: number;
 };
 
+export type TopGeoLocationData = TopData & {
+  latitude: number;
+  longitude: number;
+};
+
 export type HeatMap = {
   id: string;
   data: {
@@ -41,6 +46,7 @@ export const loadStatistics = async ({ request, teamSlug, projectSlug }: LoadSta
     pageViewsTrend,
     topCustomEvents,
     topBrowsers,
+    topGeoLocations,
     topDevices,
     topOS,
     topReferrers,
@@ -53,6 +59,7 @@ export const loadStatistics = async ({ request, teamSlug, projectSlug }: LoadSta
     getPageViewsTrend({ date, project, period }),
     getTopCustomEvents({ date, project }),
     getTopBrowsers({ date, project }),
+    getTopGeoLocations({ date, project }),
     getTopDevices({ date, project }),
     getTopOS({ date, project }),
     getTopReferrers({ date, project }),
@@ -69,6 +76,7 @@ export const loadStatistics = async ({ request, teamSlug, projectSlug }: LoadSta
     period,
     topCustomEvents,
     topBrowsers,
+    topGeoLocations,
     topDevices,
     topOS,
     topReferrers,
@@ -187,6 +195,18 @@ const getTopDevices = async ({ project, date }: Pick<WhereQuery, 'project' | 'da
     GROUP BY p.device
     ORDER BY "count" DESC
     LIMIT 50;
+  `;
+};
+
+const getTopGeoLocations = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>): Promise<TopGeoLocationData[]> => {
+  return prismaClient.$queryRaw<TopGeoLocationData[]>`
+    SELECT CONCAT(l.flag, ' ', l.city) as "name", l.latitude, l.longitude, COUNT(*)::int as "count"
+    FROM public."PageViewNext" p
+    JOIN public."Location" l ON p."locationId" = l.id
+    WHERE p."projectId" = ${project.id} AND p.date BETWEEN ${date.gte} AND ${date.lte}
+    GROUP BY l.id
+    ORDER BY "count" DESC
+    LIMIT 250;
   `;
 };
 

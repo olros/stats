@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'react';
 
 import type { HeatMap } from './loader.server';
 
-const ResponsiveHeatMap = lazy(() => import('~/components/nivo/ResponsiveHeatMap'));
+const ResponsiveHeatMap = lazy(() => import('~/components/lazy/ResponsiveHeatMap'));
 
 export type HeatMapProps = {
   data: HeatMap[];
@@ -23,7 +23,7 @@ export const HeatMapChart = ({ data }: HeatMapProps) => {
           data={data}
           emptyColor={theme.palette.background.level1}
           isInteractive={false}
-          margin={{ top: 20, right: 15, bottom: 15, left: 25 }}
+          margin={{ top: 20, right: 0, bottom: 0, left: 25 }}
           theme={{
             legends: { text: { fill: theme.palette.text.primary } },
             text: { fill: theme.palette.text.primary },

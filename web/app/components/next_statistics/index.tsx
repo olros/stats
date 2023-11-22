@@ -4,6 +4,7 @@ import { Filters } from '~/components/next_statistics/Filters';
 import { useState } from 'react';
 
 import { BarChart } from './BarChart';
+import { GlobeWithCities } from './GlobeWithCities';
 import { HeatMapChart } from './HeatMapChart';
 import type { LoadStatisticsSerialized, TopData } from './loader.server';
 import { TrendChart } from './TrendChart';
@@ -107,14 +108,16 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
       </Card>
       <Box sx={{ display: 'grid', gap: 1, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
         <Card>
-          <Typography gutterBottom level='h4'>
-            Locations
-          </Typography>
+          <Typography level='h4'>Geolocations</Typography>
+          <GlobeWithCities data={statistics.topGeoLocations} />
         </Card>
         <Card>
-          <Typography gutterBottom level='h4'>
-            Top time of day / week
-          </Typography>
+          <Typography level='h4'>Top locations</Typography>
+          <BarChart countTitle='Visitors' data={statistics.topGeoLocations} title='Location' />
+        </Card>
+        <Card>
+          <Typography level='h4'>Top time of day / week</Typography>
+          <Typography level='body-sm'>The hours are in UTC-time</Typography>
           <HeatMapChart data={statistics.hoursOfWeekHeatMap} />
         </Card>
       </Box>
