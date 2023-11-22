@@ -45,7 +45,7 @@ export const BarChart = ({ data, maxCount, title, countTitle, nullText }: BarCha
                   borderRadius: ({ radius }) => radius.xs,
                 }}
               />
-              <Typography level='body-md' sx={{ py: 0.5, px: 1, position: 'relative', zIndex: 2 }}>
+              <Typography level='body-md' sx={{ py: 0.5, px: 1, position: 'relative', zIndex: 2, wordBreak: 'break-word' }}>
                 {row.name || nullText}
               </Typography>
             </Box>

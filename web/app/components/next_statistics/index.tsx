@@ -5,8 +5,9 @@ import { useState } from 'react';
 
 import { BarChart } from './BarChart';
 import { HeatMapChart } from './HeatMapChart';
-import { CURRENT_VISITORS_LAST_MINUTES, type LoadStatisticsSerialized, type TopData } from './loader.server';
+import type { LoadStatisticsSerialized, TopData } from './loader.server';
 import { TrendChart } from './TrendChart';
+import { CURRENT_VISITORS_LAST_MINUTES } from './utils';
 
 export type StatisticsProps = {
   statistics: LoadStatisticsSerialized;
