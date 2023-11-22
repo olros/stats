@@ -7,6 +7,7 @@ import { BarChart } from './BarChart';
 import { GlobeWithCities } from './GlobeWithCities';
 import { HeatMapChart } from './HeatMapChart';
 import type { LoadStatisticsSerialized, TopData } from './loader.server';
+import { TimeRangeChart } from './TimeRangeChart';
 import { TrendChart } from './TrendChart';
 import { CURRENT_VISITORS_LAST_MINUTES } from './utils';
 
@@ -119,6 +120,10 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
           <Typography level='h4'>Top time of day / week</Typography>
           <Typography level='body-sm'>The hours are in UTC-time</Typography>
           <HeatMapChart data={statistics.hoursOfWeekHeatMap} />
+        </Card>
+        <Card>
+          <Typography level='h4'>Calendar</Typography>
+          <TimeRangeChart dateGte={statistics.date.gte} dateLte={statistics.date.lte} period={statistics.period} trend={statistics.pageViewsTrend} />
         </Card>
       </Box>
     </Stack>
