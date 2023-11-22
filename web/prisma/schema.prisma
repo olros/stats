@@ -103,7 +103,7 @@ model PageVisitor {
 model PageViewNext {
   id String @id @default(uuid()) @db.Uuid
 
-  date        DateTime
+  date        DateTime @db.Timestamptz(3)
   pathname    String
   user_hash   String
   referrer    String?
