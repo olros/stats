@@ -4,7 +4,6 @@ import type { ActionFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import type { UserAgentData } from '~/user-agent';
 import { userAgent } from '~/user-agent';
-import { getDate } from '~/utils_api.server';
 import { forwardRequestToInternalApi } from '~/utils_edge.server';
 import { format } from 'date-fns';
 import invariant from 'tiny-invariant';
@@ -42,7 +41,7 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
   const geo = geolocation(request);
   const ip = ipAddress(request);
   const ua = userAgent(request);
-  const date = getDate(request);
+  const date = new Date();
 
   const geoData: PageviewRequestData['geo'] | undefined =
     geo.city && geo.country && geo.flag && geo.latitude && geo.longitude ? (geo as PageviewRequestData['geo']) : undefined;
