@@ -3,7 +3,7 @@ import type { Serie } from '@nivo/line';
 import { format } from 'date-fns';
 import { lazy, Suspense, useMemo } from 'react';
 
-import type { LoadStatisticsSerialized, TrendSerialized } from './loader';
+import type { LoadStatisticsSerialized, TrendSerialized } from './loader.server';
 
 const ResponsiveLine = lazy(() => import('~/components/nivo/ResponsiveLine'));
 

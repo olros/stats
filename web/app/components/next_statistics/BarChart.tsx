@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/joy';
 import { Fragment } from 'react';
 
-import type { TopData } from './loader';
+import type { TopData } from './loader.server';
 
 export type BarChartProps = {
   data: TopData[];

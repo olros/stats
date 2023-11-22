@@ -1,7 +1,7 @@
 import { Box, useTheme } from '@mui/joy';
 import { lazy, Suspense } from 'react';
 
-import type { HeatMap } from './loader';
+import type { HeatMap } from './loader.server';
 
 const ResponsiveHeatMap = lazy(() => import('~/components/nivo/ResponsiveHeatMap'));
 
@@ -28,7 +28,6 @@ export const HeatMapChart = ({ data }: HeatMapProps) => {
             legends: { text: { fill: theme.palette.text.primary } },
             text: { fill: theme.palette.text.primary },
           }}
-          valueFormat='>-.1s'
         />
       </Suspense>
     </Box>

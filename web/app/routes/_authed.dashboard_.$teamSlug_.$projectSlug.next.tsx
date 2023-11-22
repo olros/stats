@@ -2,7 +2,7 @@ import { useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { Statistics } from '~/components/next_statistics';
-import { loadStatistics } from '~/components/next_statistics/loader';
+import { loadStatistics } from '~/components/next_statistics/loader.server';
 import { jsonHash } from 'remix-utils/json-hash';
 import invariant from 'tiny-invariant';
 

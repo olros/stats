@@ -2,6 +2,9 @@ import type { SerializeFrom } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import { addDays, eachDayOfInterval, endOfDay, format, isDate, isSameDay, set, setDay, startOfDay, subMinutes } from 'date-fns';
 
+/** Number of minutes backwards that should count towards current visitors */
+export const CURRENT_VISITORS_LAST_MINUTES = 5;
+
 export type LoadStatistics = Awaited<ReturnType<typeof loadStatistics>>;
 export type LoadStatisticsSerialized = SerializeFrom<Awaited<ReturnType<typeof loadStatistics>>>;
 
@@ -34,7 +37,7 @@ export const loadStatistics = async ({ request, teamSlug, projectSlug }: LoadSta
   const { date, project, period } = await getWhereQuery({ request, teamSlug, projectSlug });
 
   const [
-    currentUsers,
+    currentVisitors,
     hoursOfWeekHeatMap,
     pageViewsTrend,
     topCustomEvents,
@@ -44,9 +47,9 @@ export const loadStatistics = async ({ request, teamSlug, projectSlug }: LoadSta
     topReferrers,
     topPages,
     totalPageViews,
-    uniqueUsersTrend,
+    uniqueVisitorsTrend,
   ] = await Promise.all([
-    getCurrentUsers({ project }),
+    getCurrentVisitors({ project }),
     getHoursOfWeekHeatMap({ project, date }),
     getPageViewsTrend({ date, project, period }),
     getTopCustomEvents({ date, project }),
@@ -56,11 +59,11 @@ export const loadStatistics = async ({ request, teamSlug, projectSlug }: LoadSta
     getTopReferrers({ date, project }),
     getTopPages({ date, project }),
     getTotalPageViews({ date, project }),
-    getUniqueUsersTrend({ date, project, period }),
+    getUniqueVisitorsTrend({ date, project, period }),
   ]);
 
   return {
-    currentUsers,
+    currentVisitors,
     date: { gte: formatFilterDate(date.gte), lte: formatFilterDate(date.lte) },
     hoursOfWeekHeatMap,
     pageViewsTrend,
@@ -72,7 +75,7 @@ export const loadStatistics = async ({ request, teamSlug, projectSlug }: LoadSta
     topReferrers,
     topPages,
     totalPageViews,
-    uniqueUsersTrend,
+    uniqueVisitorsTrend,
   };
 };
 
@@ -117,7 +120,7 @@ const getWhereQuery = async ({ request, teamSlug, projectSlug }: Pick<LoadStatis
   return { date, project, period };
 };
 
-const getTotalPageViews = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>) => {
+const getTotalPageViews = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>): Promise<{ count: number }> => {
   return prismaClient.$queryRaw<{ count: number }[]>`
     SELECT COUNT(*)::int as "count"
     FROM public."PageViewNext" p
@@ -125,11 +128,11 @@ const getTotalPageViews = async ({ project, date }: Pick<WhereQuery, 'project' |
   `.then((rows) => rows[0]);
 };
 
-const getCurrentUsers = async ({ project }: Pick<WhereQuery, 'project'>) => {
+const getCurrentVisitors = async ({ project }: Pick<WhereQuery, 'project'>): Promise<{ count: number }> => {
   return prismaClient.$queryRaw<{ count: number }[]>`
     SELECT COUNT(DISTINCT p.user_hash)::int as "count"
     FROM public."PageViewNext" p
-    WHERE p."projectId" = ${project.id} AND p.date >= ${subMinutes(new Date(), 2)};
+    WHERE p."projectId" = ${project.id} AND p.date >= ${subMinutes(new Date(), CURRENT_VISITORS_LAST_MINUTES)};
   `.then((rows) => rows[0]);
 };
 
@@ -145,7 +148,7 @@ const getPageViewsTrend = async ({ project, date, period }: Pick<WhereQuery, 'pr
   return days.map((day) => ({ x: day, y: rows.find((point) => isSameDay(point.period, day))?.count || 0 }));
 };
 
-const getUniqueUsersTrend = async ({ project, date, period }: Pick<WhereQuery, 'project' | 'date' | 'period'>): Promise<Trend[]> => {
+const getUniqueVisitorsTrend = async ({ project, date, period }: Pick<WhereQuery, 'project' | 'date' | 'period'>): Promise<Trend[]> => {
   const rows = await prismaClient.$queryRaw<{ period: Date; count: number }[]>`
     SELECT DATE_TRUNC(${period}, p.date) as "period", COUNT(DISTINCT p.user_hash)::int as "count"
     FROM public."PageViewNext" p
