@@ -32,9 +32,8 @@ export const getPageViewUserIdHash = async (ip: string, userAgent: string, date:
 export const getPageViewUserAgentData = (ua: UserAgentData): PageviewRequestData['userAgentData'] => {
   const browser = ua.browser.name || null;
   const device = [ua.device.vendor, ua.device.model].filter(Boolean).join(' ') || null;
-  const device_size = ua.device.type || null;
   const os = ua.os.name || null;
-  return { browser, device, device_size, os };
+  return { browser, device, os };
 };
 
 const getPageViewNextRequest = async (request: Request): Promise<Request | undefined> => {
