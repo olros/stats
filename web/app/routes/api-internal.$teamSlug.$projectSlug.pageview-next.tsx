@@ -10,7 +10,7 @@ import type { PageviewInput } from '~/types';
 
 export type PageviewRequestData = {
   data: PageviewInput;
-  userAgentData: Pick<Prisma.PageViewNextCreateInput, 'browser' | 'device' | 'os' | 'device_size'>;
+  userAgentData: Pick<Prisma.PageViewNextCreateInput, 'browser' | 'device' | 'os'>;
   user_hash: string;
   date: string;
   geo: Required<Pick<Geo, 'city' | 'country' | 'flag' | 'latitude' | 'longitude'>>;
@@ -65,7 +65,6 @@ const trackPageviewNext = async (request: Request, project: Project) => {
       user_hash,
       browser: userAgentData.browser,
       device: userAgentData.device,
-      device_size: userAgentData.device_size,
       os: userAgentData.os,
       projectId: project.id,
       locationId: location.id,
