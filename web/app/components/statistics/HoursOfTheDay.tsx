@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'react';
 
 import type { getTopHours } from './loaders';
 
-const ResponsiveBar = lazy(() => import('~/components/nivo/ResponsiveBar'));
+const ResponsiveBar = lazy(() => import('~/components/lazy/ResponsiveBar'));
 
 export type Hour = Awaited<ReturnType<typeof getTopHours>>[number];
 

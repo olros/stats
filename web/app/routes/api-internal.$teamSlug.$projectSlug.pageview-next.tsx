@@ -61,7 +61,7 @@ const trackPageviewNext = async (request: Request, project: Project) => {
     data: {
       date,
       pathname: data.pathname,
-      referrer: data.referrer,
+      referrer: data.referrer ? new URL(data.referrer).host : null,
       user_hash,
       browser: userAgentData.browser,
       device: userAgentData.device,

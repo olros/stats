@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'react';
 
 import type { getPageVisitorsTrend } from './loaders';
 
-const ResponsiveLine = lazy(() => import('~/components/nivo/ResponsiveLine'));
+const ResponsiveLine = lazy(() => import('~/components/lazy/ResponsiveLine'));
 
 export type VisitorsTrendProps = {
   pageVisitorsTrend: Awaited<ReturnType<typeof getPageVisitorsTrend>>;
