@@ -12,9 +12,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
   await ensureIsTeamMember(request, params.teamSlug);
-  return jsonHash({
-    statistics: loadStatistics({ request, teamSlug: params.teamSlug, projectSlug: params.projectSlug }),
-  });
+  return jsonHash({ statistics: loadStatistics({ request, teamSlug: params.teamSlug, projectSlug: params.projectSlug }) });
 };
 
 export default function ProjectPageviewsStatistics() {

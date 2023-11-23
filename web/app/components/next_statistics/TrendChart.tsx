@@ -24,8 +24,8 @@ export const TrendChart = ({ period, trend, dateGte, dateLte, tooltipTitle }: Tr
       <Suspense fallback={null}>
         <ResponsiveLine
           axisBottom={{
-            format: '%b %d',
-            tickValues: 'every 2 days',
+            format: period === 'day' ? '%b %d' : '%b %d %H:00',
+            tickValues: `every ${Math.round(trend.length / 24)} ${period === 'day' ? 'days' : 'hours'}`,
             tickRotation: -45,
           }}
           axisLeft={{
@@ -36,7 +36,7 @@ export const TrendChart = ({ period, trend, dateGte, dateLte, tooltipTitle }: Tr
           data={data}
           enableArea
           enableSlices='x'
-          margin={{ top: 10, right: 15, bottom: 45, left: 45 }}
+          margin={{ top: 10, right: 15, bottom: 60, left: 60 }}
           pointBorderColor={{ from: 'serieColor' }}
           pointBorderWidth={3}
           pointSize={3}
@@ -61,14 +61,11 @@ export const TrendChart = ({ period, trend, dateGte, dateLte, tooltipTitle }: Tr
             legends: { text: { fill: theme.palette.text.primary } },
             text: { fill: theme.palette.text.primary },
           }}
-          xFormat='time:%Y-%m-%d'
           xScale={{
             type: 'time',
-            format: '%Y-%m-%d',
+            format: period === 'day' ? '%Y-%m-%d' : '%Y-%m-%dT%H',
             useUTC: false,
             precision: period,
-            min: dateGte,
-            max: dateLte,
           }}
           yScale={{ type: 'linear' }}
         />

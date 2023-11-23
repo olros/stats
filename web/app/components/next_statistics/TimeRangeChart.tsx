@@ -31,10 +31,10 @@ export const TimeRangeChart = ({ trend, dateGte, dateLte }: TimeRangeChartProps)
             palette.primary[600],
           ]}
           data={data}
-          dayBorderColor='#ffffff00'
-          dayBorderWidth={0}
-          dayRadius={4}
-          daySpacing={4}
+          dayBorderColor={palette.background.body}
+          dayBorderWidth={4}
+          dayRadius={6}
+          daySpacing={0}
           emptyColor={palette.danger[50]}
           from={dateGte}
           margin={{ top: 40, right: 0, bottom: 0, left: 40 }}
@@ -42,6 +42,7 @@ export const TimeRangeChart = ({ trend, dateGte, dateLte }: TimeRangeChartProps)
           theme={{
             legends: { text: { fill: palette.text.primary } },
             text: { fill: palette.text.primary },
+            tooltip: { container: { background: palette.background.level1, fontSize: 12 } },
           }}
           to={dateLte}
         />

@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, Card, Chip, Stack, Typography } from '@mui/joy';
+import { Alert, Box, Button, ButtonGroup, Card, Chip, Stack, Typography } from '@mui/joy';
 import { AggregatedCard } from '~/components/next_statistics/AggregatedCard';
 import { Filters } from '~/components/next_statistics/Filters';
 import { useState } from 'react';
@@ -26,6 +26,11 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
   };
   return (
     <Stack gap={1}>
+      <Alert color='primary'>
+        The new Stats is in Beta. Pageviews are collected in a new format with more data, including device types and locations which enables more user-insight.
+        Since it is a completely new data-format, data collected until now can't be transferred. Therefore, data will be collected in to both the current and
+        new format until the new format has enough data to replace the current format. The old data will then be deleted sometime after January 1st 2024.
+      </Alert>
       <Stack direction={{ xs: 'column-reverse', lg: 'row' }} gap={1}>
         <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} sx={{ flex: 1 }}>
           <AggregatedCard count={statistics.totalPageViews.count} emoji='👀' title='Total pageviews' />
@@ -36,7 +41,7 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
             tooltip={`The number of visitors currently on your site. This does not depend on the applied filters. It includes all visitors who have loaded a page in the last ${CURRENT_VISITORS_LAST_MINUTES} minutes`}
           />
         </Stack>
-        <Filters dateGte={statistics.date.gte} dateLte={statistics.date.lte} />
+        <Filters dateGte={statistics.date.gte} dateLte={statistics.date.lte} period={statistics.period} />
       </Stack>
       <Card>
         <Typography gutterBottom level='h4'>
@@ -123,7 +128,11 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
         </Card>
         <Card>
           <Typography level='h4'>Calendar</Typography>
-          <TimeRangeChart dateGte={statistics.date.gte} dateLte={statistics.date.lte} period={statistics.period} trend={statistics.pageViewsTrend} />
+          {statistics.period === 'hour' ? (
+            <Typography level='body-md'>Calendar is not supported when period is set to "Hour"</Typography>
+          ) : (
+            <TimeRangeChart dateGte={statistics.date.gte} dateLte={statistics.date.lte} period={statistics.period} trend={statistics.pageViewsTrend} />
+          )}
         </Card>
       </Box>
     </Stack>

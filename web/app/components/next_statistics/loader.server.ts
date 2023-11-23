@@ -1,8 +1,8 @@
 import type { SerializeFrom } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
-import { eachDayOfInterval, format, isSameDay, set, setDay, subMinutes } from 'date-fns';
+import { format, setDay, subMinutes } from 'date-fns';
 
-import { CURRENT_VISITORS_LAST_MINUTES, formatFilterDate, getFilteringParams } from './utils';
+import { CURRENT_VISITORS_LAST_MINUTES, formatFilterDate, getFilteringParams, mapTrendDataToTrend } from './utils';
 
 export type LoadStatistics = Awaited<ReturnType<typeof loadStatistics>>;
 export type LoadStatisticsSerialized = SerializeFrom<Awaited<ReturnType<typeof loadStatistics>>>;
@@ -86,7 +86,7 @@ export const loadStatistics = async ({ request, teamSlug, projectSlug }: LoadSta
   };
 };
 
-type WhereQuery = Awaited<ReturnType<typeof getWhereQuery>>;
+export type WhereQuery = Awaited<ReturnType<typeof getWhereQuery>>;
 
 const getWhereQuery = async ({ request, teamSlug, projectSlug }: Pick<LoadStatisticsProps, 'teamSlug' | 'projectSlug' | 'request'>) => {
   const { dateGte, dateLte, period } = getFilteringParams(request);
@@ -127,8 +127,7 @@ const getPageViewsTrend = async ({ project, date, period }: Pick<WhereQuery, 'pr
     GROUP BY "period"
     ORDER BY "period" ASC;
   `;
-  const days = eachDayOfInterval({ start: date.gte, end: date.lte }).map((day) => set(day, { hours: 12 }));
-  return days.map((day) => ({ x: day, y: rows.find((point) => isSameDay(point.period, day))?.count || 0 }));
+  return mapTrendDataToTrend({ data: rows, period, date });
 };
 
 const getUniqueVisitorsTrend = async ({ project, date, period }: Pick<WhereQuery, 'project' | 'date' | 'period'>): Promise<Trend[]> => {
@@ -139,8 +138,7 @@ const getUniqueVisitorsTrend = async ({ project, date, period }: Pick<WhereQuery
     GROUP BY "period"
     ORDER BY "period" ASC;
   `;
-  const days = eachDayOfInterval({ start: date.gte, end: date.lte }).map((day) => set(day, { hours: 12 }));
-  return days.map((day) => ({ x: day, y: rows.find((point) => isSameDay(point.period, day))?.count || 0 }));
+  return mapTrendDataToTrend({ data: rows, period, date });
 };
 
 const getTopPages = async ({ project, date }: Pick<WhereQuery, 'project' | 'date'>): Promise<TopData[]> => {
