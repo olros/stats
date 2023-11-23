@@ -41,7 +41,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 const TABS = [
   { label: 'Stats', url: '' },
-  { label: 'Beta', url: 'next' },
+  { label: 'Beta', url: 'beta' },
   { label: 'Setup', url: 'setup' },
   { label: 'Settings', url: 'settings' },
 ];
