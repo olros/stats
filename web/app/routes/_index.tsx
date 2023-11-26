@@ -29,13 +29,12 @@ const FEATURES: { emoji: string; heading: string; description: string }[] = [
   {
     emoji: '🔒',
     heading: 'Privacy-friendly',
-    description: 'No cookie-usage. Can be self-hosted. Generated data is saved in an aggregated manner, making it impossible to track individual users',
+    description: 'No cookie-usage. Can be self-hosted. Unique users are counted on a daily basis, making it impossible to track users over a period of time.',
   },
   {
-    emoji: '💰',
-    heading: 'Cheap',
-    description:
-      'With the structure pageviews, events and unique users are stored makes the storage-usage low. This makes hosting cheap and Stats can be free! (At least for now)',
+    emoji: '🌍',
+    heading: 'Locations',
+    description: 'View which locations your visitors visit your application from, and how many from each location. Both visualized on a map and in a list.',
   },
   {
     emoji: '✏️',
@@ -46,7 +45,7 @@ const FEATURES: { emoji: string; heading: string; description: string }[] = [
     emoji: '🧮',
     heading: 'Unique visitors',
     description:
-      'View how many unique users visits your application. Visitors are counted by storing a combination of the user IP adress and user-agent, SHA512-hashed with a secret key.',
+      "View how many unique users visits your application. Visitors are counted by storing a hashed combination of the user's IP-adress, today's date, the user-agent, and a secret key.",
   },
 ];
 

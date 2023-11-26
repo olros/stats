@@ -1,21 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, useTheme } from '@mui/joy';
 import { useElementSize } from '~/hooks/useElementSize';
+import { scaleSequentialSqrt } from 'd3-scale';
+import { interpolateYlOrRd } from 'd3-scale-chromatic';
 import { lazy, memo, Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
+
+import type { TopGeoLocationData } from './loader.server';
 
 const Globe = lazy(() => import('~/components/lazy/Globe'));
 
-type GlobeWithCitiesValues = {
-  latitude: number;
-  longitude: number;
-  count: number;
-};
-
 export type GlobeWithCitiesProps = {
-  data: GlobeWithCitiesValues[];
+  data: TopGeoLocationData[];
+  ringsData?: { lat: number; lng: number }[];
+  height?: number;
 };
 
-export const GlobeWithCities = memo(({ data }: GlobeWithCitiesProps) => {
+const ringsColorInterpolator = (t: number) => `rgba(255,255,255,${Math.sqrt(1 - t)})`;
+
+const MAX_ALTITUDE = 0.6;
+const MIN_ALTITUDE = 0.01;
+
+const weightColor = scaleSequentialSqrt(interpolateYlOrRd).domain([MIN_ALTITUDE, MAX_ALTITUDE]);
+
+const countToAltitude = (count: number, maxCount: number) => Math.min(MAX_ALTITUDE, Math.max(MIN_ALTITUDE, (count / (maxCount * 0.75)) * MAX_ALTITUDE));
+
+export const GlobeWithCities = memo(({ data, ringsData = [], height = 400 }: GlobeWithCitiesProps) => {
   const { palette } = useTheme();
   const globeEl = useRef<any>();
   const [boxRef, boxSize] = useElementSize();
@@ -48,7 +57,7 @@ export const GlobeWithCities = memo(({ data }: GlobeWithCitiesProps) => {
       data.map((point) => ({
         lat: point.latitude,
         lng: point.longitude,
-        altitude: Math.min(0.8, Math.max(0.01, point.count / (data[0].count * 0.6))),
+        altitude: countToAltitude(point.count, data[0].count),
         radius: 0.3,
         color: palette.primary[400],
       })),
@@ -56,14 +65,20 @@ export const GlobeWithCities = memo(({ data }: GlobeWithCitiesProps) => {
   );
 
   return (
-    <Box ref={boxRef} sx={{ position: 'relative', height: 400 }}>
+    <Box ref={boxRef} sx={{ position: 'relative', height }}>
       <Suspense fallback={null}>
         <Globe
           customThreeObjectUpdate={(obj, d: any) => Object.assign(obj.position, globeEl.current?.getCoords(d.lat, d.lng, d.alt))}
           height={boxSize.height}
           onGlobeReady={globeReady}
+          pointColor={(d: any) => weightColor(d.altitude)}
           pointsData={points}
           ref={globeEl}
+          ringColor={() => ringsColorInterpolator}
+          ringMaxRadius={5}
+          ringPropagationSpeed={5}
+          ringRepeatPeriod={400 / 3}
+          ringsData={ringsData}
           width={boxSize.width}
         />
       </Suspense>
