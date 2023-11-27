@@ -1,12 +1,9 @@
-import { Card, Container, Stack, Tab, TabList, Tabs, Typography } from '@mui/joy';
-import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react';
+import { Card, Stack, Typography } from '@mui/joy';
+import { Outlet, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
 import { json, redirect } from '@vercel/remix';
-import { ensureIsTeamMember, getUserOrRedirect } from '~/auth.server';
-import { Navbar } from '~/components/Navbar';
+import { LinkTabs } from '~/components/LinkTabs';
 import { prismaClient } from '~/prismaClient';
-import { parseJSON } from 'date-fns';
-import { useState } from 'react';
 import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
@@ -16,27 +13,16 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: `${data
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
-  const [team, user] = await Promise.all([ensureIsTeamMember(request, params.teamSlug), getUserOrRedirect(request)]);
 
+  const teamSlug = params.teamSlug.toLowerCase();
   const projectSlug = params.projectSlug.toLowerCase();
 
-  const teamsQuery = prismaClient.team.findMany({
-    where: {
-      teamUsers: {
-        some: {
-          userId: user.id,
-        },
-      },
-    },
-  });
-  const projectQuery = prismaClient.project.findFirst({ where: { slug: projectSlug, teamSlug: team.slug } });
-
-  const [teams, project] = await Promise.all([teamsQuery, projectQuery]);
+  const project = await prismaClient.project.findFirst({ where: { slug: projectSlug, teamSlug: teamSlug } });
 
   if (!project) {
-    throw redirect(`/dashboard/${team.slug}`);
+    throw redirect(`/dashboard/${teamSlug}`);
   }
-  return json({ teams, team, project, user });
+  return json({ teamSlug, project });
 };
 
 const TABS = [
@@ -47,43 +33,24 @@ const TABS = [
 ];
 
 export default function ProjectDashboard() {
-  const { teams, team, project, user } = useLoaderData<typeof loader>();
-  const location = useLocation();
-  const [defaultLocation] = useState(location.pathname);
-  const baseLocation = `/dashboard/${team.slug}/${project.slug}`;
-
+  const { teamSlug, project } = useLoaderData<typeof loader>();
   return (
     <>
-      <Navbar
-        project={project ? { ...project, createdAt: parseJSON(project.createdAt) } : undefined}
-        teams={teams.map((team) => ({ ...team, createdAt: parseJSON(team.createdAt) }))}
-        user={user}
-      />
-      <Container sx={{ py: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <Stack
-          component={Card}
-          direction={{ sm: 'row' }}
-          gap={1}
-          justifyContent='space-between'
-          sx={{ alignItems: 'center', viewTransitionName: 'project-card' }}>
-          <Typography level='h1' sx={{ overflowWrap: 'anywhere', viewTransitionName: 'project-name' }}>
-            {project.name}
-          </Typography>
-          <Typography component='a' fontSize='md' href={project.url} sx={{ overflowWrap: 'anywhere', viewTransitionName: 'project-url' }} target='_blank'>
-            {project.url}
-          </Typography>
-        </Stack>
-        <Tabs aria-label='Select team page' defaultValue={defaultLocation}>
-          <TabList>
-            {TABS.map((tab) => (
-              <Tab component={Link} key={tab.url} to={tab.url} unstable_viewTransition value={`${baseLocation}${tab.url.length ? `/${tab.url}` : ''}`}>
-                {tab.label}
-              </Tab>
-            ))}
-          </TabList>
-        </Tabs>
-        <Outlet />
-      </Container>
+      <Stack
+        component={Card}
+        direction={{ sm: 'row' }}
+        gap={1}
+        justifyContent='space-between'
+        sx={{ alignItems: 'center', viewTransitionName: 'project-card' }}>
+        <Typography level='h1' sx={{ overflowWrap: 'anywhere', viewTransitionName: 'project-name' }}>
+          {project.name}
+        </Typography>
+        <Typography component='a' fontSize='md' href={project.url} sx={{ overflowWrap: 'anywhere', viewTransitionName: 'project-url' }} target='_blank'>
+          {project.url}
+        </Typography>
+      </Stack>
+      <LinkTabs aria-label='Select project page' baseLocation={`/dashboard/${teamSlug}/${project.slug}`} key={`${teamSlug}/${project.slug}`} tabs={TABS} />
+      <Outlet />
     </>
   );
 }

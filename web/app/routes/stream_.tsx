@@ -1,11 +1,10 @@
 import { Box, Container, Stack, Typography } from '@mui/joy';
 import { useLoaderData } from '@remix-run/react';
-import type { LoaderFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
 import type { GlobeWithCitiesProps } from '~/components/next_statistics/GlobeWithCities';
 import { GlobeWithCities } from '~/components/next_statistics/GlobeWithCities';
 import { subHours } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { jsonHash } from 'remix-utils/json-hash';
 import { useEventSource } from 'remix-utils/sse/react';
 
 import type { GeoLocationsEventData } from './stream.geolocations';
@@ -13,11 +12,9 @@ import { getTopGeoLocations, NEW_GEOLOCATION_EVENT } from './stream.geolocations
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const topGeoLocations = await getTopGeoLocations(subHours(new Date(), 72));
-
-  return json({ topGeoLocations });
-};
+// Needs Prisma on Edge-functions as serverless functions times out after 10s
+// Edge-functions have no timeout
+export const loader = async () => jsonHash({ topGeoLocations: getTopGeoLocations(subHours(new Date(), 72)) });
 
 export default function Stream() {
   const { topGeoLocations } = useLoaderData<typeof loader>();
@@ -62,7 +59,7 @@ export default function Stream() {
         textAlign='center'>
         GeoLocations stream
       </Typography>
-      <Box sx={{ width: '100%', p: { xs: 1, md: 2 } }}>
+      <Box sx={{ width: '100%', p: { xs: 0.5, sm: 1, md: 2 } }}>
         <GlobeWithCities data={pointsData} height={700} ringsData={ringsData} />
       </Box>
       <Typography component='a' href='https://github.com/olros/stats' sx={{ textAlign: 'center', my: 2 }} target='_blank'>

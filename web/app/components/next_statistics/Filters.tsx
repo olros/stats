@@ -1,5 +1,6 @@
 import { Button, Card, FormControl, FormLabel, Input, Option, Select, Stack } from '@mui/joy';
 import { Form } from '@remix-run/react';
+import { stats } from '~/stats';
 
 import type { PERIOD } from './utils';
 
@@ -12,7 +13,7 @@ export type FiltersProps = {
 export const Filters = ({ dateGte, dateLte, period }: FiltersProps) => {
   return (
     <Card>
-      <Stack component={Form} direction={{ xs: 'column', sm: 'row' }} gap={1}>
+      <Stack component={Form} direction={{ xs: 'column', sm: 'row' }} gap={1} onSubmit={() => stats.event('update-filters')}>
         <FormControl required>
           <FormLabel id='period-label'>Period</FormLabel>
           <Select defaultValue={period} name='period' slotProps={{ button: { 'aria-labelledby': 'period-label' } }}>

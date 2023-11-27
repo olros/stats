@@ -1,16 +1,17 @@
 import { Box, Button, Card, Container, Divider, Stack, Typography } from '@mui/joy';
-import { Form, Link, useLoaderData } from '@remix-run/react';
-import type { LoaderFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
+import { Form } from '@remix-run/react';
+import { type LoaderFunctionArgs, redirect } from '@vercel/remix';
 import { authenticator } from '~/auth.server';
 import { stats } from '~/stats';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const isAuthenticated = await authenticator.isAuthenticated(request);
-
-  return json({ isAuthenticated });
+  const user = await authenticator.isAuthenticated(request);
+  if (user) {
+    return redirect(`/dashboard`);
+  }
+  return null;
 };
 
 const FEATURES: { emoji: string; heading: string; description: string }[] = [
@@ -50,7 +51,6 @@ const FEATURES: { emoji: string; heading: string; description: string }[] = [
 ];
 
 export default function Index() {
-  const { isAuthenticated } = useLoaderData<typeof loader>();
   return (
     <Container alignItems='center' component={Stack} sx={{ display: 'flex' }}>
       <Typography
@@ -77,15 +77,9 @@ export default function Index() {
         HTTP-requests, choose whichever fits your application best! Server-side tracking are also supported!
       </Typography>
       <Stack direction='row' gap={2} justifyContent='center'>
-        {isAuthenticated ? (
-          <Button component={Link} to='/dashboard' unstable_viewTransition>
-            Open dashboard
-          </Button>
-        ) : (
-          <Box action='/auth/github' component={Form} method='post'>
-            <Button type='submit'>Continue with GitHub</Button>
-          </Box>
-        )}
+        <Form action='/auth/github' method='POST'>
+          <Button type='submit'>Continue with GitHub</Button>
+        </Form>
         <Button component='a' href='/public/olros/stats' onClick={() => stats.event('live-demo')} target='_blank' variant='outlined'>
           Live demo
         </Button>

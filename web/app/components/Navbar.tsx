@@ -1,150 +1,139 @@
 import {
   Avatar,
   Box,
-  Button,
+  Card,
+  Chip,
   List,
   ListDivider,
-  ListItem,
   ListItemDecorator,
-  Menu,
-  MenuItem,
-  menuItemClasses,
-  Sheet,
+  listItemDecoratorClasses,
+  Option,
+  optionClasses,
+  Select,
   Stack,
   Typography,
-  typographyClasses,
 } from '@mui/joy';
-import type { Project, Team, User } from '@prisma/client';
-import { Link, useLocation, useParams } from '@remix-run/react';
-import { useState } from 'react';
+import type { Prisma, User } from '@prisma/client';
+import type { SerializeFrom } from '@remix-run/node';
+import { Link, useLocation, useNavigate, useParams } from '@remix-run/react';
+import { Fragment, useCallback } from 'react';
 
-import { Add, Check, UnfoldMore } from './Icons';
-
-const Separator = () => (
-  <Box
-    component='svg'
-    fill='none'
-    shapeRendering='geometricPrecision'
-    stroke='currentColor'
-    strokeLinecap='round'
-    strokeLinejoin='round'
-    strokeWidth='1'
-    sx={{ color: (theme) => theme.palette.text.secondary, height: 32, width: 32, opacity: 0.6 }}
-    viewBox='0 0 24 24'>
-    <path d='M 10 6 L 14 12 L 10 18' />
-  </Box>
-);
+import { Add, Check } from './Icons';
 
 export type NavbarProps = {
   user: Pick<User, 'avatar_url' | 'name'>;
-  teams: Team[];
-  project?: Project;
+  teams: SerializeFrom<
+    Prisma.TeamGetPayload<{
+      include: {
+        projects: true;
+      };
+    }>[]
+  >;
 };
 
-export const Navbar = ({ user, teams, project }: NavbarProps) => {
-  const { teamSlug } = useParams();
+export const Navbar = ({ user, teams }: NavbarProps) => {
+  const { teamSlug, projectSlug } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const selectedTeam = teams.find((team) => team.slug === teamSlug);
-  const [teamSelectorAnchorEl, setTeamSelectorAnchorEl] = useState<HTMLAnchorElement | null>(null);
-  const teamSelectorOpen = Boolean(teamSelectorAnchorEl);
-
-  const closeTeamSelector = () => setTeamSelectorAnchorEl(null);
+  const onSelect = useCallback(
+    (_: React.SyntheticEvent | null, value: string | null) => {
+      if (value) {
+        navigate(`/dashboard/${value}`);
+      }
+    },
+    [navigate],
+  );
 
   return (
-    <Sheet
-      component='ol'
+    <Card
       sx={{
-        display: 'flex',
+        flexDirection: 'row',
         justifyContent: 'space-between',
         overflow: 'hidden',
-        listStyleType: 'none',
-        m: 0,
         py: 1,
         px: 2,
         borderBottom: ({ palette }) => `1px solid ${palette.neutral.outlinedBorder}`,
+        position: 'sticky',
+        top: ({ spacing }) => spacing(1),
+        zIndex: 10,
+        background: ({ palette }) => palette.background.backdrop,
+        backdropFilter: `blur(5px)`,
       }}>
       <Stack alignItems='center' direction='row' sx={{ overflow: 'hidden' }}>
-        <Box component={Link} sx={{ height: 44 }} to={selectedTeam ? `/dashboard/${selectedTeam.slug}` : '/dashboard'} unstable_viewTransition>
-          <Box alt='' component='img' src='/favicon-192.png' sx={{ height: 44 }} />
+        <Box component={Link} sx={{ height: 34 }} to='/dashboard' unstable_viewTransition>
+          <Box alt='' component='img' src='/favicon-192.png' sx={{ height: 34 }} />
         </Box>
-        <Separator />
-        <Button
-          aria-controls={teamSelectorOpen ? 'select-team-menu' : undefined}
-          aria-expanded={teamSelectorOpen ? 'true' : undefined}
-          aria-haspopup='true'
-          color='neutral'
-          endDecorator={<UnfoldMore />}
-          id='select-team'
-          onClick={(event) => setTeamSelectorAnchorEl(event.currentTarget)}
-          variant='plain'>
-          {selectedTeam ? selectedTeam.name : 'Choose team'}
-        </Button>
-        <Menu
-          anchorEl={teamSelectorAnchorEl}
-          aria-labelledby='select-team-button'
-          id='select-team'
-          onClose={closeTeamSelector}
-          open={teamSelectorOpen}
-          sx={(theme) => ({
-            width: 288,
-            '--List-padding': 'var(--List-divider-gap)',
-            '--List-item-minHeight': '32px',
-            [`& .${menuItemClasses.root}`]: {
-              transition: 'none',
-              '&:hover': {
-                ...theme.variants.solid.primary,
-                [`& .${typographyClasses.root}`]: {
-                  color: 'inherit',
-                },
+        <Select
+          onChange={onSelect}
+          placeholder='Choose team/project'
+          slotProps={{
+            listbox: {
+              variant: 'outlined',
+              component: 'div',
+              sx: {
+                maxHeight: 240,
+                overflow: 'auto',
+                '--List-padding': '0px',
+                '--ListItem-radius': '0px',
               },
             },
-          })}>
-          <ListItem nested>
-            <List>
-              {teams.map((team) => (
-                <MenuItem
-                  component={Link}
-                  key={team.slug}
-                  onClick={closeTeamSelector}
-                  selected={selectedTeam?.slug === team.slug}
-                  to={`/dashboard/${team.slug}`}
-                  unstable_viewTransition>
-                  <ListItemDecorator>{selectedTeam?.slug === team.slug && <Check />}</ListItemDecorator>
-                  {team.name}
-                </MenuItem>
-              ))}
-              {!teams.length && (
-                <Typography level='body-md' sx={{ px: 2, py: 1 }}>
-                  You're not member of any teams
-                </Typography>
-              )}
-            </List>
-          </ListItem>
-          <ListDivider />
-          <ListItem nested>
-            <List>
-              <MenuItem component={Link} onClick={closeTeamSelector} to='/dashboard/new-team' unstable_viewTransition>
-                <ListItemDecorator>
-                  <Add />
-                </ListItemDecorator>
-                Create team
-              </MenuItem>
-            </List>
-          </ListItem>
-        </Menu>
-        {project && (
-          <>
-            <Separator />
-            <Typography
-              component={Link}
-              sx={{ textDecoration: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-              to='.'
-              unstable_viewTransition>
-              {project.name}
-            </Typography>
-          </>
-        )}
+          }}
+          value={[teamSlug, projectSlug].filter(Boolean).join('/')}
+          variant='plain'>
+          {teams.map((team) => (
+            <Fragment key={team.id}>
+              <List aria-labelledby={`team-${team.slug}`} sx={{ '--ListItemDecorator-size': '28px' }}>
+                <Option
+                  id={`team-${team.slug}`}
+                  label={
+                    <Chip color='primary' size='md' sx={{ borderRadius: 'xs', mr: 1 }}>
+                      {team.name}
+                    </Chip>
+                  }
+                  sx={{
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                    textTransform: 'uppercase',
+                    fontSize: ({ fontSize }) => fontSize.sm,
+                    background: ({ palette }) => palette.background.popup,
+                  }}
+                  value={`${team.slug}`}>
+                  {team.name} ({team.projects.length})
+                </Option>
+                {team.projects.map((project) => (
+                  <Option
+                    key={project.id}
+                    label={
+                      <Typography level='body-md'>
+                        <Chip color='primary' component='span' size='sm' sx={{ borderRadius: 'xs', mr: 1 }}>
+                          {team.name}
+                        </Chip>
+                        {project.name}
+                      </Typography>
+                    }
+                    sx={{ [`&.${optionClasses.selected} .${listItemDecoratorClasses.root}`]: { opacity: 1 } }}
+                    value={`${team.slug}/${project.slug}`}>
+                    <ListItemDecorator sx={{ opacity: 0 }}>
+                      <Check />
+                    </ListItemDecorator>
+                    {project.name}
+                  </Option>
+                ))}
+              </List>
+              <ListDivider role='none' />
+            </Fragment>
+          ))}
+          <List aria-labelledby={`new-team`} sx={{ '--ListItemDecorator-size': '28px' }}>
+            <Option id={`new-team`} sx={{ fontSize: ({ fontSize }) => fontSize.sm }} value='new-team'>
+              <ListItemDecorator>
+                <Add />
+              </ListItemDecorator>
+              Create team
+            </Option>
+          </List>
+        </Select>
       </Stack>
       {location.pathname !== '/profile' && (
         <Link to='/profile' unstable_viewTransition>
@@ -156,6 +145,6 @@ export const Navbar = ({ user, teams, project }: NavbarProps) => {
           </Avatar>
         </Link>
       )}
-    </Sheet>
+    </Card>
   );
 };

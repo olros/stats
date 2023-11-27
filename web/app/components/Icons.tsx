@@ -13,12 +13,6 @@ export const Check = (props: IconProps) => (
   </IconBase>
 );
 
-export const UnfoldMore = (props: IconProps) => (
-  <IconBase {...props} fill='currentColor'>
-    <path d='m24 42-9-9 2.2-2.2 6.8 6.8 6.8-6.8L33 33Zm-6.8-24.6L15 15.2l9-9 9 9-2.2 2.2-6.8-6.8Z' />
-  </IconBase>
-);
-
 export const Add = (props: IconProps) => (
   <IconBase {...props} fill='currentColor'>
     <path d='M22.5 38V25.5H10v-3h12.5V10h3v12.5H38v3H25.5V38Z' />
