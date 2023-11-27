@@ -1,9 +1,7 @@
-import { keyframes } from '@emotion/react';
 import { Box, Button, Card, Container, Divider, Stack, Typography } from '@mui/joy';
 import { Form } from '@remix-run/react';
 import { type LoaderFunctionArgs, redirect } from '@vercel/remix';
 import { authenticator } from '~/auth.server';
-import { useWindowSize } from '~/hooks/useWindowSize';
 import { stats } from '~/stats';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
@@ -15,19 +13,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
   return null;
 };
-
-const smScaleAnimation = keyframes({
-  from: { ry: '100', rx: '100', opacity: 1 },
-  to: { ry: '200', rx: '200', opacity: 0.6 },
-});
-
-const mdScaleAnimation = keyframes({
-  from: { ry: '200', rx: '200', opacity: 1 },
-  to: { ry: '400', rx: '400', opacity: 0.6 },
-});
-
-const smAnimation = `${smScaleAnimation} 6s ease-in-out alternate infinite`;
-const mdAnimation = `${mdScaleAnimation} 6s ease-in-out alternate infinite`;
 
 const FEATURES: { emoji: string; heading: string; description: string }[] = [
   {
@@ -88,37 +73,8 @@ const FEATURES: { emoji: string; heading: string; description: string }[] = [
 ];
 
 export default function Index() {
-  const { width, height } = useWindowSize();
   return (
     <>
-      <Box
-        component='svg'
-        height='100%'
-        preserveAspectRatio='none'
-        sx={{ position: 'fixed', inset: 0, zIndex: -1, opacity: 0.6 }}
-        version='1.1'
-        viewBox={`0 0 ${width ?? 1000} ${height ?? 1000}`}
-        width='100%'
-        xmlns='http://www.w3.org/2000/svg'>
-        <defs>
-          <filter
-            colorInterpolationFilters='sRGB'
-            filterUnits='objectBoundingBox'
-            height='400%'
-            id='bbblurry-filter'
-            primitiveUnits='userSpaceOnUse'
-            width='400%'
-            x='-100%'
-            y='-100%'>
-            <feGaussianBlur edgeMode='none' height='100%' in='SourceGraphic' result='blur' stdDeviation='93' width='100%' x='0%' y='0%'></feGaussianBlur>
-          </filter>
-        </defs>
-        <Box component='g' filter='url(#bbblurry-filter)' sx={{ opacity: height && width ? 1 : 0, transition: '1s opacity' }}>
-          <Box component='ellipse' cx='20%' cy='20%' sx={{ fill: 'hsl(37, 99%, 67%)', animation: { xs: smAnimation, md: mdAnimation } }} />
-          <Box component='ellipse' cx='80%' cy='50%' sx={{ fill: 'hsl(316, 73%, 52%)', animation: { xs: smAnimation, md: mdAnimation } }} />
-          <Box component='ellipse' cx='45%' cy='80%' sx={{ fill: 'hsl(185, 100%, 57%)', animation: { xs: smAnimation, md: mdAnimation } }} />
-        </Box>
-      </Box>
       <Container alignItems='center' component={Stack} sx={{ display: 'flex' }}>
         <Typography
           level='h1'

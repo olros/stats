@@ -21,6 +21,8 @@ export const theme = extendTheme({
       styleOverrides: {
         root: ({ theme }) => ({
           '--Card-radius': theme.radius.lg,
+          background: theme.palette.background.backdrop,
+          backdropFilter: `blur(10px)`,
         }),
       },
     },
@@ -45,6 +47,8 @@ export const theme = extendTheme({
         root: ({ theme }) => ({
           border: `1px solid ${theme.palette.neutral.outlinedBorder}`,
           borderRadius: theme.vars.radius.lg,
+          background: theme.palette.background.backdrop,
+          backdropFilter: `blur(10px)`,
           [`& .${tabClasses.root}`]: {
             whiteSpace: 'nowrap',
             transition: '0.3s',

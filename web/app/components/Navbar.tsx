@@ -60,7 +60,7 @@ export const Navbar = ({ user, teams }: NavbarProps) => {
         background: ({ palette }) => palette.background.backdrop,
         backdropFilter: `blur(5px)`,
       }}>
-      <Stack alignItems='center' direction='row' sx={{ overflow: 'hidden' }}>
+      <Stack alignItems='center' direction='row' gap={1} sx={{ overflow: 'hidden' }}>
         <Box component={Link} sx={{ height: 34 }} to='/dashboard' unstable_viewTransition>
           <Box alt='' component='img' src='/favicon-192.png' sx={{ height: 34 }} />
         </Box>

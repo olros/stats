@@ -16,8 +16,8 @@ export const HeatMapChart = ({ data }: HeatMapProps) => {
       <Suspense fallback={null}>
         <ResponsiveHeatMap
           colors={{
-            type: 'diverging',
-            scheme: 'purple_blue',
+            type: 'sequential',
+            scheme: 'yellow_orange_red',
             minValue: 0,
           }}
           data={data}

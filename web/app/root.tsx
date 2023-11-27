@@ -1,4 +1,5 @@
 import FontStyles from '@fontsource-variable/inter/index.css';
+import { Box } from '@mui/joy';
 import type { LinksFunction } from '@remix-run/node';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLocation, useParams } from '@remix-run/react';
 import { ErrorBoundary as BaseErrorBoundary } from '~/components/ErrorBoundary';
@@ -52,6 +53,17 @@ const Document = ({ children }: DocumentProps) => {
         ))}
       </head>
       <body>
+        <Box
+          sx={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: -1,
+            background: ({ palette }) =>
+              `linear-gradient(${palette.success[100]}, transparent), linear-gradient(-45deg, ${palette.danger[500]}, transparent), linear-gradient(45deg, ${palette.primary[500]}, transparent)`,
+            backgroundBlendMode: 'multiply',
+            opacity: 0.2,
+          }}
+        />
         {children}
         <ScrollRestoration />
         <Scripts />

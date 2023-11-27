@@ -47,7 +47,7 @@ export const GlobeWithCities = memo(({ data, ringsData = [], height = 400 }: Glo
       globeEl.current.pointOfView({
         lat: 50,
         lng: 40,
-        altitude: 1.2,
+        altitude: 1.4,
       });
     }
   }, []);
