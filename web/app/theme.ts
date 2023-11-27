@@ -3,8 +3,8 @@ import { extendTheme, tabClasses } from '@mui/joy';
 export const theme = extendTheme({
   spacing: 10,
   fontFamily: {
-    display: 'Public Sans',
-    body: 'Public Sans',
+    display: 'Inter Variable',
+    body: 'Inter Variable',
   },
   radius: {
     xs: '6px',
