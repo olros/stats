@@ -25,7 +25,7 @@ export const TrendChart = ({ period, trend, dateGte, dateLte, tooltipTitle }: Tr
         <ResponsiveLine
           axisBottom={{
             format: period === 'day' ? '%b %d' : '%b %d %H:00',
-            tickValues: `every ${Math.max(Math.round(trend.length / 24), 1)} ${period === 'day' ? 'days' : 'hours'}`,
+            tickValues: `every ${Math.max(Math.ceil(trend.length / 24), 2)} ${period === 'day' ? 'days' : 'hours'}`,
             tickRotation: -45,
           }}
           axisLeft={{
