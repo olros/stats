@@ -31,6 +31,7 @@ export const TimeRangeChart = ({ trend, dateGte, dateLte }: TimeRangeChartProps)
           dayRadius={6}
           daySpacing={4}
           emptyColor={palette.danger[50]}
+          firstWeekday='monday'
           from={dateGte}
           margin={{ top: 40, right: 0, bottom: 0, left: 40 }}
           minValue={0}
