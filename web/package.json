@@ -49,6 +49,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-globe.gl": "^2.27.0",
+    "react-intersection-observer": "^9.5.3",
     "remix-auth": "^3.6.0",
     "remix-auth-github": "^1.6.0",
     "remix-utils": "^7.3.0",
