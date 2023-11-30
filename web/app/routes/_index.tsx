@@ -129,7 +129,7 @@ export default function Index() {
             </Card>
           ))}
         </Box>
-        <Typography component='a' href='https://github.com/olros/stats' sx={{ textAlign: 'center', my: 2 }} target='_blank'>
+        <Typography component='a' href='https://github.com/olros/stats' sx={{ textAlign: 'center', py: 2 }} target='_blank'>
           @olros/stats
         </Typography>
       </Container>

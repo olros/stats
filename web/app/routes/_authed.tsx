@@ -1,4 +1,4 @@
-import { Container } from '@mui/joy';
+import { Container, Typography } from '@mui/joy';
 import { Outlet, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
@@ -26,9 +26,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Index() {
   const { teams, user } = useLoaderData<typeof loader>();
   return (
-    <Container sx={{ py: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+    <Container sx={{ py: 1, display: 'flex', flexDirection: 'column', gap: 1, minHeight: '95vh' }}>
       <Navbar teams={teams} user={user} />
       <Outlet />
+      <Typography component='a' href='https://github.com/olros/stats' sx={{ textAlign: 'center', py: 2, mt: 'auto' }} target='_blank'>
+        @olros/stats
+      </Typography>
     </Container>
   );
 }
