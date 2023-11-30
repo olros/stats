@@ -11,11 +11,13 @@ export type Usage = {
 export type TeamUsage = {
   pageViews: Usage;
   pageVisitors: Usage;
+  pageViewsNext: Usage;
   customEvents: Usage;
 };
 
 export const USAGE_LIMITS: Record<keyof TeamUsage, number> = {
   customEvents: 500_000,
+  pageViewsNext: 1_000_000,
   pageViews: 1_000_000,
   pageVisitors: 1_000_000,
 };
@@ -40,6 +42,16 @@ export const getPageVisitorsUsage = async (teamSlug: Team['slug']): Promise<Pick
   return { pageVisitors: { count, limit, withinLimit } };
 };
 
+export const getPageViewsNextUsage = async (teamSlug: Team['slug']): Promise<Pick<TeamUsage, 'pageViewsNext'>> => {
+  const count = await prismaClient.pageViewNext.count({
+    where: { project: { teamSlug } },
+  });
+  const limit = USAGE_LIMITS['pageViewsNext'];
+  const withinLimit = count < limit;
+
+  return { pageViewsNext: { count, limit, withinLimit } };
+};
+
 export const getCustomEventsUsage = async (teamSlug: Team['slug']): Promise<Pick<TeamUsage, 'customEvents'>> => {
   const count = await prismaClient.customEvent.count({
     where: { project: { teamSlug } },
@@ -51,11 +63,12 @@ export const getCustomEventsUsage = async (teamSlug: Team['slug']): Promise<Pick
 };
 
 export const getTeamUsage = async (teamSlug: Team['slug']): Promise<TeamUsage> => {
-  const [pageViews, pageVisitors, customEvents] = await Promise.all([
+  const [pageViews, pageVisitors, pageViewsNext, customEvents] = await Promise.all([
     getPageViewsUsage(teamSlug),
     getPageVisitorsUsage(teamSlug),
+    getPageViewsNextUsage(teamSlug),
     getCustomEventsUsage(teamSlug),
   ]);
 
-  return { ...pageViews, ...customEvents, ...pageVisitors };
+  return { ...pageViews, ...customEvents, ...pageViewsNext, ...pageVisitors };
 };

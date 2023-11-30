@@ -1,8 +1,10 @@
-import { useLoaderData } from '@remix-run/react';
+import { useLoaderData, useRevalidator } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { Statistics } from '~/components/next_statistics';
 import { loadStatistics } from '~/components/next_statistics/loader.server';
+import { useInterval } from '~/hooks/useInterval';
+import { secondsToMilliseconds } from 'date-fns';
 import { jsonHash } from 'remix-utils/json-hash';
 import invariant from 'tiny-invariant';
 
@@ -17,6 +19,12 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export default function ProjectPageviewsStatistics() {
   const { statistics } = useLoaderData<typeof loader>();
+
+  const { revalidate } = useRevalidator();
+
+  useInterval(() => {
+    revalidate();
+  }, secondsToMilliseconds(20));
 
   return <Statistics statistics={statistics} />;
 }

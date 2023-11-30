@@ -41,7 +41,7 @@ export const UsageDisplay = ({ label, description, usage }: { label: string; des
   );
 };
 
-export default function TeamMembers() {
+export default function TeamUsage() {
   const { usage } = useLoaderData<typeof loader>();
 
   return (
@@ -64,6 +64,7 @@ export default function TeamMembers() {
         label='Unique visitors'
         usage={usage.pageVisitors}
       />
+      <UsageDisplay description='Pageviews registered with the new pageviews format' label='Pageviews BETA' usage={usage.pageViewsNext} />
       <UsageDisplay
         description='Since custom events are aggregated when stored in the database, the usage seen here will probably be lower than the number of custom events seen in your projects'
         label='Custom events'

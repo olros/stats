@@ -4,6 +4,7 @@ import type { ActionFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
 import { getProjectAndCheckPermissions } from '~/utils_api.server';
+import { getPageViewsNextUsage } from '~/utils_usage.server';
 import invariant from 'tiny-invariant';
 
 import type { PageviewInput } from '~/types';
@@ -53,6 +54,12 @@ const getLocation = async (geo: PageviewRequestData['geo']): Promise<Location> =
 };
 
 const trackPageviewNext = async (request: Request, project: Project) => {
+  const { pageViewsNext } = await getPageViewsNextUsage(project.teamSlug);
+
+  if (!pageViewsNext.withinLimit) {
+    return;
+  }
+
   const { data, date, geo, userAgentData, user_hash } = await parsePageviewRequestData(request);
 
   const location = await getLocation(geo);
