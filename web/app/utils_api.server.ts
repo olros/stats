@@ -33,7 +33,7 @@ export const getProjectAndCheckPermissions = async (request: Request, teamSlug: 
   const originURL = origin ? new URL(origin) : null;
   const allowedOrigins = project.allowed_hosts.split(',').filter((_origin) => _origin.length > 0);
 
-  if (allowedOrigins.length > 0 && (!originURL || !allowedOrigins.some((_origin) => originURL.host === _origin))) {
+  if (originURL && allowedOrigins.length > 0 && !allowedOrigins.some((_origin) => originURL.host === _origin)) {
     throw new Error(JSON.stringify({ errors: { host: `The host is either not in headers or not declared as one of the allowed hosts` } }));
   }
 
