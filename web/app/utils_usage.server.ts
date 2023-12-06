@@ -17,7 +17,7 @@ export type TeamUsage = {
 
 export const USAGE_LIMITS: Record<keyof TeamUsage, number> = {
   customEvents: 500_000,
-  pageViewsNext: 1_000_000,
+  pageViewsNext: 20_000_000,
   pageViews: 1_000_000,
   pageVisitors: 1_000_000,
 };
