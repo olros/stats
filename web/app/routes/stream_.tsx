@@ -1,7 +1,7 @@
 import { Box, Container, Stack, Typography } from '@mui/joy';
 import { useLoaderData } from '@remix-run/react';
-import type { GlobeWithCitiesProps } from '~/components/next_statistics/GlobeWithCities';
-import { GlobeWithCities } from '~/components/next_statistics/GlobeWithCities';
+import type { GlobeWithCitiesProps } from '~/components/statistics/GlobeWithCities';
+import { GlobeWithCities } from '~/components/statistics/GlobeWithCities';
 import { subHours } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { jsonHash } from 'remix-utils/json-hash';

@@ -1,7 +1,7 @@
 import { useLoaderData, useRevalidator } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
-import { PageviewsStatistics } from '~/components/statistics';
+import { PageviewsStatistics } from '~/components/deprecated_statistics';
 import {
   formatFilterDate,
   getFilteringParams,
@@ -18,7 +18,7 @@ import {
   getTopPagesQuery,
   getTotalPageviews,
   getUniqueVisitorsCount,
-} from '~/components/statistics/loaders';
+} from '~/components/deprecated_statistics/loaders';
 import { useInterval } from '~/hooks/useInterval';
 import { secondsToMilliseconds } from 'date-fns';
 import { jsonHash } from 'remix-utils/json-hash';

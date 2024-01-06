@@ -1,27 +1,31 @@
-import { Button, Card, FormControl, FormLabel, Input, Stack, Tooltip } from '@mui/joy';
+import { Button, Card, FormControl, FormLabel, Input, Option, Select, Stack } from '@mui/joy';
 import { Form } from '@remix-run/react';
+import { stats } from '~/stats';
+
+import type { PERIOD } from './utils';
 
 export type FiltersProps = {
-  pathname: string;
   dateGte: string;
   dateLte: string;
+  period: PERIOD;
 };
 
-export const Filters = ({ pathname, dateGte, dateLte }: FiltersProps) => {
+export const Filters = ({ dateGte, dateLte, period }: FiltersProps) => {
   return (
     <Card>
-      <Stack component={Form} direction={{ xs: 'column', md: 'row' }} gap={1}>
-        <FormControl id='pathname' sx={{ flex: 1 }}>
-          <Tooltip arrow title='Equal-matching for Trend, startswith-matching for Top pages and ignored for custom events'>
-            <FormLabel id='pathname-label'>Pathname</FormLabel>
-          </Tooltip>
-          <Input defaultValue={pathname} name='pathname' />
+      <Stack component={Form} direction={{ xs: 'column', sm: 'row' }} gap={1} onSubmit={() => stats.event('update-filters')}>
+        <FormControl required>
+          <FormLabel id='period-label'>Period</FormLabel>
+          <Select defaultValue={period} name='period' slotProps={{ button: { 'aria-labelledby': 'period-label' } }}>
+            <Option value='day'>Day</Option>
+            <Option value='hour'>Hour</Option>
+          </Select>
         </FormControl>
-        <FormControl id='gte' required sx={{ flex: 1 }}>
+        <FormControl required sx={{ flex: 1 }}>
           <FormLabel id='gte-label'>From date</FormLabel>
           <Input defaultValue={dateGte} name='gte' type='date' />
         </FormControl>
-        <FormControl id='lte' required sx={{ flex: 1 }}>
+        <FormControl required sx={{ flex: 1 }}>
           <FormLabel id='lte-label'>To date</FormLabel>
           <Input defaultValue={dateLte} name='lte' type='date' />
         </FormControl>

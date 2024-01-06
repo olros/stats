@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs } from '@remix-run/node';
-import type { TopGeoLocationData } from '~/components/next_statistics/loader.server';
+import type { TopGeoLocationData } from '~/components/statistics/loader.server';
 import { prismaClient } from '~/prismaClient';
 import { secondsToMilliseconds, subMilliseconds } from 'date-fns';
 import { eventStream } from 'remix-utils/sse/server';

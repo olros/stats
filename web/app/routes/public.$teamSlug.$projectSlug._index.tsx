@@ -1,7 +1,7 @@
 import { useLoaderData, useRevalidator } from '@remix-run/react';
 import { type LoaderFunctionArgs } from '@vercel/remix';
-import { Statistics } from '~/components/next_statistics';
-import { loadStatistics } from '~/components/next_statistics/loader.server';
+import { Statistics } from '~/components/statistics';
+import { loadStatistics } from '~/components/statistics/loader.server';
 import { useInterval } from '~/hooks/useInterval';
 import { secondsToMilliseconds } from 'date-fns';
 import { jsonHash } from 'remix-utils/json-hash';

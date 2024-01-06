@@ -7,7 +7,7 @@ import type { GlobeMethods, GlobeProps } from 'react-globe.gl';
 import Globe from 'react-globe.gl';
 import * as THREE from 'three';
 
-import geoJson from '../next_statistics/globe_countries.geojson.json';
+import geoJson from '../statistics/globe_countries.geojson.json';
 
 const LazyGlobe = forwardRef<GlobeMethods, GlobeProps>((props, ref) => {
   const isClient = useIsClient();
