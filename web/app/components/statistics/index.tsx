@@ -1,4 +1,4 @@
-import { Box, Card, Stack, Typography } from '@mui/joy';
+import { Alert, Box, Card, Stack, Typography } from '@mui/joy';
 import type { AggregatedProps } from '~/components/statistics/Aggregated';
 import { Aggregated } from '~/components/statistics/Aggregated';
 import type { FiltersProps } from '~/components/statistics/Filters';
@@ -38,6 +38,7 @@ export const PageviewsStatistics = ({
 }: PageviewsStatisticsProps) => {
   return (
     <Stack gap={1}>
+      <Alert color='primary'>These Stats is deprecated. The old data will then be deleted sometime after January 15th 2024.</Alert>
       <Filters dateGte={dateGte} dateLte={dateLte} pathname={pathname} />
       <Aggregated mostPopularHour={mostPopularHour} totalPageviews={totalPageviews} uniqueVisitorsCount={uniqueVisitorsCount} />
       <Card sx={{ p: 2 }}>

@@ -1,4 +1,4 @@
-import { Alert, Box, Button, ButtonGroup, Card, Chip, Stack, Typography } from '@mui/joy';
+import { Box, Button, ButtonGroup, Card, Chip, Stack, Typography } from '@mui/joy';
 import { AggregatedCard } from '~/components/next_statistics/AggregatedCard';
 import { Filters } from '~/components/next_statistics/Filters';
 import { useState } from 'react';
@@ -26,11 +26,6 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
   };
   return (
     <Stack gap={1}>
-      <Alert color='primary'>
-        The new Stats is in Beta. Pageviews are collected in a new format with more data, including device types and locations which enables more user-insight.
-        Since it is a completely new data-format, data collected until now can't be transferred. Therefore, data will be collected in to both the current and
-        new format until the new format has enough data to replace the current format. The old data will then be deleted sometime after January 1st 2024.
-      </Alert>
       <Stack direction={{ xs: 'column-reverse', lg: 'row' }} gap={1}>
         <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} sx={{ flex: 1 }}>
           <AggregatedCard count={statistics.totalPageViews.count} emoji='👀' title='Total pageviews' />

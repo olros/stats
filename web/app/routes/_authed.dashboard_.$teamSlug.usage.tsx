@@ -55,16 +55,16 @@ export default function TeamUsage() {
         </Typography>
       </Card>
       <UsageDisplay
-        description='Since pageviews are aggregated when stored in the database, the usage seen here will probably be lower than the number of pageviews seen in your projects'
-        label='Pageviews'
+        description='Since pageviews are aggregated when stored in the database, the usage seen here will probably be lower than the number of pageviews seen in your projects. Registered with the deprecated format.'
+        label='Pageviews (deprecated)'
         usage={usage.pageViews}
       />
       <UsageDisplay
-        description='Since unique visitors are stored with a hash per visitor per day in the database, the usage seen here will probably be higher than the number of unique visitors seen in your projects'
-        label='Unique visitors'
+        description='Since unique visitors are stored with a hash per visitor per day in the database, the usage seen here will probably be higher than the number of unique visitors seen in your projects. Registered with the deprecated format.'
+        label='Unique visitors (deprecated)'
         usage={usage.pageVisitors}
       />
-      <UsageDisplay description='Pageviews registered with the new pageviews format' label='Pageviews BETA' usage={usage.pageViewsNext} />
+      <UsageDisplay description='Pageviews registered' label='Pageviews' usage={usage.pageViewsNext} />
       <UsageDisplay
         description='Since custom events are aggregated when stored in the database, the usage seen here will probably be lower than the number of custom events seen in your projects'
         label='Custom events'
