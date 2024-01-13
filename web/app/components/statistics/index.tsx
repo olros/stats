@@ -114,7 +114,7 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
         </Card>
         <Card>
           <Typography level='h4'>Top locations</Typography>
-          <BarChart countTitle='Visitors' data={statistics.topGeoLocations} title='Location' />
+          <BarChart countTitle='Pageviews' data={statistics.topGeoLocations} title='Location' />
         </Card>
         <Card>
           <Typography level='h4'>Top time of day / week</Typography>
