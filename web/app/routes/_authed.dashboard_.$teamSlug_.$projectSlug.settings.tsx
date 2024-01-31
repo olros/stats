@@ -2,14 +2,13 @@ import { Box, Button, Card, FormControl, FormHelperText, FormLabel, Input, Switc
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Form, useActionData, useLoaderData, useNavigation, useSubmit } from '@remix-run/react';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
-import { redirect } from '@vercel/remix';
-import { json } from '@vercel/remix';
+import { json, redirect } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { ConfirmDialog } from '~/components/ConfirmDialog';
+import { useIsClient } from '~/hooks/useIsClient';
 import { prismaClient } from '~/prismaClient';
 import { useCallback, useState } from 'react';
 import invariant from 'tiny-invariant';
-import { useIsClient } from '~/hooks/useIsClient';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -49,17 +48,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       });
     }
     if (deleteResource === 'pageviews') {
-      await prismaClient.pageView.deleteMany({
-        where: {
-          project: {
-            slug: params.projectSlug.toLowerCase(),
-            teamSlug: params.teamSlug.toLowerCase(),
-          },
-        },
-      });
-    }
-    if (deleteResource === 'visitors') {
-      await prismaClient.pageVisitor.deleteMany({
+      await prismaClient.pageViewNext.deleteMany({
         where: {
           project: {
             slug: params.projectSlug.toLowerCase(),
@@ -76,7 +65,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const url = formData.get('url') as string;
     const allowed_hosts = formData.get('allowed_hosts') as string;
     const public_statistics = formData.get('public_statistics') === 'on';
-    const track_page_visitors = formData.get('track_page_visitors') === 'on';
     try {
       const project = await prismaClient.project.update({
         data: {
@@ -84,7 +72,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           url,
           allowed_hosts,
           public_statistics,
-          track_page_visitors,
         },
         where: {
           teamSlug_slug: {
@@ -122,7 +109,6 @@ export default function ProjectSettings() {
 
   const deleteProjectEvents = useCallback(() => submit({ deleteResource: 'events' }, { method: 'POST', replace: true }), [submit]);
   const deleteProjectPageviews = useCallback(() => submit({ deleteResource: 'pageviews' }, { method: 'POST', replace: true }), [submit]);
-  const deleteProjectVisitors = useCallback(() => submit({ deleteResource: 'visitors' }, { method: 'POST', replace: true }), [submit]);
 
   const [deleteName, setDeleteName] = useState('');
 
@@ -150,16 +136,6 @@ export default function ProjectSettings() {
             all orgins
           </FormHelperText>
         </FormControl>
-        <FormControl id='track_page_visitors' orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
-          <Box>
-            <FormLabel>Track unique page visitors</FormLabel>
-            <FormHelperText sx={{ mt: 0, display: 'block' }}>
-              Enable tracking unique page visitors by storing a hash consisting of each visitors IP-adress, user-agent and a random salt. Changing this will not
-              affect data of eventual previously tracked unique users
-            </FormHelperText>
-          </Box>
-          <Switch defaultChecked={project.track_page_visitors} slotProps={{ input: { name: 'track_page_visitors' } }} variant='solid' />
-        </FormControl>
         <FormControl id='public_statistics' orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
           <Box>
             <FormLabel>Public dashboard</FormLabel>
@@ -182,19 +158,13 @@ export default function ProjectSettings() {
           Delete project-data
         </Typography>
         <ConfirmDialog
-          description='All stored data about this projects unique visitors will get permanently deleted'
-          onConfirm={deleteProjectVisitors}
-          title='Delete unique visitors data'>
-          Delete unique visitors data
-        </ConfirmDialog>
-        <ConfirmDialog
-          description='All stored data about this projects pageviews will get permanently deleted'
+          description="All stored data about this project's pageviews will get permanently deleted"
           onConfirm={deleteProjectPageviews}
           title='Delete pageviews data'>
           Delete pageviews data
         </ConfirmDialog>
         <ConfirmDialog
-          description='All stored data about this projects custom events will get permanently deleted'
+          description="All stored data about this project's custom events will get permanently deleted"
           onConfirm={deleteProjectEvents}
           title='Delete custom events data'>
           Delete custom events data

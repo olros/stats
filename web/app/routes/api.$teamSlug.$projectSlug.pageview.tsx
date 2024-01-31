@@ -82,18 +82,16 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
     invariant(params.projectSlug, `Expected params.projectSlug`);
     const ctx = context as unknown as RequestContext;
 
-    const pageViewRequest = request.clone();
-    const pageViewNextRequest = await getPageViewNextRequest(request.clone());
+    const pageViewNextRequest = await getPageViewNextRequest(request);
 
-    const promise = Promise.all([
-      forwardRequestToInternalApi(pageViewRequest, `${params.teamSlug}/${params.projectSlug}/pageview/`),
+    const promises = Promise.all([
       ...(pageViewNextRequest ? [forwardRequestToInternalApi(pageViewNextRequest, `${params.teamSlug}/${params.projectSlug}/pageview-next/`)] : []),
     ]);
 
     if ('waitUntil' in ctx) {
-      ctx.waitUntil(promise);
+      ctx.waitUntil(promises);
     } else {
-      await promise;
+      await promises;
     }
   } catch (e) {
     console.error('[API - Pageview]', e);

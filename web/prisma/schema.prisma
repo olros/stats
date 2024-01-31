@@ -36,16 +36,13 @@ model Project {
   name      String
   createdAt DateTime @default(now())
 
-  url                 String
-  allowed_hosts       String
-  track_page_visitors Boolean @default(true)
-  public_statistics   Boolean @default(false)
+  url               String
+  allowed_hosts     String
+  public_statistics Boolean @default(false)
 
   team Team @relation(fields: [teamSlug], references: [slug], onDelete: Cascade)
 
   customEvents  CustomEvent[]
-  pageViews     PageView[]
-  pageVisitors  PageVisitor[]
   pageViewsNext PageViewNext[]
 
   @@unique([teamSlug, slug])
@@ -61,22 +58,6 @@ model TeamUser {
   @@id([userId, teamId])
 }
 
-model PageView {
-  projectId String
-  date      DateTime @db.Date
-  hour      Int
-  pathname  String
-
-  count         Int
-  mobile_count  Int
-  tablet_count  Int
-  dekstop_count Int
-
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@id([projectId, date, hour, pathname])
-}
-
 model CustomEvent {
   projectId String
   date      DateTime @db.Date
@@ -88,16 +69,6 @@ model CustomEvent {
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@id([projectId, date, hour, name])
-}
-
-model PageVisitor {
-  projectId      String
-  date           DateTime @db.Date
-  hashed_user_id String
-
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@id([projectId, date, hashed_user_id])
 }
 
 model PageViewNext {

@@ -1,12 +1,6 @@
-import type { CustomEvent, PageView } from '@prisma/client';
+import type { CustomEvent, PageViewNext } from '@prisma/client';
 
-export enum DeviceType {
-  MOBILE = 'MOBILE',
-  TABLET = 'TABLET',
-  DESKTOP = 'DESKTOP',
-}
-
-export type PageviewInput = Pick<PageView, 'pathname'> & {
+export type PageviewInput = Pick<PageViewNext, 'pathname'> & {
   screen_width: number | null | undefined;
   referrer: string | null | undefined;
 };

@@ -27,7 +27,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 const TABS = [
   { label: 'Stats', url: '' },
-  { label: 'Deprecated', url: 'deprecated' },
   { label: 'Setup', url: 'setup' },
   { label: 'Settings', url: 'settings' },
 ];

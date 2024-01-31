@@ -1,10 +1,10 @@
 import { Alert, Card, LinearProgress, Stack, Typography } from '@mui/joy';
 import { useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import type { Usage } from '~/utils_usage.server';
 import { getTeamUsage } from '~/utils_usage.server';
+import { jsonHash } from 'remix-utils/json-hash';
 import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
@@ -12,9 +12,7 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   await ensureIsTeamMember(request, params.teamSlug);
-  const usage = await getTeamUsage(params.teamSlug);
-
-  return json({ usage });
+  return jsonHash({ usage: getTeamUsage(params.teamSlug) });
 };
 
 export const UsageDisplay = ({ label, description, usage }: { label: string; description?: string; usage: Usage }) => {
@@ -54,16 +52,6 @@ export default function TeamUsage() {
           in order to not break your applications, but the data will not be persisted to the database.
         </Typography>
       </Card>
-      <UsageDisplay
-        description='Since pageviews are aggregated when stored in the database, the usage seen here will probably be lower than the number of pageviews seen in your projects. Registered with the deprecated format.'
-        label='Pageviews (deprecated)'
-        usage={usage.pageViews}
-      />
-      <UsageDisplay
-        description='Since unique visitors are stored with a hash per visitor per day in the database, the usage seen here will probably be higher than the number of unique visitors seen in your projects. Registered with the deprecated format.'
-        label='Unique visitors (deprecated)'
-        usage={usage.pageVisitors}
-      />
       <UsageDisplay description='Pageviews registered' label='Pageviews' usage={usage.pageViewsNext} />
       <UsageDisplay
         description='Since custom events are aggregated when stored in the database, the usage seen here will probably be lower than the number of custom events seen in your projects'
