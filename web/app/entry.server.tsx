@@ -1,7 +1,7 @@
 import { CacheProvider } from '@emotion/react';
 import { CssBaseline, CssVarsProvider } from '@mui/joy';
+import type { RemixServerProps } from '@remix-run/react';
 import { RemixServer } from '@remix-run/react';
-import type { EntryContext } from '@vercel/remix';
 import { handleRequest } from '@vercel/remix';
 import { createEmotionServer } from '~/createEmotionServer';
 import { createEmotionCache } from '~/styles/createEmotionCache';
@@ -9,12 +9,12 @@ import StylesContext from '~/styles/server.context';
 import { theme } from '~/theme';
 import { renderToString } from 'react-dom/server';
 
-export default function (request: Request, responseStatusCode: number, responseHeaders: Headers, remixContext: EntryContext) {
+export default function (request: Request, responseStatusCode: number, responseHeaders: Headers, remixContext: RemixServerProps['context']) {
   const content = <Content remixContext={remixContext} request={request} />;
   return handleRequest(request, responseStatusCode, responseHeaders, content);
 }
 
-const Content = ({ request, remixContext }: { request: Request; remixContext: EntryContext }) => {
+const Content = ({ request, remixContext }: { request: Request; remixContext: RemixServerProps['context'] }) => {
   const cache = createEmotionCache();
   const { extractCriticalToChunks } = createEmotionServer(cache);
 

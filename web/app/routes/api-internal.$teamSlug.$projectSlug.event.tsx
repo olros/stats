@@ -2,7 +2,7 @@ import type { Prisma, Project } from '@prisma/client';
 import type { ActionFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
-import { getDate, getProjectAndCheckPermissions } from '~/utils_api.server';
+import { getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getCustomEventsUsage } from '~/utils_usage.server';
 import { getHours } from 'date-fns';
 import invariant from 'tiny-invariant';
@@ -27,7 +27,7 @@ const trackCustomEvent = async (request: Request, project: Project) => {
 
   const data = await parseCustomEventInput(request);
 
-  const date = getDate(request);
+  const date = new Date();
   const hour = getHours(date);
 
   const customEventCompoundUnique: Prisma.CustomEventProjectIdDateHourNameCompoundUniqueInput = {

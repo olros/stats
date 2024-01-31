@@ -36,6 +36,7 @@ module.exports = {
     'robust-predicates',
     /^three.*/,
     'tinycolor2',
+    'date-fns',
   ],
   serverMinify: true,
   serverModuleFormat: 'cjs',

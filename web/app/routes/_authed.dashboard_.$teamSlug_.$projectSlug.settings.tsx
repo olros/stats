@@ -1,5 +1,5 @@
 import { Box, Button, Card, FormControl, FormHelperText, FormLabel, Input, Switch, Textarea, Typography } from '@mui/joy';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Prisma } from '@prisma/client';
 import { Form, useActionData, useLoaderData, useNavigation, useSubmit } from '@remix-run/react';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
 import { json, redirect } from '@vercel/remix';
@@ -82,7 +82,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       });
       return redirect(`/dashboard/${params.teamSlug}/${project.slug}/settings`);
     } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
         return json({ errors: { name: 'This team already contains a project with this name' } }, { status: 400 });
       }
     }

@@ -1,9 +1,8 @@
 import { Button, Card, FormControl, FormLabel, Input, Typography } from '@mui/joy';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Prisma } from '@prisma/client';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
-import { redirect } from '@vercel/remix';
-import { json } from '@vercel/remix';
+import { json, redirect } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import { useState } from 'react';
@@ -34,7 +33,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       });
       return redirect(`/dashboard/${team.slug}/settings`);
     } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
         return json({ errors: { name: 'This team name is already taken' } }, { status: 400 });
       }
     }
