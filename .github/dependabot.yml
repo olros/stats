@@ -13,6 +13,10 @@ updates:
       remix:
         patterns:
           - "@remix-run/*"
+      prisma:
+        patterns:
+          - "prisma"
+          - "@prisma/client"
       eslint-prettier:
         patterns:
           - "eslint*"
@@ -28,7 +32,7 @@ updates:
         update-types: ["version-update:semver-patch"]
 
   - package-ecosystem: "github-actions"
-    directory: "/.github"
+    directory: "/"
     schedule:
       interval: "daily"
     labels:
