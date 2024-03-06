@@ -1,0 +1,37 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/web"
+    schedule:
+      interval: "daily"
+    labels:
+      - "web"
+      - "depencencies"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      remix:
+        patterns:
+          - "@remix-run/*"
+      eslint-prettier:
+        patterns:
+          - "eslint*"
+          - "prettier"
+          - "@types/eslint"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/.github"
+    schedule:
+      interval: "daily"
+    labels:
+      - "depencencies"
+    commit-message:
+      prefix: "chore(deps)"
