@@ -35,7 +35,7 @@
     "@nivo/heatmap": "^0.84.0",
     "@nivo/line": "^0.84.0",
     "@olros/stats": "^2.2.1",
-    "@prisma/adapter-neon": "5.9.1-dev.1",
+    "@prisma/adapter-neon": "5.10.2",
     "@prisma/client": "5.9.1-dev.1",
     "@remix-run/node": "^2.5.1",
     "@remix-run/react": "^2.5.1",
