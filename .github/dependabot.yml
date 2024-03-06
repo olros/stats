@@ -13,6 +13,7 @@ updates:
       remix:
         patterns:
           - "@remix-run/*"
+          - "@vercel/remix"
       prisma:
         patterns:
           - "prisma"
