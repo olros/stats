@@ -13,11 +13,19 @@ updates:
       remix:
         patterns:
           - "@remix-run/*"
-          - "@vercel/remix"
+          - "@vercel/*"
+      mui:
+        patterns:
+          - "@mui/*"
+          - "@emotion/*"
+      nivo:
+        patterns:
+          - "@nivo/*"
       prisma:
         patterns:
           - "prisma"
           - "@prisma/*"
+          - "@neondatabase/*"
       eslint-prettier:
         patterns:
           - "eslint*"

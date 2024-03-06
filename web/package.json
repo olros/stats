@@ -11,7 +11,7 @@
     "dev": "remix dev",
     "start": "remix-serve build/index.js",
     "typecheck": "tsc -b",
-    "lint": "eslint --fix src",
+    "lint": "eslint --fix",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:new-migration": "prisma migrate dev --name",
