@@ -17,7 +17,7 @@ updates:
       prisma:
         patterns:
           - "prisma"
-          - "@prisma/client"
+          - "@prisma/*"
       eslint-prettier:
         patterns:
           - "eslint*"
