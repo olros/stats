@@ -1,4 +1,4 @@
-import UglifyJS from 'uglify-js';
+import { minify } from 'uglify-js';
 
 export const config = { runtime: 'edge' };
 
@@ -28,10 +28,9 @@ const pageviewScript = () => {
 };
 
 const pageviewScriptAsString = pageviewScript.toString();
+const minifiedScript = minify(`(${pageviewScriptAsString})()`, { toplevel: true, module: true, compress: { unsafe: true } }).code;
 
 export const loader = async () => {
-  const minifiedScript = UglifyJS.minify(`(${pageviewScriptAsString})()`, { toplevel: true, module: true, compress: { unsafe: true } }).code;
-
   return new Response(minifiedScript, {
     status: 200,
     headers: {

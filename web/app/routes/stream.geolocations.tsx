@@ -1,23 +1,12 @@
 import type { LoaderFunctionArgs } from '@remix-run/node';
 import type { TopGeoLocationData } from '~/components/statistics/loader.server';
-import { prismaClient } from '~/prismaClient';
 import { secondsToMilliseconds, subMilliseconds } from 'date-fns';
 import { eventStream } from 'remix-utils/sse/server';
 import { interval } from 'remix-utils/timers';
+import { getTopGeoLocations } from '~/functions.server/getTopGeoLocations';
 
-export const getTopGeoLocations = async (dateGte: Date): Promise<TopGeoLocationData[]> => {
-  return prismaClient.$queryRaw<TopGeoLocationData[]>`
-    SELECT CONCAT(l.flag, ' ', l.city) as "name", l.latitude, l.longitude, COUNT(*)::int as "count"
-    FROM public."PageViewNext" p
-    JOIN public."Location" l ON p."locationId" = l.id
-    WHERE p.date >= ${dateGte}
-    GROUP BY l.id
-    ORDER BY "count" DESC
-    LIMIT 250;
-  `;
-};
+export const config = { runtime: 'edge' };
 
-export const NEW_GEOLOCATION_EVENT = 'new-geolocation';
 export type GeoLocationsEventData = { time: number; geoLocations: TopGeoLocationData[] };
 
 const POLL_INTERVAL = secondsToMilliseconds(2);
@@ -30,7 +19,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         const newGeoLocations = await getTopGeoLocations(subMilliseconds(new Date(), POLL_INTERVAL));
         if (newGeoLocations.length > 0) {
           send({
-            event: NEW_GEOLOCATION_EVENT,
+            event: 'new-geolocation',
             data: JSON.stringify({ time: new Date().getTime(), geoLocations: newGeoLocations } satisfies GeoLocationsEventData),
           });
         }

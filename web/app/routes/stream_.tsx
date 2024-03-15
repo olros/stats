@@ -8,12 +8,12 @@ import { jsonHash } from 'remix-utils/json-hash';
 import { useEventSource } from 'remix-utils/sse/react';
 
 import type { GeoLocationsEventData } from './stream.geolocations';
-import { getTopGeoLocations, NEW_GEOLOCATION_EVENT } from './stream.geolocations';
+import { getTopGeoLocations } from '~/functions.server/getTopGeoLocations';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-// Needs Prisma on Edge-functions as serverless functions times out after 10s
-// Edge-functions have no timeout
+export const config = { runtime: 'edge' };
+
 export const loader = async () => jsonHash({ topGeoLocations: getTopGeoLocations(subHours(new Date(), 72)) });
 
 export default function Stream() {
@@ -21,7 +21,7 @@ export default function Stream() {
   const [pointsData, setPointsData] = useState<GlobeWithCitiesProps['data']>(topGeoLocations);
   const [ringsData, setRingsData] = useState<Required<GlobeWithCitiesProps>['ringsData']>([]);
 
-  const time = useEventSource('/stream/geolocations', { event: NEW_GEOLOCATION_EVENT });
+  const time = useEventSource('/stream/geolocations', { event: 'new-geolocation' });
 
   useEffect(() => {
     if (time) {
