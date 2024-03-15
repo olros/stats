@@ -2297,13 +2297,11 @@
   resolved "https://registry.yarnpkg.com/@vercel/edge/-/edge-1.1.1.tgz#9b2fc0081dfe95db8b4c3598275721b1ad85e43f"
   integrity sha512-NtKiIbn9Cq6HWGy+qRudz28mz5nxfOJWls5Pnckjw1yCfSX8rhXdvY/il3Sy3Zd5n/sKCM2h7VSCCpJF/oaDrQ==
 
-"@vercel/remix@^2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@vercel/remix/-/remix-2.8.0.tgz#c89f4ee12c05973077ed1dffee683a1f7b0a9d0d"
-  integrity sha512-1yVLud5Cq1wkzuuIDdOM+OntCr0W9nEIofvqDgX8tY87AGb3NZ8MycBUgxAzi7quZAZIImf+JF/RNL+qM8w9XQ==
+"@vercel/remix@^2.8.1-patch.2":
+  version "2.8.1-patch.2"
+  resolved "https://registry.yarnpkg.com/@vercel/remix/-/remix-2.8.1-patch.2.tgz#dadf511414cc96a311538d94bb6e824a9e309d59"
+  integrity sha512-Ao4quvRKJshgB9ABSIdx+oNCxWPvNwvBzhEq97grnF+SP9zas+mENCYOvE4rsk7txFDwob+2Qs+bK0h+r3NScg==
   dependencies:
-    "@remix-run/node" "2.8.0"
-    "@remix-run/server-runtime" "2.8.0"
     "@vercel/static-config" "3.0.0"
     isbot "^3.6.8"
     ts-morph "12.0.0"
