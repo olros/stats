@@ -1,5 +1,7 @@
 import UglifyJS from 'uglify-js';
 
+export const config = { runtime: 'edge' };
+
 const pageviewScript = () => {
   try {
     const host = location.host;
