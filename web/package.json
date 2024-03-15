@@ -8,7 +8,8 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "yarn db:generate && remix vite:build",
+    "build": "remix vite:build",
+    "postinstall": "prisma generate",
     "dev": "remix vite:dev",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc -b",
