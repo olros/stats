@@ -1,14 +1,6 @@
-import { neonConfig, Pool } from '@neondatabase/serverless';
+import { Pool } from '@neondatabase/serverless';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { PrismaClient } from '@prisma/client';
-import dotenv from 'dotenv';
-import { WebSocket } from 'undici';
-
-dotenv.config();
-neonConfig.webSocketConstructor = WebSocket;
-const connectionString = `${process.env.DATABASE_URL}`;
-
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 declare global {
   // allow global `var` declarations
@@ -17,7 +9,10 @@ declare global {
   let prisma: PrismaClient | undefined;
 }
 
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
 const getPrismaClient = () => {
+  const connectionString = `${process.env.DATABASE_URL}`;
   if (IS_PRODUCTION) {
     const pool = new Pool({ connectionString });
     const adapter = new PrismaNeon(pool);
