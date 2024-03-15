@@ -1,10 +1,8 @@
 import { neonConfig, Pool } from '@neondatabase/serverless';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { PrismaClient } from '@prisma/client';
-import dotenv from 'dotenv';
 import { WebSocket } from 'undici';
 
-dotenv.config();
 neonConfig.webSocketConstructor = WebSocket;
 const connectionString = `${process.env.DATABASE_URL}`;
 
