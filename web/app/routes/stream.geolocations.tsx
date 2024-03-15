@@ -5,8 +5,6 @@ import { eventStream } from 'remix-utils/sse/server';
 import { interval } from 'remix-utils/timers';
 import { getTopGeoLocations } from '~/functions.server/getTopGeoLocations';
 
-export const config = { runtime: 'edge' };
-
 export type GeoLocationsEventData = { time: number; geoLocations: TopGeoLocationData[] };
 
 const POLL_INTERVAL = secondsToMilliseconds(2);

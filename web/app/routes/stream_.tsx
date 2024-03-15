@@ -12,8 +12,6 @@ import { getTopGeoLocations } from '~/functions.server/getTopGeoLocations';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const config = { runtime: 'edge' };
-
 export const loader = async () => jsonHash({ topGeoLocations: getTopGeoLocations(subHours(new Date(), 72)) });
 
 export default function Stream() {
