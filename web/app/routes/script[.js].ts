@@ -1,6 +1,8 @@
 import { minify } from 'uglify-js';
 
+const __FALLBACK_BASE_URL__ = '__FALLBACK_BASE_URL__';
 const pageviewScript = () => {
+  const fallbackBaseUrl = __FALLBACK_BASE_URL__;
   try {
     const host = location.host;
     const script = document.currentScript;
@@ -12,7 +14,7 @@ const pageviewScript = () => {
     const pathname = script.getAttribute('data-pathname') || location.pathname;
     const team = script.getAttribute('data-team');
     const project = script.getAttribute('data-project');
-    const baseUrl = script.getAttribute('data-baseurl') || (process.env.NODE_ENV === 'production' ? 'https://stats.olafros.com' : 'http://localhost:3000');
+    const baseUrl = script.getAttribute('data-baseurl') || `${fallbackBaseUrl}`;
     if (!team || !project) return;
 
     const data = {
@@ -21,11 +23,13 @@ const pageviewScript = () => {
       referrer: window.document.referrer || null,
     };
 
-    navigator.sendBeacon(`${baseUrl}/api/` + team + '/' + project + '/pageview/', JSON.stringify(data));
+    navigator.sendBeacon(`${baseUrl}/api/${team}/${project}/pageview/`, JSON.stringify(data));
   } catch {}
 };
 
-const pageviewScriptAsString = pageviewScript.toString();
+const pageviewScriptAsString = pageviewScript
+  .toString()
+  .replace(__FALLBACK_BASE_URL__, process.env.NODE_ENV === 'production' ? '"https://stats.olafros.com"' : '"http://localhost:3000"');
 
 export const loader = async () => {
   const minifiedScript = minify(`(${pageviewScriptAsString})()`, { toplevel: true, module: true, compress: { unsafe: true } }).code;
