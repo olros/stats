@@ -2,7 +2,6 @@ import { minify } from 'uglify-js';
 
 const __FALLBACK_BASE_URL__ = '__FALLBACK_BASE_URL__';
 const pageviewScript = () => {
-  const fallbackBaseUrl = __FALLBACK_BASE_URL__;
   try {
     const host = location.host;
     const script = document.currentScript;
@@ -14,7 +13,7 @@ const pageviewScript = () => {
     const pathname = script.getAttribute('data-pathname') || location.pathname;
     const team = script.getAttribute('data-team');
     const project = script.getAttribute('data-project');
-    const baseUrl = script.getAttribute('data-baseurl') || `${fallbackBaseUrl}`;
+    const baseUrl = script.getAttribute('data-baseurl') || __FALLBACK_BASE_URL__;
     if (!team || !project) return;
 
     const data = {
