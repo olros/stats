@@ -44,7 +44,7 @@ const Code = ({ children, language = 'javascript' }: { children: ReactNode; lang
   if (!isClient) return null;
   return (
     // @ts-ignore
-    <SyntaxHighlighter wrapLongLines PreTag={Pre} language={language} style={codeStyle}>
+    <SyntaxHighlighter PreTag={Pre} language={language} style={codeStyle}>
       {children}
     </SyntaxHighlighter>
   );
