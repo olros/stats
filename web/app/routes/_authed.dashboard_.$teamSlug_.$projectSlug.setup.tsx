@@ -73,7 +73,7 @@ window.__stats.pageview({
 });
 
 // Register event:
-window.__stats.event({ name: 'buy' });`}
+window.__stats.event('buy');`}
         </Code>
       </Card>
       <Card>
