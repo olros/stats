@@ -53,11 +53,11 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
       <Box sx={{ display: 'grid', gap: 1, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
         <Card>
           <Typography level='h4'>Top sources</Typography>
-          <BarChart countTitle='Visitors' data={statistics.topReferrers} maxCount={statistics.totalPageViews.count} nullText='Direct / None' title='Source' />
+          <BarChart countTitle='Pageviews' data={statistics.topReferrers} maxCount={statistics.totalPageViews.count} nullText='Direct / None' title='Source' />
         </Card>
         <Card>
           <Typography level='h4'>Top pages</Typography>
-          <BarChart countTitle='Visitors' data={statistics.topPages} maxCount={statistics.totalPageViews.count} title='Page' />
+          <BarChart countTitle='Pageviews' data={statistics.topPages} maxCount={statistics.totalPageViews.count} title='Page' />
         </Card>
         <Card>
           <Stack direction='row' justifyContent='space-between'>
@@ -70,7 +70,7 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
               ))}
             </ButtonGroup>
           </Stack>
-          <BarChart countTitle='Visitors' data={deviceStats[deviceStat]} maxCount={statistics.totalPageViews.count} nullText='(Unknown)' title={deviceStat} />
+          <BarChart countTitle='Pageviews' data={deviceStats[deviceStat]} maxCount={statistics.totalPageViews.count} nullText='(Unknown)' title={deviceStat} />
         </Card>
         <Card>
           <Typography level='h4'>Top custom events</Typography>
