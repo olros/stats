@@ -16,13 +16,19 @@ const pageviewScript = () => {
     const baseUrl = script.getAttribute('data-baseurl') || __FALLBACK_BASE_URL__;
     if (!team || !project) return;
 
+    const url = `${baseUrl}/api/${team}/${project}/`;
+
+    const event = (name: string) => navigator.sendBeacon(`${url}event/`, JSON.stringify({ name }));
+    const pageview = (data: { pathname: string; referrer: string | null }) => navigator.sendBeacon(`${url}pageview/`, JSON.stringify(data));
+
+    window.__stats = { event, pageview };
+
     const data = {
       pathname,
-      screen_width: window.innerWidth,
       referrer: window.document.referrer || null,
     };
 
-    navigator.sendBeacon(`${baseUrl}/api/${team}/${project}/pageview/`, JSON.stringify(data));
+    window.__stats.pageview(data);
   } catch {}
 };
 

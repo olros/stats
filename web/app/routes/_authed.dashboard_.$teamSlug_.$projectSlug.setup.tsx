@@ -1,7 +1,17 @@
-import type { CardProps, TypographyProps } from '@mui/joy';
+import type { TypographyProps } from '@mui/joy';
 import { Card, styled, Typography } from '@mui/joy';
 import { useParams } from '@remix-run/react';
-import type { ReactNode } from 'react';
+import { ReactNode } from 'react';
+
+import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism-light';
+import js from 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
+import bash from 'react-syntax-highlighter/dist/esm/languages/prism/bash';
+import codeStyle from 'react-syntax-highlighter/dist/esm/styles/prism/coldark-dark';
+
+import { useIsClient } from '~/hooks/useIsClient';
+
+SyntaxHighlighter.registerLanguage('javascript', js);
+SyntaxHighlighter.registerLanguage('bash', bash);
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -11,38 +21,71 @@ const Description = styled(Typography)(({ theme }) => ({
   overflowWrap: 'anywhere',
 }));
 
-const Code = ({ children, gutterBottom = true, ...props }: { children: ReactNode } & CardProps & TypographyProps) => (
-  <Card
-    gutterBottom={gutterBottom}
-    sx={{ fontFamily: 'monospace', overflowWrap: 'anywhere', whiteSpace: 'pre-wrap' }}
+const Pre = ({ children, ...props }: TypographyProps) => (
+  <Typography
+    sx={{
+      p: ({ spacing }) => `${spacing(2)} !important`,
+      fontSize: ({ fontSize }) => `${fontSize.md} !important`,
+      '& code': {
+        fontSize: 'inherit !important',
+      },
+      bgcolor: ({ palette }) => `${palette.neutral.softBg} !important`,
+      margin: '0 !important',
+    }}
     variant='soft'
-    {...props}
-    component={Typography}>
+    component='pre'
+    {...props}>
     {children}
-  </Card>
+  </Typography>
 );
+
+const Code = ({ children, language = 'javascript' }: { children: ReactNode; language?: 'javascript' | 'bash' }) => {
+  const isClient = useIsClient();
+  if (!isClient) return null;
+  return (
+    // @ts-ignore
+    <SyntaxHighlighter wrapLongLines PreTag={Pre} language={language} style={codeStyle}>
+      {children}
+    </SyntaxHighlighter>
+  );
+};
 
 export default function ProjectSetup() {
   const { teamSlug, projectSlug } = useParams() as { teamSlug: string; projectSlug: string };
   return (
     <>
       <Card>
-        <Typography level='h3'>{`Javascript snippet`}</Typography>
-        <Description>{`Include this snippet in the <head> of your website to register pageviews`}</Description>
-        <Code gutterBottom={false}>
-          {`<script data-project='${projectSlug}' data-team='${teamSlug}' defer src='https://stats.olafros.com/script.js'></script>`}
+        <Typography level='h3'>Javascript snippet</Typography>
+        <Description>{`Include this snippet in the <head> of your website to automatically register pageviews on load.`}</Description>
+        <Code>{`<script data-project='${projectSlug}' data-team='${teamSlug}' defer src='https://stats.olafros.com/script.js'></script>`}</Code>
+        <Description>
+          The script also add{' '}
+          <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
+            __stats
+          </Typography>{' '}
+          to window, giving you access register events and pageviews programatically:
+        </Description>
+        <Code>
+          {`// Register pageview:
+window.__stats.pageview({
+  pathname: location.pathname,
+  referrer: document.referrer,
+});
+
+// Register event:
+window.__stats.event({ name: 'buy' });`}
         </Code>
       </Card>
       <Card>
-        <Typography level='h3'>{`NPM-package`}</Typography>
+        <Typography level='h3'>NPM-package</Typography>
         <Description>
           Import{' '}
           <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
-            {`@olros/stats`}
+            @olros/stats
           </Typography>
           :
         </Description>
-        <Code>{`yarn add @olros/stats`}</Code>
+        <Code language='bash'>yarn add @olros/stats</Code>
         <Description>Create an instance of Stats:</Description>
         <Code>
           {`// utils/stats.ts
@@ -60,7 +103,7 @@ export const stats = Stats({ team: TEAM, project: PROJECT });`}
           </Typography>
           -method on each pagenavigation to track pageviews. Example from React with React-Router:
         </Description>
-        <Code gutterBottom={false}>
+        <Code>
           {`// route.ts
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -82,7 +125,7 @@ useEffect(() => {
           </Typography>
           -method to track custom events:
         </Description>
-        <Code gutterBottom={false}>
+        <Code>
           {`// route.ts
 import { stats } from 'utils/stats'; // Import the stats-instance
 
@@ -94,8 +137,8 @@ const handleClick = () => {
         </Code>
       </Card>
       <Card>
-        <Typography level='h3'>{`HTTP-request`}</Typography>
-        <Description>{`You can also manually send a HTTP-request to our api to register pageviews or custom events.`}</Description>
+        <Typography level='h3'>HTTP-request</Typography>
+        <Description>You can also manually send a HTTP-request to our api to register pageviews or custom events.</Description>
         <Typography level='h4'>{`Pageviews`}</Typography>
         <Description>
           Send POST-request to{' '}
@@ -104,17 +147,17 @@ const handleClick = () => {
           </Typography>
           {' with a body containing pathname and optionally referrer.'}
         </Description>
-        <Description>{`Example using Javascript:`}</Description>
-        <Code gutterBottom={false}>
+        <Description>Example using Javascript:</Description>
+        <Code>
           {`const data = {
   pathname: location.pathname,
   referrer: document.referrer,
 };
 
-// You can use either navigator.sendBeacon:
+// You can use both navigator.sendBeacon:
 navigator.sendBeacon('https://stats.olafros.com/api/${teamSlug}/${projectSlug}/pageview/', JSON.stringify(data));
 
-// or fetch:
+// and fetch:
 fetch('https://stats.olafros.com/api/${teamSlug}/${projectSlug}/pageview/', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
@@ -131,16 +174,16 @@ fetch('https://stats.olafros.com/api/${teamSlug}/${projectSlug}/pageview/', {
           </Typography>
           {' with a body containing name of the custom event.'}
         </Description>
-        <Description>{`Example using Javascript:`}</Description>
-        <Code gutterBottom={false}>
+        <Description>Example using Javascript:</Description>
+        <Code>
           {`const data = {
   name: 'buy',
 };
 
-// You can use either navigator.sendBeacon:
+// You can use both navigator.sendBeacon:
 navigator.sendBeacon('https://stats.olafros.com/api/${teamSlug}/${projectSlug}/event/', JSON.stringify(data));
 
-// or fetch:
+// and fetch:
 fetch('https://stats.olafros.com/api/${teamSlug}/${projectSlug}/event/', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },

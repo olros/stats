@@ -11,7 +11,7 @@ export default defineConfig({
     port: 3000,
   },
   ssr: {
-    noExternal: [/^@nivo\/.*/, /^@react-spring\/.*/],
+    noExternal: [/^@nivo\/.*/, /^@react-spring\/.*/, 'react-syntax-highlighter'],
   },
   plugins: [
     remix({
