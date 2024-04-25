@@ -8,7 +8,7 @@ import { useContext, useEffect } from 'react';
 
 import { stats } from './stats';
 
-import styles from './globals.css';
+import styles from './globals.css?url';
 
 export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }];
 
