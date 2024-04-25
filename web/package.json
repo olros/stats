@@ -8,7 +8,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "yarn db:generate && remix vite:build",
+    "build": "pnpm run db:generate && remix vite:build",
     "dev": "remix vite:dev",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc -b",
@@ -19,7 +19,7 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "docker:down": "docker-compose down",
-    "docker:fresh": "yarn docker:down && yarn docker:start && sleep 1 && yarn db:migrate && yarn db:generate",
+    "docker:fresh": "pnpm run docker:down && pnpm run docker:start && sleep 1 && pnpm run db:migrate && pnpm run db:generate",
     "docker:start": "docker-compose up -d",
     "docker:stop": "docker-compose stop"
   },
@@ -42,6 +42,8 @@
     "@remix-run/react": "^2.9.1",
     "@vercel/edge": "^1.1.1",
     "@vercel/remix": "^2.9.0",
+    "d3-scale": "^4.0.2",
+    "d3-scale-chromatic": "^3.1.0",
     "date-fns": "^3.6.0",
     "is-ip": "^5.0.1",
     "isbot": "^5.1.1",
@@ -54,6 +56,7 @@
     "remix-auth-github": "^1.7.0",
     "remix-utils": "^7.6.0",
     "slugify": "^1.6.6",
+    "three": "^0.163.0",
     "tiny-invariant": "^1.3.1",
     "ua-parser-js": "^1.0.37",
     "uglify-js": "^3.17.4",
@@ -63,6 +66,8 @@
     "@remix-run/dev": "^2.9.1",
     "@remix-run/eslint-config": "^2.9.1",
     "@remix-run/serve": "^2.9.1",
+    "@types/d3-scale": "^4.0.8",
+    "@types/d3-scale-chromatic": "^3.0.3",
     "@types/node": "^20.12.2",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",

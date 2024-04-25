@@ -85,7 +85,7 @@ window.__stats.event('buy');`}
           </Typography>
           :
         </Description>
-        <Code language='bash'>yarn add @olros/stats</Code>
+        <Code language='bash'>npm i/yarn add/pnpm add @olros/stats</Code>
         <Description>Create an instance of Stats:</Description>
         <Code>
           {`// utils/stats.ts

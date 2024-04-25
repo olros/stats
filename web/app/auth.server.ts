@@ -1,7 +1,7 @@
 import type { Team, User } from '@prisma/client';
 import { authSession } from '~/cookies.server';
 import { differenceInSeconds, minutesToSeconds } from 'date-fns';
-import { redirect } from 'react-router';
+import { redirect } from '@remix-run/node';
 import { Authenticator } from 'remix-auth';
 import { GitHubStrategy } from 'remix-auth-github';
 import slugify from 'slugify';
