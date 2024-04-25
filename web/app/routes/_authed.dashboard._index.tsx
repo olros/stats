@@ -1,7 +1,6 @@
 import { Box, Button, Card, Stack, Typography } from '@mui/joy';
 import { Link, NavLink, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 
@@ -18,7 +17,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       },
     },
   });
-  return json({ teams });
+  return { teams };
 };
 
 export default function Dashboard() {

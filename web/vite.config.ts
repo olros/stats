@@ -4,7 +4,7 @@ import { vercelPreset } from '@vercel/remix/vite';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-installGlobals();
+installGlobals({ nativeFetch: true });
 
 export default defineConfig({
   server: {
@@ -18,6 +18,12 @@ export default defineConfig({
       serverModuleFormat: 'esm',
       ignoredRouteFiles: ['**/.*'],
       presets: [vercelPreset()],
+      future: {
+        v3_throwAbortReason: true,
+        v3_fetcherPersist: true,
+        v3_relativeSplatPath: true,
+        unstable_singleFetch: true,
+      },
     }),
     tsconfigPaths(),
   ],

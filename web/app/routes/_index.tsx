@@ -1,15 +1,16 @@
 import { Box, Button, Card, Container, Divider, Stack, Typography } from '@mui/joy';
 import { Form } from '@remix-run/react';
-import { type LoaderFunctionArgs, redirect } from '@vercel/remix';
+import { type LoaderFunctionArgs } from '@vercel/remix';
 import { authenticator } from '~/auth.server';
 import { stats } from '~/stats';
+import { redirect } from '~/utils.server';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request, response }: LoaderFunctionArgs) => {
   const user = await authenticator.isAuthenticated(request);
   if (user) {
-    return redirect(`/dashboard`);
+    return redirect(response, `/dashboard`);
   }
   return null;
 };

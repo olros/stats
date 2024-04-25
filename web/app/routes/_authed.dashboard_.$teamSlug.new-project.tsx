@@ -2,15 +2,14 @@ import { Button, Card, FormControl, FormLabel, Input, Stack, Typography } from '
 import { Prisma } from '@prisma/client';
 import { Form, Link, useActionData, useNavigation, useParams } from '@remix-run/react';
 import type { ActionFunctionArgs } from '@vercel/remix';
-import { json, redirect } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
-import { slugify } from '~/utils';
+import { redirect, slugify } from '~/utils.server';
 import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const action = async ({ request, params }: ActionFunctionArgs) => {
+export const action = async ({ request, params, response }: ActionFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   const team = await ensureIsTeamMember(request, params.teamSlug);
   const formData = await request.formData();
@@ -19,7 +18,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const slug = slugify(name);
 
   if (slug === 'settings' || slug === 'members') {
-    return json({ errors: { name: `"settings" and "members" are protected project names, chose a different name and try again` } }, { status: 400 });
+    response!.status = 400;
+    return { errors: { name: `"settings" and "members" are protected project names, chose a different name and try again` } };
   }
 
   try {
@@ -32,13 +32,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         allowed_hosts: '',
       },
     });
-    return redirect(`/dashboard/${team.slug}/${project.slug}`);
+    return redirect(response, `/dashboard/${team.slug}/${project.slug}`);
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      return json({ errors: { name: `This team already contains a project named "${name}"` } }, { status: 400 });
+      response!.status = 400;
+      return { errors: { name: `This team already contains a project named "${name}"` } };
     }
   }
-  return json({ errors: { name: 'Something went wrong' } }, { status: 400 });
+  response!.status = 400;
+  return { errors: { name: 'Something went wrong' } };
 };
 
 export default function CreateProject() {

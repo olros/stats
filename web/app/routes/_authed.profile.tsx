@@ -2,7 +2,6 @@ import { Avatar, Button, Card, Stack, Typography } from '@mui/joy';
 import { Link, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
-import { jsonHash } from 'remix-utils/json-hash';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -10,7 +9,7 @@ export const meta: MetaFunction = () => [{ title: 'Profile | Stats' }];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await getUserOrRedirect(request);
-  return jsonHash({ user });
+  return { user };
 };
 
 export default function Profile() {

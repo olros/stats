@@ -22,13 +22,11 @@ import { Add, Check } from './Icons';
 
 export type NavbarProps = {
   user: Pick<User, 'avatar_url' | 'name'>;
-  teams: SerializeFrom<
-    Prisma.TeamGetPayload<{
-      include: {
-        projects: true;
-      };
-    }>[]
-  >;
+  teams: Prisma.TeamGetPayload<{
+    include: {
+      projects: true;
+    };
+  }>[];
 };
 
 export const Navbar = ({ user, teams }: NavbarProps) => {

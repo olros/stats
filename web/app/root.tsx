@@ -7,17 +7,13 @@ import { useContext, useEffect } from 'react';
 
 import { stats } from './stats';
 
-export const ErrorBoundary = () => (
-  <Document>
-    <BaseErrorBoundary />
-  </Document>
-);
+export const ErrorBoundary = () => <BaseErrorBoundary />;
 
-type DocumentProps = {
+export type LayoutProps = {
   children: React.ReactNode;
 };
 
-const Document = ({ children }: DocumentProps) => {
+export const Layout = ({ children }: LayoutProps) => {
   const styleData = useContext(StylesContext);
 
   const location = useLocation();
@@ -70,9 +66,5 @@ const Document = ({ children }: DocumentProps) => {
 };
 
 export default function App() {
-  return (
-    <Document>
-      <Outlet />
-    </Document>
-  );
+  return <Outlet />;
 }

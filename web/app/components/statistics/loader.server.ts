@@ -5,13 +5,13 @@ import { format, setDay, subMinutes } from 'date-fns';
 import { CURRENT_VISITORS_LAST_MINUTES, formatFilterDate, getFilteringParams, mapTrendDataToTrend } from './utils';
 
 export type LoadStatistics = Awaited<ReturnType<typeof loadStatistics>>;
-export type LoadStatisticsSerialized = SerializeFrom<Awaited<ReturnType<typeof loadStatistics>>>;
+export type LoadStatisticsSerialized = Awaited<ReturnType<typeof loadStatistics>>;
 
 export type Trend = {
   x: Date;
   y: number;
 };
-export type TrendSerialized = SerializeFrom<Trend>;
+export type TrendSerialized = Trend;
 
 export type TopData = {
   name: string | null;

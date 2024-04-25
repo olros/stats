@@ -1,7 +1,6 @@
 import { geolocation, ipAddress } from '@vercel/edge';
 import type { RequestContext } from '@vercel/edge';
 import type { ActionFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
 import type { UserAgentData } from '~/user-agent';
 import { userAgent } from '~/user-agent';
 import { forwardRequestToInternalApi } from '~/utils_edge.server';
@@ -45,16 +44,18 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
   const geoData: PageviewRequestData['geo'] | undefined =
     geo.city && geo.country && geo.flag && geo.latitude && geo.longitude ? (geo as PageviewRequestData['geo']) : undefined;
   if (!geoData || !ip || ua.isBot) {
-    console.warn(
-      '[API - getPageViewNextRequest]',
-      new Error(
-        JSON.stringify({
-          location: geoData ? undefined : `Location could not be found: ${JSON.stringify(geo)}`,
-          ip: ip ? undefined : `IP-address could not be found`,
-          isBot: ua.isBot ? `Bot detected: ${ua.ua}` : undefined,
-        }),
-      ),
-    );
+    if (process.env.NODE_ENV === 'production') {
+      console.warn(
+        '[API - getPageViewNextRequest]',
+        new Error(
+          JSON.stringify({
+            location: geoData ? undefined : `Location could not be found: ${JSON.stringify(geo)}`,
+            ip: ip ? undefined : `IP-address could not be found`,
+            isBot: ua.isBot ? `Bot detected: ${ua.ua}` : undefined,
+          }),
+        ),
+      );
+    }
     return undefined;
   }
 
@@ -95,7 +96,7 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
     }
   } catch (e) {
     console.error('[API - Pageview]', e);
-    return json({ ok: false }, { status: 200 });
+    return { ok: false };
   }
-  return json({ ok: true }, { status: 200 });
+  return { ok: true };
 };

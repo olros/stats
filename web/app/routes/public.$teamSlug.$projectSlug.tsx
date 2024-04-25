@@ -1,16 +1,15 @@
 import { Container, Typography } from '@mui/joy';
 import { Outlet, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
-import { redirect } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
-import { jsonHash } from 'remix-utils/json-hash';
 import invariant from 'tiny-invariant';
+import { redirect } from '~/utils.server';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: `${data?.project.team.name}/${data?.project.name} | Stats` }];
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, response }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
 
@@ -31,13 +30,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   });
 
   if (!project) {
-    throw redirect('/');
+    throw redirect(response, '/');
   }
 
   try {
-    return jsonHash({
-      project,
-    });
+    return { project };
   } catch (e) {
     console.error(e);
     throw e;

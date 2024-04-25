@@ -1,7 +1,6 @@
 import type { Location, Prisma, Project } from '@prisma/client';
 import type { Geo } from '@vercel/edge';
 import type { ActionFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
 import { getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getPageViewsNextUsage } from '~/utils_usage.server';
@@ -79,7 +78,7 @@ const trackPageviewNext = async (request: Request, project: Project) => {
   });
 };
 
-export const action = async ({ request, params }: ActionFunctionArgs) => {
+export const action = async ({ request, params, response }: ActionFunctionArgs) => {
   try {
     invariant(params.teamSlug, `Expected params.teamSlug`);
     invariant(params.projectSlug, `Expected params.projectSlug`);
@@ -89,7 +88,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     await trackPageviewNext(request, project);
   } catch (e) {
     console.error('[API-Internal - PageviewNext]', e);
-    return json({ ok: false }, { status: 400 });
+    response!.status = 400;
+    return { ok: false };
   }
-  return json({ ok: true }, { status: 202 });
+  return { ok: true };
 };

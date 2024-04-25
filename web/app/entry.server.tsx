@@ -1,48 +1,120 @@
-import { CacheProvider } from '@emotion/react';
-import { CssBaseline, CssVarsProvider } from '@mui/joy';
-import type { RemixServerProps } from '@remix-run/react';
-import { RemixServer } from '@remix-run/react';
-import { handleRequest } from '@vercel/remix';
-import { createEmotionServer } from '~/createEmotionServer';
-import { createEmotionCache } from '~/styles/createEmotionCache';
-import StylesContext from '~/styles/server.context';
-import { theme } from '~/theme';
-import { renderToString } from 'react-dom/server';
+import { PassThrough } from 'node:stream';
 
-export default function (request: Request, responseStatusCode: number, responseHeaders: Headers, remixContext: RemixServerProps['context']) {
-  const content = <Content remixContext={remixContext} request={request} />;
-  return handleRequest(request, responseStatusCode, responseHeaders, content);
+import type { AppLoadContext, EntryContext } from '@remix-run/node';
+import { createReadableStreamFromReadable } from '@remix-run/node';
+import { RemixServer } from '@remix-run/react';
+import * as isbotModule from 'isbot';
+import { renderToPipeableStream } from 'react-dom/server';
+
+const ABORT_DELAY = 5_000;
+
+export default function handleRequest(
+  request: Request,
+  responseStatusCode: number,
+  responseHeaders: Headers,
+  remixContext: EntryContext,
+  loadContext: AppLoadContext,
+) {
+  let prohibitOutOfOrderStreaming = isBotRequest(request.headers.get('user-agent')) || remixContext.isSpaMode;
+
+  return prohibitOutOfOrderStreaming
+    ? handleBotRequest(request, responseStatusCode, responseHeaders, remixContext)
+    : handleBrowserRequest(request, responseStatusCode, responseHeaders, remixContext);
 }
 
-const Content = ({ request, remixContext }: { request: Request; remixContext: RemixServerProps['context'] }) => {
-  const cache = createEmotionCache();
-  const { extractCriticalToChunks } = createEmotionServer(cache);
+// We have some Remix apps in the wild already running with isbot@3 so we need
+// to maintain backwards compatibility even though we want new apps to use
+// isbot@4.  That way, we can ship this as a minor Semver update to @remix-run/dev.
+function isBotRequest(userAgent: string | null) {
+  if (!userAgent) {
+    return false;
+  }
 
-  const MuiRemixServer = () => (
-    <CacheProvider value={cache}>
-      <CssVarsProvider defaultColorScheme='dark' defaultMode='dark' theme={theme}>
-        <CssBaseline />
-        <RemixServer context={remixContext} url={request.url} />
-      </CssVarsProvider>
-    </CacheProvider>
-  );
+  // isbot >= 3.8.0, >4
+  if ('isbot' in isbotModule && typeof isbotModule.isbot === 'function') {
+    return isbotModule.isbot(userAgent);
+  }
 
-  // Render the component to a string.
-  const html = renderToString(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    <StylesContext.Provider value={null}>
-      <MuiRemixServer />
-    </StylesContext.Provider>,
-  );
+  // isbot < 3.8.0
+  if ('default' in isbotModule && typeof isbotModule.default === 'function') {
+    return isbotModule.default(userAgent);
+  }
 
-  // Grab the CSS from emotion
-  const emotionChunks = extractCriticalToChunks(html);
+  return false;
+}
 
-  // Re-render including the extracted css.
-  return (
-    <StylesContext.Provider value={emotionChunks.styles}>
-      <MuiRemixServer />
-    </StylesContext.Provider>
-  );
-};
+function handleBotRequest(request: Request, responseStatusCode: number, responseHeaders: Headers, remixContext: EntryContext) {
+  return new Promise((resolve, reject) => {
+    let shellRendered = false;
+    const { pipe, abort } = renderToPipeableStream(<RemixServer context={remixContext} url={request.url} abortDelay={ABORT_DELAY} />, {
+      onAllReady() {
+        shellRendered = true;
+        const body = new PassThrough();
+        const stream = createReadableStreamFromReadable(body);
+
+        responseHeaders.set('Content-Type', 'text/html');
+
+        resolve(
+          new Response(stream, {
+            headers: responseHeaders,
+            status: responseStatusCode,
+          }),
+        );
+
+        pipe(body);
+      },
+      onShellError(error: unknown) {
+        reject(error);
+      },
+      onError(error: unknown) {
+        responseStatusCode = 500;
+        // Log streaming rendering errors from inside the shell.  Don't log
+        // errors encountered during initial shell rendering since they'll
+        // reject and get logged in handleDocumentRequest.
+        if (shellRendered) {
+          console.error(error);
+        }
+      },
+    });
+
+    setTimeout(abort, ABORT_DELAY);
+  });
+}
+
+function handleBrowserRequest(request: Request, responseStatusCode: number, responseHeaders: Headers, remixContext: EntryContext) {
+  return new Promise((resolve, reject) => {
+    let shellRendered = false;
+    const { pipe, abort } = renderToPipeableStream(<RemixServer context={remixContext} url={request.url} abortDelay={ABORT_DELAY} />, {
+      onShellReady() {
+        shellRendered = true;
+        const body = new PassThrough();
+        const stream = createReadableStreamFromReadable(body);
+
+        responseHeaders.set('Content-Type', 'text/html');
+
+        resolve(
+          new Response(stream, {
+            headers: responseHeaders,
+            status: responseStatusCode,
+          }),
+        );
+
+        pipe(body);
+      },
+      onShellError(error: unknown) {
+        reject(error);
+      },
+      onError(error: unknown) {
+        responseStatusCode = 500;
+        // Log streaming rendering errors from inside the shell.  Don't log
+        // errors encountered during initial shell rendering since they'll
+        // reject and get logged in handleDocumentRequest.
+        if (shellRendered) {
+          console.error(error);
+        }
+      },
+    });
+
+    setTimeout(abort, ABORT_DELAY);
+  });
+}

@@ -4,7 +4,6 @@ import type { LoaderFunctionArgs } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import type { Usage } from '~/utils_usage.server';
 import { getTeamUsage } from '~/utils_usage.server';
-import { jsonHash } from 'remix-utils/json-hash';
 import invariant from 'tiny-invariant';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
@@ -12,7 +11,7 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   await ensureIsTeamMember(request, params.teamSlug);
-  return jsonHash({ usage: getTeamUsage(params.teamSlug) });
+  return { usage: await getTeamUsage(params.teamSlug) };
 };
 
 export const UsageDisplay = ({ label, description, usage }: { label: string; description?: string; usage: Usage }) => {

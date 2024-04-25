@@ -1,7 +1,6 @@
 import { Box, Card, Typography } from '@mui/joy';
 import { NavLink, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import invariant from 'tiny-invariant';
@@ -17,7 +16,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     },
   });
 
-  return json({ projects: await projects });
+  return { projects: await projects };
 };
 
 export default function TeamDashboard() {

@@ -9,23 +9,24 @@ import invariant from 'tiny-invariant';
 
 import type { CustomEventInput } from '~/types';
 
-const parseCustomEventInput = async (request: Request): Promise<CustomEventInput> => {
+const parseCustomEventInput = async (request: Request, response: ActionFunctionArgs['response']): Promise<CustomEventInput> => {
   const data = (await request.json()) as CustomEventInput;
   if (!data.name) {
-    throw json({ errors: { name: `Name isn't defined` } }, { status: 400 });
+    response!.status = 400;
+    throw { errors: { name: `Name isn't defined` } };
   }
 
   return data;
 };
 
-const trackCustomEvent = async (request: Request, project: Project) => {
+const trackCustomEvent = async (request: Request, response: ActionFunctionArgs['response'], project: Project) => {
   const { customEvents } = await getCustomEventsUsage(project.teamSlug);
 
   if (!customEvents.withinLimit) {
     return;
   }
 
-  const data = await parseCustomEventInput(request);
+  const data = await parseCustomEventInput(request, response);
 
   const date = new Date();
   const hour = getHours(date);
@@ -51,18 +52,19 @@ const trackCustomEvent = async (request: Request, project: Project) => {
   });
 };
 
-export const action = async ({ request, params }: ActionFunctionArgs) => {
+export const action = async ({ request, params, response }: ActionFunctionArgs) => {
   try {
     invariant(params.teamSlug, `Expected params.teamSlug`);
     invariant(params.projectSlug, `Expected params.projectSlug`);
 
     const { project } = await getProjectAndCheckPermissions(request, params.teamSlug, params.projectSlug);
 
-    await trackCustomEvent(request, project);
+    await trackCustomEvent(request, response, project);
 
-    return json({ ok: true }, { status: 202 });
+    return { ok: true };
   } catch (e) {
     console.error('[API-Internal - Event]', e);
-    return json({ ok: false }, { status: 400 });
+    response!.status = 400;
+    return { ok: false };
   }
 };
