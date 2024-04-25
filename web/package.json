@@ -79,9 +79,5 @@
     "typescript": "^5.4.2",
     "vite": "^5.2.7",
     "vite-tsconfig-paths": "^4.3.1"
-  },
-  "resolutions": {
-    "@remix-run/node": "^2.8.0",
-    "@remix-run/server-runtime": "^2.8.0"
   }
 }
