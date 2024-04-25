@@ -1,11 +1,16 @@
 import '@fontsource-variable/inter/index.css';
 import { Box } from '@mui/joy';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, useParams } from '@remix-run/react';
+import type { LinksFunction } from '@remix-run/node';
 import { ErrorBoundary as BaseErrorBoundary } from '~/components/ErrorBoundary';
 import StylesContext from '~/styles/server.context';
 import { useContext, useEffect } from 'react';
 
 import { stats } from './stats';
+
+import styles from './globals.css';
+
+export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }];
 
 export const ErrorBoundary = () => (
   <Document>
