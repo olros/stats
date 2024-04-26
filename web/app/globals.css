@@ -36,6 +36,10 @@
     --radius: 0.75rem;
   }
 
+  * {
+    border-color: hsl(var(--border));
+  }
+
   html,
   body {
     background: hsl(var(--background));

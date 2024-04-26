@@ -45,7 +45,7 @@ export const Navbar = ({ user, teams }: NavbarProps) => {
           <DropdownMenuContent className='w-56'>
             <DropdownMenuLabel>My teams</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {teams.map((team) => (
+            {teams.map((team, index) => (
               <DropdownMenuGroup key={team.id}>
                 <DropdownMenuItem asChild>
                   <Link to={`/dashboard/${team.slug}`} unstable_viewTransition>
@@ -66,16 +66,9 @@ export const Navbar = ({ user, teams }: NavbarProps) => {
                     </DropdownMenuSubContent>
                   </DropdownMenuPortal>
                 </DropdownMenuSub>
-                <DropdownMenuSeparator />
+                {index !== teams.length - 1 && <DropdownMenuSeparator />}
               </DropdownMenuGroup>
             ))}
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link to='/dashboard/new-team' unstable_viewTransition>
-                  New Team
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
