@@ -59,7 +59,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     await trackCustomEvent(request, project);
 
-    return { ok: true };
+    return Response.json({ ok: true }, { status: 200 });
   } catch (e) {
     console.error('[API-Internal - Event]', e);
     return Response.json({ ok: false }, { status: 400 });

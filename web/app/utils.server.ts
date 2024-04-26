@@ -14,5 +14,5 @@ export const redirect = (response: LoaderFunctionArgs['response'], to: string): 
     response.headers.set('Location', to);
     return response as never;
   }
-  throw new Error("[redirect()] 'response' can't be null when using redirect");
+  return Response.redirect(to, 302) as never;
 };
