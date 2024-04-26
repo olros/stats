@@ -1,7 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 import type { ActionFunctionArgs } from '@vercel/remix';
-import { json, redirect } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
 import { Typography } from '~/components/typography';
 import { Button } from '~/components/ui/button';
@@ -9,11 +8,11 @@ import { Card } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { prismaClient } from '~/prismaClient';
-import { slugify } from '~/utils';
+import { redirect, slugify } from '~/utils.server';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const action = async ({ request }: ActionFunctionArgs) => {
+export const action = async ({ request, response }: ActionFunctionArgs) => {
   const user = await getUserOrRedirect(request);
   const formData = await request.formData();
   const name = formData.get('name') as string;
@@ -29,14 +28,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         },
       },
     });
-    return redirect(`/dashboard/${team.slug}`);
+    return redirect(response, `/dashboard/${team.slug}`);
   } catch (e) {
     console.error('[New Team]', e);
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      return json({ errors: { name: 'This team name is already taken' } }, { status: 400 });
+      response!.status = 400;
+      return { errors: { name: 'This team name is already taken' } };
     }
   }
-  return json({ errors: { name: 'Something went wrong' } }, { status: 400 });
+  response!.status = 400;
+  return { errors: { name: 'Something went wrong' } };
 };
 
 export default function CreateTeam() {

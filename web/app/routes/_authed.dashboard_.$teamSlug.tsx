@@ -1,8 +1,7 @@
-import { Link, Outlet, useLoaderData } from '@remix-run/react';
+import { Link, Outlet, useLoaderData, type MetaArgs_SingleFetch } from '@remix-run/react';
 import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { LinkTabs } from '~/components/LinkTabs';
-import { jsonHash } from 'remix-utils/json-hash';
 import invariant from 'tiny-invariant';
 import { Button } from '~/components/ui/button';
 import { Card } from '~/components/ui/card';
@@ -10,11 +9,11 @@ import { Typography } from '~/components/typography';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: `${data?.team.name} | Stats` }];
+export const meta = ({ data }: MetaArgs_SingleFetch<typeof loader>) => [{ title: `${data?.team.name} | Stats` }];
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
-  return jsonHash({ team: ensureIsTeamMember(request, params.teamSlug) });
+  return { team: await ensureIsTeamMember(request, params.teamSlug) };
 };
 
 const TABS = [

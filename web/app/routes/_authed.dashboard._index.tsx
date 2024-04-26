@@ -1,6 +1,5 @@
 import { Link, NavLink, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
 import { Typography } from '~/components/typography';
 import { Button } from '~/components/ui/button';
@@ -20,7 +19,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       },
     },
   });
-  return json({ teams });
+  return { teams };
 };
 
 export default function Dashboard() {

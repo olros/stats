@@ -1,6 +1,5 @@
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import invariant from 'tiny-invariant';
@@ -27,10 +26,10 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     },
   });
 
-  return json({ members: await members });
+  return { members: await members };
 };
 
-export const action = async ({ request, params }: ActionFunctionArgs) => {
+export const action = async ({ request, params, response }: ActionFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   const team = await ensureIsTeamMember(request, params.teamSlug);
 
@@ -49,7 +48,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     });
 
     if (!user) {
-      return json({ errors: { github_username: 'No users exists with this GitHub username' } }, { status: 400 });
+      response!.status = 400;
+      return { errors: { github_username: 'No users exists with this GitHub username' } };
     }
 
     await prismaClient.teamUser.create({
@@ -59,7 +59,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       },
     });
 
-    return json({ detail: 'Member successfully added to the team' });
+    return { detail: 'Member successfully added to the team' };
   }
   if (request.method === 'DELETE') {
     const userId = formData.get('userId') as string;
@@ -74,9 +74,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         },
       });
 
-      return json({ detail: 'Member successfully removed from the team' });
+      return { detail: 'Member successfully removed from the team' };
     } catch {
-      return json({ errors: { userId: 'Something went wrong' } }, { status: 400 });
+      response!.status = 400;
+      return { errors: { userId: 'Something went wrong' } };
     }
   }
 };

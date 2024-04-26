@@ -2,7 +2,7 @@ import '@fontsource-variable/inter/index.css';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, useParams } from '@remix-run/react';
 import type { LinksFunction } from '@remix-run/node';
 import { ErrorBoundary as BaseErrorBoundary } from '~/components/ErrorBoundary';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { stats } from './stats';
 
@@ -19,11 +19,14 @@ export type LayoutProps = {
 export const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
   const params = useParams<Record<string, string>>();
+  const pathname = useMemo(
+    () => Object.entries(params as Record<string, string>).reduce((path, [key, param]) => path.replace(`/${param}`, `/:${key}`), location.pathname),
+    [location.pathname, params],
+  );
 
   useEffect(() => {
-    const pathname = Object.entries(params as Record<string, string>).reduce((path, [key, param]) => path.replace(`/${param}`, `/:${key}`), location.pathname);
     stats.pageview({ pathname });
-  }, [location.pathname, location.search, params]);
+  }, [pathname]);
 
   return (
     <html lang='no'>

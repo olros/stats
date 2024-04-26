@@ -1,6 +1,5 @@
 import type { Prisma, Project } from '@prisma/client';
 import type { ActionFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
 import { getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getCustomEventsUsage } from '~/utils_usage.server';
@@ -12,7 +11,7 @@ import type { CustomEventInput } from '~/types';
 const parseCustomEventInput = async (request: Request): Promise<CustomEventInput> => {
   const data = (await request.json()) as CustomEventInput;
   if (!data.name) {
-    throw json({ errors: { name: `Name isn't defined` } }, { status: 400 });
+    throw Response.json({ errors: { name: `Name isn't defined` } }, { status: 400 });
   }
 
   return data;
@@ -60,9 +59,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     await trackCustomEvent(request, project);
 
-    return json({ ok: true }, { status: 202 });
+    return { ok: true };
   } catch (e) {
     console.error('[API-Internal - Event]', e);
-    return json({ ok: false }, { status: 400 });
+    return Response.json({ ok: false }, { status: 400 });
   }
 };

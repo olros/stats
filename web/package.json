@@ -8,7 +8,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "pnpm run db:generate && remix vite:build",
+    "prebuild": "pnpm run db:generate",
+    "build": "remix vite:build",
+    "postinstall": "pnpm run db:generate",
     "dev": "remix vite:dev",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc -b",

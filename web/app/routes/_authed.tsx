@@ -3,7 +3,6 @@ import type { LoaderFunctionArgs } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';
-import { jsonHash } from 'remix-utils/json-hash';
 import { Container } from '~/components/container';
 import { RepositoryLink } from '~/components/repository-link';
 
@@ -21,7 +20,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     },
     include: { projects: true },
   });
-  return jsonHash({ teams, user });
+  return { teams, user };
 };
 
 export default function Index() {

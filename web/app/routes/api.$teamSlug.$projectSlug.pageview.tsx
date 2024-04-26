@@ -1,7 +1,6 @@
 import { geolocation, ipAddress } from '@vercel/edge';
 import type { RequestContext } from '@vercel/edge';
 import type { ActionFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
 import type { UserAgentData } from '~/user-agent';
 import { userAgent } from '~/user-agent';
 import { forwardRequestToInternalApi } from '~/utils_edge.server';
@@ -97,7 +96,7 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
     }
   } catch (e) {
     console.error('[API - Pageview]', e);
-    return json({ ok: false }, { status: 200 });
+    return Response.json({ ok: false }, { status: 400 });
   }
-  return json({ ok: true }, { status: 200 });
+  return Response.json({ ok: true }, { status: 200 });
 };

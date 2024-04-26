@@ -12,7 +12,7 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
-  return jsonHash({ statistics: loadStatistics({ request, teamSlug: params.teamSlug, projectSlug: params.projectSlug }) });
+  return { statistics: await loadStatistics({ request, teamSlug: params.teamSlug, projectSlug: params.projectSlug }) };
 };
 
 export default function PublicPageviewsStatistics() {

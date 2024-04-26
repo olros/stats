@@ -3,7 +3,6 @@ import type { GlobeWithCitiesProps } from '~/components/statistics/GlobeWithCiti
 import { GlobeWithCities } from '~/components/statistics/GlobeWithCities';
 import { subHours } from 'date-fns';
 import { useEffect, useState } from 'react';
-import { jsonHash } from 'remix-utils/json-hash';
 import { useEventSource } from 'remix-utils/sse/react';
 
 import type { GeoLocationsEventData } from './stream.geolocations';
@@ -14,7 +13,7 @@ import { Typography } from '~/components/typography';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async () => jsonHash({ topGeoLocations: getTopGeoLocations(subHours(new Date(), 72)) });
+export const loader = async () => ({ topGeoLocations: await getTopGeoLocations(subHours(new Date(), 72)) });
 
 export default function Stream() {
   const { topGeoLocations } = useLoaderData<typeof loader>();
