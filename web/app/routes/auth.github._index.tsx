@@ -9,8 +9,18 @@ export const loader = async ({ response }: LoaderFunctionArgs) => {
 
 export const action = async ({ request, response }: ActionFunctionArgs) => {
   console.log('GitHub index action', response);
-  return authenticator.authenticate('github', request, {
-    failureRedirect: '/',
-    successRedirect: '/dashboard',
-  });
+  try {
+    const user = await authenticator.authenticate('github', request);
+    console.log('GitHub index action - user', user);
+    if (user) {
+      return redirect(response, '/dashboard');
+    }
+    return redirect(response, '/');
+  } catch (e) {
+    console.error('GitHub index action - catch', e);
+    if (e instanceof Response) {
+      return e;
+    }
+    throw e;
+  }
 };
