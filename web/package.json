@@ -5,7 +5,7 @@
   "sideEffects": false,
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": "^18"
   },
   "scripts": {
     "prebuild": "pnpm run db:generate",
