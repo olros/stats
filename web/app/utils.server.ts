@@ -8,11 +8,11 @@ export const slugify = (string: string) =>
     trim: true,
   });
 
-export const redirect = (response: LoaderFunctionArgs['response'], to: string) => {
+export const redirect = (response: LoaderFunctionArgs['response'], to: string): never => {
   if (response) {
     response.status = 302;
     response.headers.set('Location', to);
-    throw response;
+    return response as never;
   }
-  throw new Error("response can't be null when using redirect");
+  throw new Error("[redirect()] 'response' can't be null when using redirect");
 };
