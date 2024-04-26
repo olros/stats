@@ -2,6 +2,8 @@
 
 @layer base {
   :root {
+    color-scheme: dark;
+
     --background: 199 47.449999999999996% 4%;
     --foreground: 199 7.3% 97.5%;
 
@@ -44,6 +46,7 @@
     border-color: var(--color-border);
   }
 
+  a,
   button {
     cursor: pointer;
   }

@@ -37,7 +37,7 @@ export default function ProjectDashboard() {
   return (
     <>
       <Card className='flex items-center justify-between gap-2 [view-transition-name:project-card]'>
-        <Typography variant='h1' className='overflow-hidden text-ellipsis [view-transition-name:project-name]'>
+        <Typography variant='h1' className='overflow-hidden text-ellipsis py-1 [view-transition-name:project-name]'>
           {project.name}
         </Typography>
         <Typography asChild variant='small'>

@@ -27,7 +27,7 @@ export const UsageDisplay = ({ label, description, usage }: { label: string; des
       <Typography variant='large'>
         {`${Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 2 }).format(usage.count)} / ${Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 }).format(usage.limit)} (${percentage.toFixed(2)}%)`}
       </Typography>
-      <Progress thickness={24} value={percentage} />
+      <Progress value={percentage} />
       {!usage.withinLimit && (
         <Alert variant='destructive'>The usage has exceeded the usage restriction, future {label.toLowerCase()} will not be stored!</Alert>
       )}

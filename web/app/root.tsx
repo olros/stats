@@ -2,8 +2,7 @@ import '@fontsource-variable/inter/index.css';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, useParams } from '@remix-run/react';
 import type { LinksFunction } from '@remix-run/node';
 import { ErrorBoundary as BaseErrorBoundary } from '~/components/ErrorBoundary';
-import StylesContext from '~/styles/server.context';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { stats } from './stats';
 
@@ -11,19 +10,13 @@ import styles from './globals.css?url';
 
 export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }];
 
-export const ErrorBoundary = () => (
-  <Document>
-    <BaseErrorBoundary />
-  </Document>
-);
+export const ErrorBoundary = () => <BaseErrorBoundary />;
 
-type DocumentProps = {
+export type LayoutProps = {
   children: React.ReactNode;
 };
 
-const Document = ({ children }: DocumentProps) => {
-  const styleData = useContext(StylesContext);
-
+export const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
   const params = useParams<Record<string, string>>();
 
@@ -33,7 +26,7 @@ const Document = ({ children }: DocumentProps) => {
   }, [location.pathname, location.search, params]);
 
   return (
-    <html data-joy-color-scheme='dark' lang='no'>
+    <html lang='no'>
       <head>
         <link href='/favicon-180.png' rel='apple-touch-icon' sizes='180x180' />
         <link href='/favicon-32.png' rel='icon' sizes='32x32' type='image/png' />
@@ -44,14 +37,6 @@ const Document = ({ children }: DocumentProps) => {
         <title>Stats</title>
         <meta content='width=device-width,initial-scale=1' name='viewport' />
         <Links />
-        {styleData?.map(({ key, ids, css }) => (
-          <style
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: css }}
-            data-emotion={`${key} ${ids.join(' ')}`}
-            key={key}
-          />
-        ))}
       </head>
       <body>
         {children}
@@ -63,9 +48,5 @@ const Document = ({ children }: DocumentProps) => {
 };
 
 export default function App() {
-  return (
-    <Document>
-      <Outlet />
-    </Document>
-  );
+  return <Outlet />;
 }

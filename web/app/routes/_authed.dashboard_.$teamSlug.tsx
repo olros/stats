@@ -29,7 +29,7 @@ export default function ProjectDashboard() {
   return (
     <>
       <Card className='flex-column flex items-center justify-between gap-2 [view-transition-name:team-card] sm:flex-row'>
-        <Typography variant='h1' className='[view-transition-name:team-name]'>
+        <Typography variant='h1' className='py-1 [view-transition-name:team-name]'>
           {team.name}
         </Typography>
         <Button asChild>
