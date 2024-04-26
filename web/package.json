@@ -5,7 +5,7 @@
   "sideEffects": false,
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "build": "pnpm run db:generate && remix vite:build",
