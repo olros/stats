@@ -41,7 +41,7 @@ export default function ProjectDashboard() {
           {project.name}
         </Typography>
         <Typography asChild variant='small'>
-          <a href={project.url} className='text-ellipsis overflow-hidden [view-transition-name:project-url]' target='_blank'>
+          <a href={project.url} className=' underline text-ellipsis overflow-hidden [view-transition-name:project-url]' target='_blank'>
             {project.url}
           </a>
         </Typography>

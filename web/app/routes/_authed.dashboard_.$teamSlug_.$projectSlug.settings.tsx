@@ -3,7 +3,6 @@ import { Form, useActionData, useLoaderData, useNavigation, useSubmit } from '@r
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
 import { json, redirect } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
-import { ConfirmDialog } from '~/components/ConfirmDialog';
 import { useIsClient } from '~/hooks/useIsClient';
 import { prismaClient } from '~/prismaClient';
 import { useCallback, useState } from 'react';
@@ -15,6 +14,17 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Textarea } from '~/components/ui/textarea';
 import { Checkbox } from '~/components/ui/checkbox';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '~/components/ui/alert-dialog';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -169,18 +179,52 @@ export default function ProjectSettings() {
         <Typography className='text-red-500' variant='h3'>
           Delete project-data
         </Typography>
-        <ConfirmDialog
-          description="All stored data about this project's pageviews will get permanently deleted"
-          onConfirm={deleteProjectPageviews}
-          title='Delete pageviews data'>
-          Delete pageviews data
-        </ConfirmDialog>
-        <ConfirmDialog
-          description="All stored data about this project's custom events will get permanently deleted"
-          onConfirm={deleteProjectEvents}
-          title='Delete custom events data'>
-          Delete custom events data
-        </ConfirmDialog>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant='outline' className='border-red-500'>
+              Delete pageviews data
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete pageviews data</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. All stored data about this project's pageviews will get permanently deleted.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction asChild>
+                <Button onClick={deleteProjectPageviews} variant='destructive'>
+                  I'm sure
+                </Button>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant='outline' className='border-red-500'>
+              Delete custom events data
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete custom events data</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. All stored data about this project's custom events will get permanently deleted.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction asChild>
+                <Button onClick={deleteProjectEvents} variant='destructive'>
+                  I'm sure
+                </Button>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </Card>
 
       <Card className='border-red-500'>
@@ -197,7 +241,7 @@ export default function ProjectSettings() {
             onChange={(e) => setDeleteName(e.target.value)}
             value={deleteName}
           />
-          <Button color='danger' disabled={deleteName !== `delete ${project.name}` || state === 'submitting'} type='submit'>
+          <Button variant='destructive' disabled={deleteName !== `delete ${project.name}` || state === 'submitting'} type='submit'>
             I understand the consequences, delete this project
           </Button>
         </Form>

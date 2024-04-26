@@ -43,13 +43,7 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
       </div>
       <Card>
         <Typography variant='h4'>Pageviews trend</Typography>
-        <TrendChart
-          dateGte={statistics.date.gte}
-          dateLte={statistics.date.lte}
-          period={statistics.period}
-          tooltipTitle='Pageviews'
-          trend={statistics.pageViewsTrend}
-        />
+        <TrendChart period={statistics.period} tooltipTitle='Pageviews' trend={statistics.pageViewsTrend} />
       </Card>
       <div className='grid gap-2 grid-cols-1 md:grid-cols-2'>
         <Card>
@@ -63,7 +57,7 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
         <Card>
           <div className='flex justify-between'>
             <Typography variant='h4'>Devices</Typography>
-            <ToggleGroup type='single'>
+            <ToggleGroup defaultValue={Object.keys(deviceStats)[0]} type='single'>
               {Object.keys(deviceStats).map((stat) => (
                 <ToggleGroupItem key={stat} value={stat} onClick={() => setDeviceStat(stat as DEVICE_STAT)}>
                   {stat}
@@ -100,13 +94,7 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
           . It's therefore not possible to track users over multiple days, count returning users, or a total amount of users during a period of more than one
           day.
         </Typography>
-        <TrendChart
-          dateGte={statistics.date.gte}
-          dateLte={statistics.date.lte}
-          period={statistics.period}
-          tooltipTitle='Unique visitors'
-          trend={statistics.uniqueVisitorsTrend}
-        />
+        <TrendChart period={statistics.period} tooltipTitle='Unique visitors' trend={statistics.uniqueVisitorsTrend} />
       </Card>
       <div className='grid gap-2 grid-cols-1 md:grid-cols-2'>
         <Card>

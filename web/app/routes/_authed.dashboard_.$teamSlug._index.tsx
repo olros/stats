@@ -32,7 +32,7 @@ export default function TeamDashboard() {
           to={project.slug}
           unstable_viewTransition>
           <Typography variant='h3'>{project.name}</Typography>
-          <Typography variant='small'>{project.url}</Typography>
+          <Typography variant='muted'>{project.url}</Typography>
         </NavLink>
       ))}
     </div>

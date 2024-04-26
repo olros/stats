@@ -25,6 +25,12 @@
     --radius: 0.75rem;
   }
 
+  html,
+  body {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
   .border {
     border-color: var(--color-border);
   }

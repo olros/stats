@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Box, useTheme } from '@mui/joy';
 import { useElementSize } from '~/hooks/useElementSize';
 import { scaleSequentialSqrt } from 'd3-scale';
 import { interpolateYlOrRd } from 'd3-scale-chromatic';
@@ -28,7 +27,6 @@ const countToAltitude = (count: number, maxCount: number) => Math.min(MAX_ALTITU
 
 export const GlobeWithCities = memo(({ data, ringsData = [], height = 400, disableUseInView = false }: GlobeWithCitiesProps) => {
   const { ref, inView } = useInView({ rootMargin: '200px 0px', triggerOnce: true, skip: disableUseInView, initialInView: disableUseInView });
-  const { palette } = useTheme();
   const globeEl = useRef<any>();
   const [boxRef, boxSize] = useElementSize();
 
@@ -62,14 +60,14 @@ export const GlobeWithCities = memo(({ data, ringsData = [], height = 400, disab
         lng: point.longitude,
         altitude: countToAltitude(point.count, data[0].count),
         radius: 0.3,
-        color: palette.primary[400],
+        color: '#4393E4',
       })),
-    [data, palette],
+    [data],
   );
 
   return (
-    <Box ref={ref}>
-      <Box ref={boxRef} sx={{ position: 'relative', height }}>
+    <div ref={ref}>
+      <div className='relative' ref={boxRef} style={{ height: `${height}px` }}>
         {inView && (
           <Suspense fallback={null}>
             <Globe
@@ -88,7 +86,7 @@ export const GlobeWithCities = memo(({ data, ringsData = [], height = 400, disab
             />
           </Suspense>
         )}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 });

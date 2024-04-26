@@ -7,13 +7,13 @@ import { cn } from '~/lib/utils';
 const typographyVariants = cva('', {
   variants: {
     variant: {
-      p: 'leading-7 [&:not(:first-child)]:mt-2',
+      p: 'leading-5 [&:not(:first-child)]:mt-2',
       h1: 'text-4xl font-extrabold tracking-tight lg:text-5xl',
       h2: 'pb-2 text-3xl font-semibold tracking-tight first:mt-0',
       h3: 'text-2xl font-semibold tracking-tight',
       h4: 'text-xl font-semibold tracking-tight',
       large: 'text-lg font-semibold',
-      small: 'text-sm font-medium leading-none',
+      small: 'text-sm font-small leading-none',
       muted: 'text-sm text-muted-foreground',
     },
   },

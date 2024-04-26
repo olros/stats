@@ -6,7 +6,6 @@ import js from 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
 import bash from 'react-syntax-highlighter/dist/esm/languages/prism/bash';
 import codeStyle from 'react-syntax-highlighter/dist/esm/styles/prism/coldark-dark';
 
-import { useIsClient } from '~/hooks/useIsClient';
 import { Typography, TypographyProps } from '~/components/typography';
 import { Card } from '~/components/ui/card';
 
@@ -24,8 +23,6 @@ const Pre = ({ children, ...props }: TypographyProps) => (
 );
 
 const Code = ({ children, language = 'javascript' }: { children: ReactNode; language?: 'javascript' | 'bash' }) => {
-  const isClient = useIsClient();
-  if (!isClient) return null;
   return (
     // @ts-ignore
     <SyntaxHighlighter PreTag={Pre} language={language} style={codeStyle}>

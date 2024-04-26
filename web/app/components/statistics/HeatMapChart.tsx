@@ -1,4 +1,3 @@
-import { Box, useTheme } from '@mui/joy';
 import { lazy, Suspense } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -13,9 +12,8 @@ export type HeatMapProps = {
 
 export const HeatMapChart = ({ data, disableUseInView = false }: HeatMapProps) => {
   const { ref, inView } = useInView({ rootMargin: '200px 0px', triggerOnce: true, skip: disableUseInView, initialInView: disableUseInView });
-  const theme = useTheme();
   return (
-    <Box ref={ref} sx={{ position: 'relative', height: 400 }}>
+    <div className='relative h-[400px]' ref={ref}>
       {inView && (
         <Suspense fallback={null}>
           <ResponsiveHeatMap
@@ -25,16 +23,16 @@ export const HeatMapChart = ({ data, disableUseInView = false }: HeatMapProps) =
               minValue: 0,
             }}
             data={data}
-            emptyColor={theme.palette.background.level1}
+            emptyColor='#171A1C'
             isInteractive={false}
             margin={{ top: 20, right: 0, bottom: 0, left: 25 }}
             theme={{
-              legends: { text: { fill: theme.palette.text.primary } },
-              text: { fill: theme.palette.text.primary },
+              legends: { text: { fill: '#F0F4F8' } },
+              text: { fill: '#F0F4F8' },
             }}
           />
         </Suspense>
       )}
-    </Box>
+    </div>
   );
 };
