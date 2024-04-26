@@ -9,7 +9,7 @@ import invariant from 'tiny-invariant';
 
 import type { PageviewInput } from '~/types';
 
-import type { PageviewRequestData } from './api-internal.$teamSlug.$projectSlug.pageview-next';
+import type { PageviewRequestData } from './api-internal.$teamSlug.$projectSlug.pageview';
 
 export const config = { runtime: 'edge' };
 
@@ -86,7 +86,7 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
     const pageViewNextRequest = await getPageViewNextRequest(request);
 
     const promises = Promise.all([
-      ...(pageViewNextRequest ? [forwardRequestToInternalApi(pageViewNextRequest, `${params.teamSlug}/${params.projectSlug}/pageview-next/`)] : []),
+      ...(pageViewNextRequest ? [forwardRequestToInternalApi(pageViewNextRequest, `${params.teamSlug}/${params.projectSlug}/pageview/`)] : []),
     ]);
 
     if ('waitUntil' in ctx) {
@@ -96,7 +96,7 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
     }
   } catch (e) {
     console.error('[API - Pageview]', e);
-    return Response.json({ ok: false }, { status: 400 });
+    return new Response(JSON.stringify({ ok: false }), { status: 400 });
   }
-  return Response.json({ ok: true }, { status: 200 });
+  return new Response(JSON.stringify({ ok: true }), { status: 200 });
 };

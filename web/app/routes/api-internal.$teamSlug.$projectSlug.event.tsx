@@ -11,7 +11,7 @@ import type { CustomEventInput } from '~/types';
 const parseCustomEventInput = async (request: Request): Promise<CustomEventInput> => {
   const data = (await request.json()) as CustomEventInput;
   if (!data.name) {
-    throw Response.json({ errors: { name: `Name isn't defined` } }, { status: 400 });
+    throw new Response(JSON.stringify({ errors: { name: `Name isn't defined` } }), { status: 400 });
   }
 
   return data;
@@ -59,9 +59,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     await trackCustomEvent(request, project);
 
-    return Response.json({ ok: true }, { status: 200 });
+    return new Response(JSON.stringify({ ok: true }), { status: 200 });
   } catch (e) {
     console.error('[API-Internal - Event]', e);
-    return Response.json({ ok: false }, { status: 400 });
+    return new Response(JSON.stringify({ ok: false }), { status: 400 });
   }
 };

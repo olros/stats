@@ -16,9 +16,9 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
     } else {
       await forwardRequestToInternalApi(request, `${params.teamSlug}/${params.projectSlug}/event/`);
     }
-    return Response.json({ ok: true }, { status: 200 });
+    return new Response(JSON.stringify({ ok: true }), { status: 200 });
   } catch (e) {
     console.error('[API - Event]', e);
-    return Response.json({ ok: false }, { status: 400 });
+    return new Response(JSON.stringify({ ok: false }), { status: 400 });
   }
 };

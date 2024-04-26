@@ -88,7 +88,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     await trackPageviewNext(request, project);
   } catch (e) {
     console.error('[API-Internal - PageviewNext]', e);
-    return Response.json({ ok: false }, { status: 400 });
+    return new Response(JSON.stringify({ ok: false }), { status: 400 });
   }
-  return Response.json({ ok: true }, { status: 200 });
+  return new Response(JSON.stringify({ ok: true }), { status: 200 });
 };
