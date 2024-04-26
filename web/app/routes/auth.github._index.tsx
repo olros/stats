@@ -19,7 +19,7 @@ export const action = async ({ request, response }: ActionFunctionArgs) => {
   } catch (e) {
     console.error('GitHub index action - catch', e);
     if (e instanceof Response) {
-      return e;
+      return new Response(undefined, { status: e.status, headers: e.headers });
     }
     throw e;
   }
