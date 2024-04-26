@@ -4,4 +4,8 @@ import { redirect } from '~/utils.server';
 
 export const loader = async ({ response }: LoaderFunctionArgs) => redirect(response, '/');
 
-export const action = async ({ request }: ActionFunctionArgs) => authenticator.authenticate('github', request);
+export const action = async ({ request }: ActionFunctionArgs) =>
+  authenticator.authenticate('github', request, {
+    failureRedirect: '/',
+    successRedirect: '/dashboard',
+  });
