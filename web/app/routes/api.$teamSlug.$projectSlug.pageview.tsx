@@ -96,7 +96,7 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
     }
   } catch (e) {
     console.error('[API - Pageview]', e);
-    return { ok: false };
+    return Response.json({ ok: false }, { status: 400 });
   }
-  return { ok: true };
+  return Response.json({ ok: true }, { status: 200 });
 };

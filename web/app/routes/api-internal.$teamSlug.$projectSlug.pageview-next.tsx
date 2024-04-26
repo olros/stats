@@ -78,7 +78,7 @@ const trackPageviewNext = async (request: Request, project: Project) => {
   });
 };
 
-export const action = async ({ request, params, response }: ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   try {
     invariant(params.teamSlug, `Expected params.teamSlug`);
     invariant(params.projectSlug, `Expected params.projectSlug`);
@@ -88,8 +88,7 @@ export const action = async ({ request, params, response }: ActionFunctionArgs) 
     await trackPageviewNext(request, project);
   } catch (e) {
     console.error('[API-Internal - PageviewNext]', e);
-    response!.status = 400;
-    return { ok: false };
+    return Response.json({ ok: false }, { status: 400 });
   }
-  return { ok: true };
+  return Response.json({ ok: true }, { status: 200 });
 };

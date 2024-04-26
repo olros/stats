@@ -1,6 +1,5 @@
 import type { Prisma, Project } from '@prisma/client';
 import type { ActionFunctionArgs } from '@vercel/remix';
-import { json } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
 import { getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getCustomEventsUsage } from '~/utils_usage.server';
@@ -9,24 +8,23 @@ import invariant from 'tiny-invariant';
 
 import type { CustomEventInput } from '~/types';
 
-const parseCustomEventInput = async (request: Request, response: ActionFunctionArgs['response']): Promise<CustomEventInput> => {
+const parseCustomEventInput = async (request: Request): Promise<CustomEventInput> => {
   const data = (await request.json()) as CustomEventInput;
   if (!data.name) {
-    response!.status = 400;
-    throw { errors: { name: `Name isn't defined` } };
+    throw Response.json({ errors: { name: `Name isn't defined` } }, { status: 400 });
   }
 
   return data;
 };
 
-const trackCustomEvent = async (request: Request, response: ActionFunctionArgs['response'], project: Project) => {
+const trackCustomEvent = async (request: Request, project: Project) => {
   const { customEvents } = await getCustomEventsUsage(project.teamSlug);
 
   if (!customEvents.withinLimit) {
     return;
   }
 
-  const data = await parseCustomEventInput(request, response);
+  const data = await parseCustomEventInput(request);
 
   const date = new Date();
   const hour = getHours(date);
@@ -52,19 +50,18 @@ const trackCustomEvent = async (request: Request, response: ActionFunctionArgs['
   });
 };
 
-export const action = async ({ request, params, response }: ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   try {
     invariant(params.teamSlug, `Expected params.teamSlug`);
     invariant(params.projectSlug, `Expected params.projectSlug`);
 
     const { project } = await getProjectAndCheckPermissions(request, params.teamSlug, params.projectSlug);
 
-    await trackCustomEvent(request, response, project);
+    await trackCustomEvent(request, project);
 
     return { ok: true };
   } catch (e) {
     console.error('[API-Internal - Event]', e);
-    response!.status = 400;
-    return { ok: false };
+    return Response.json({ ok: false }, { status: 400 });
   }
 };
