@@ -1,5 +1,3 @@
-import type { TypographyProps } from '@mui/joy';
-import { Card, styled, Typography } from '@mui/joy';
 import { useParams } from '@remix-run/react';
 import { ReactNode } from 'react';
 
@@ -9,33 +7,19 @@ import bash from 'react-syntax-highlighter/dist/esm/languages/prism/bash';
 import codeStyle from 'react-syntax-highlighter/dist/esm/styles/prism/coldark-dark';
 
 import { useIsClient } from '~/hooks/useIsClient';
+import { Typography, TypographyProps } from '~/components/typography';
+import { Card } from '~/components/ui/card';
 
 SyntaxHighlighter.registerLanguage('javascript', js);
 SyntaxHighlighter.registerLanguage('bash', bash);
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-const Description = styled(Typography)(({ theme }) => ({
-  marginTop: theme.spacing(1),
-  marginBottom: theme.spacing(0.5),
-  overflowWrap: 'anywhere',
-}));
+const Description = ({ children }: { children: ReactNode }) => <Typography className='break-words'>{children}</Typography>;
 
 const Pre = ({ children, ...props }: TypographyProps) => (
-  <Typography
-    sx={{
-      p: ({ spacing }) => `${spacing(2)} !important`,
-      fontSize: ({ fontSize }) => `${fontSize.md} !important`,
-      '& code': {
-        fontSize: 'inherit !important',
-      },
-      bgcolor: ({ palette }) => `${palette.neutral.softBg} !important`,
-      margin: '0 !important',
-    }}
-    variant='soft'
-    component='pre'
-    {...props}>
-    {children}
+  <Typography className='!p-4 text-md [&_code]:text-inherit bg-slate-500 !m-0 rounded-md' asChild {...props}>
+    <pre>{children}</pre>
   </Typography>
 );
 
@@ -55,13 +39,13 @@ export default function ProjectSetup() {
   return (
     <>
       <Card>
-        <Typography level='h3'>Javascript snippet</Typography>
+        <Typography variant='h3'>Javascript snippet</Typography>
         <Description>{`Include this snippet in the <head> of your website to automatically register pageviews on load.`}</Description>
         <Code>{`<script data-project='${projectSlug}' data-team='${teamSlug}' defer src='https://stats.olafros.com/script.js'></script>`}</Code>
         <Description>
           The script also add{' '}
-          <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
-            __stats
+          <Typography asChild className='font-mono'>
+            <span>__stats</span>
           </Typography>{' '}
           to window, giving you access register events and pageviews programatically:
         </Description>
@@ -77,15 +61,15 @@ window.__stats.event('buy');`}
         </Code>
       </Card>
       <Card>
-        <Typography level='h3'>NPM-package</Typography>
+        <Typography variant='h3'>NPM-package</Typography>
         <Description>
           Import{' '}
-          <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
-            @olros/stats
+          <Typography asChild className='font-mono'>
+            <span>@olros/stats</span>
           </Typography>
           :
         </Description>
-        <Code language='bash'>npm i/yarn add/pnpm add @olros/stats</Code>
+        <Code language='bash'>npm i @olros/stats</Code>
         <Description>Create an instance of Stats:</Description>
         <Code>
           {`// utils/stats.ts
@@ -98,8 +82,8 @@ export const stats = Stats({ team: TEAM, project: PROJECT });`}
         </Code>
         <Description>
           Use the{' '}
-          <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
-            {`stats.pageview`}
+          <Typography asChild className='font-mono'>
+            <span>stats.pageview</span>
           </Typography>
           -method on each pagenavigation to track pageviews. Example from React with React-Router:
         </Description>
@@ -120,8 +104,8 @@ useEffect(() => {
         </Code>
         <Description>
           Use the{' '}
-          <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
-            {`stats.event`}
+          <Typography asChild className='font-mono'>
+            <span>stats.event</span>
           </Typography>
           -method to track custom events:
         </Description>
@@ -137,13 +121,15 @@ const handleClick = () => {
         </Code>
       </Card>
       <Card>
-        <Typography level='h3'>HTTP-request</Typography>
+        <Typography variant='h3'>HTTP-request</Typography>
         <Description>You can also manually send a HTTP-request to our api to register pageviews or custom events.</Description>
-        <Typography level='h4'>{`Pageviews`}</Typography>
+        <Typography variant='h4' className='mt-4'>
+          Pageviews
+        </Typography>
         <Description>
           Send POST-request to{' '}
-          <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
-            {`https://stats.olafros.com/api/${teamSlug}/${projectSlug}/pageview/`}
+          <Typography asChild className='font-mono'>
+            <span>{`https://stats.olafros.com/api/${teamSlug}/${projectSlug}/pageview/`}</span>
           </Typography>
           {' with a body containing pathname and optionally referrer.'}
         </Description>
@@ -166,11 +152,13 @@ fetch('https://stats.olafros.com/api/${teamSlug}/${projectSlug}/pageview/', {
   credentials: 'omit',
 });`}
         </Code>
-        <Typography level='h4' sx={{ mt: 2 }}>{`Custom events`}</Typography>
+        <Typography variant='h4' className='mt-4'>
+          Custom events
+        </Typography>
         <Description>
           Send POST-request to{' '}
-          <Typography component='span' sx={{ fontFamily: 'monospace' }} variant='soft'>
-            {`https://stats.olafros.com/api/${teamSlug}/${projectSlug}/event/`}
+          <Typography asChild className='font-mono'>
+            <span>{`https://stats.olafros.com/api/${teamSlug}/${projectSlug}/event/`}</span>
           </Typography>
           {' with a body containing name of the custom event.'}
         </Description>

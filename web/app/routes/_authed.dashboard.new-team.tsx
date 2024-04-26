@@ -1,9 +1,13 @@
-import { Button, Card, FormControl, FormLabel, Input, Stack, Typography } from '@mui/joy';
 import { Prisma } from '@prisma/client';
 import { Form, Link, useActionData, useNavigation } from '@remix-run/react';
 import type { ActionFunctionArgs } from '@vercel/remix';
 import { json, redirect } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
+import { Typography } from '~/components/typography';
+import { Button } from '~/components/ui/button';
+import { Card } from '~/components/ui/card';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
 import { prismaClient } from '~/prismaClient';
 import { slugify } from '~/utils';
 
@@ -40,23 +44,21 @@ export default function CreateTeam() {
   const { state } = useNavigation();
   return (
     <Card>
-      <Typography gutterBottom level='h1'>
-        Create team
-      </Typography>
-      <Stack component={Form} gap={1} method='post'>
-        <FormControl id='name' required>
-          <FormLabel id='name-label'>Team name</FormLabel>
-          <Input disabled={state === 'submitting'} error={Boolean(actionData?.errors.name)} name='name' />
-        </FormControl>
-        <Stack direction='row' gap={1}>
-          <Button loading={state === 'submitting'} sx={{ viewTransitionName: 'create-team' }} type='submit'>
+      <Typography variant='h1'>Create team</Typography>
+      <Form method='post'>
+        <Label htmlFor='name'>Team name</Label>
+        <Input id='name' required disabled={state === 'submitting'} error={Boolean(actionData?.errors.name)} name='name' />
+        <div className='flex gap-2 mt-4'>
+          <Button disabled={state === 'submitting'} className='[view-transition-name:create-team]' type='submit'>
             Save
           </Button>
-          <Button component={Link} to='/dashboard' unstable_viewTransition variant='plain'>
-            Cancel
+          <Button variant='link' asChild>
+            <Link to='/dashboard' unstable_viewTransition>
+              Cancel
+            </Link>
           </Button>
-        </Stack>
-      </Stack>
+        </div>
+      </Form>
     </Card>
   );
 }

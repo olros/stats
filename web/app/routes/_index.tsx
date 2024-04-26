@@ -1,7 +1,12 @@
-import { Box, Button, Card, Container, Divider, Stack, Typography } from '@mui/joy';
 import { Form } from '@remix-run/react';
 import { type LoaderFunctionArgs, redirect } from '@vercel/remix';
 import { authenticator } from '~/auth.server';
+import { Container } from '~/components/container';
+import { RepositoryLink } from '~/components/repository-link';
+import { Typography } from '~/components/typography';
+import { Button } from '~/components/ui/button';
+import { Card } from '~/components/ui/card';
+import { Separator } from '~/components/ui/separator';
 import { stats } from '~/stats';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
@@ -75,63 +80,49 @@ const FEATURES: { emoji: string; heading: string; description: string }[] = [
 export default function Index() {
   return (
     <>
-      <Container alignItems='center' component={Stack} sx={{ display: 'flex' }}>
+      <Container>
         <Typography
-          level='h1'
-          sx={{
-            fontSize: { xs: '6rem', md: '10rem' },
-            background: 'linear-gradient(170deg, purple 0%, red 100%)',
-            fontWeight: '900',
-            backgroundClip: 'text',
-            textFillColor: 'transparent',
-            pt: 4,
-            pb: 2,
-          }}
-          textAlign='center'>
+          variant='h1'
+          className='text-8xl text-center md:text-[10rem] lg:text-[12rem] bg-gradient-to-br from-purple-700 to-red-600 font-black bg-clip-text text-transparent pt-8 pb-4'>
           Stats
         </Typography>
-        <Typography gutterBottom level='h2' textAlign='center'>
+        <Typography variant='h2' className='text-center'>
           A simple and easy to use analytics-tool
           <br />
           for all applications.
         </Typography>
-        <Typography level='body-lg' sx={{ mb: 4, px: 2 }} textAlign='center'>
+        <Typography className='text-center mb-8 px-4'>
           No need for a cookie-banner as no cookies are used, ever. Easy to add to your website with a lightweight script, NPM-package or by manually sending
           HTTP-requests, choose whichever fits your application best! Server-side tracking are also supported!
         </Typography>
-        <Stack direction='row' gap={2} justifyContent='center'>
+        <div className='flex gap-4 justify-center'>
           <Form action='/auth/github' method='POST'>
             <Button type='submit'>Continue with GitHub</Button>
           </Form>
-          <Button color='neutral' component='a' href='/public/olros/stats' onClick={() => stats.event('live-demo')} target='_blank' variant='outlined'>
-            Live demo
+          <Button asChild onClick={() => stats.event('live-demo')} variant='outline'>
+            <a href='/public/olros/stats' target='_blank'>
+              Live demo
+            </a>
           </Button>
-        </Stack>
-        <Divider sx={{ my: 4 }} />
-        <Typography level='h2'>Features</Typography>
-        <Box sx={{ width: '100%', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: { xs: 1, md: 2 }, p: { xs: 1, md: 2 } }}>
+        </div>
+        <Separator className='my-8' />
+        <Typography variant='h2' className='text-center'>
+          Features
+        </Typography>
+        <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 p-2 sm:p-4'>
           {FEATURES.map((feature, i) => (
-            <Card key={i} sx={{ background: ({ palette }) => palette.background.backdrop, backdropFilter: `blur(10px)` }}>
-              <Typography gutterBottom level='h3'>
+            <Card key={i}>
+              <Typography variant='h3'>
                 {feature.emoji}{' '}
-                <Typography
-                  component='span'
-                  sx={{
-                    background: 'linear-gradient(0deg, lightgreen 0%, orange 100%)',
-                    fontWeight: '800',
-                    backgroundClip: 'text',
-                    textFillColor: 'transparent',
-                  }}>
-                  {feature.heading}
+                <Typography className='bg-gradient-to-br from-green-400 to-blue-400 font-extrabold bg-clip-text text-transparent' asChild>
+                  <span>{feature.heading}</span>
                 </Typography>
               </Typography>
               <Typography>{feature.description}</Typography>
             </Card>
           ))}
-        </Box>
-        <Typography component='a' href='https://github.com/olros/stats' sx={{ textAlign: 'center', py: 2 }} target='_blank'>
-          @olros/stats
-        </Typography>
+        </div>
+        <RepositoryLink />
       </Container>
     </>
   );

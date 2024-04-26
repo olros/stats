@@ -1,10 +1,11 @@
-import { Card, Stack, Typography } from '@mui/joy';
 import { Outlet, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
 import { json, redirect } from '@vercel/remix';
 import { LinkTabs } from '~/components/LinkTabs';
 import { prismaClient } from '~/prismaClient';
 import invariant from 'tiny-invariant';
+import { Card } from '~/components/ui/card';
+import { Typography } from '~/components/typography';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -35,19 +36,16 @@ export default function ProjectDashboard() {
   const { teamSlug, project } = useLoaderData<typeof loader>();
   return (
     <>
-      <Stack
-        component={Card}
-        direction={{ sm: 'row' }}
-        gap={1}
-        justifyContent='space-between'
-        sx={{ alignItems: 'center', viewTransitionName: 'project-card' }}>
-        <Typography level='h1' sx={{ overflowWrap: 'anywhere', viewTransitionName: 'project-name' }}>
+      <Card className='flex gap-2 justify-between items-center [view-transition-name:project-card]'>
+        <Typography variant='h1' className='text-ellipsis overflow-hidden [view-transition-name:project-name]'>
           {project.name}
         </Typography>
-        <Typography component='a' fontSize='md' href={project.url} sx={{ overflowWrap: 'anywhere', viewTransitionName: 'project-url' }} target='_blank'>
-          {project.url}
+        <Typography asChild variant='small'>
+          <a href={project.url} className='text-ellipsis overflow-hidden [view-transition-name:project-url]' target='_blank'>
+            {project.url}
+          </a>
         </Typography>
-      </Stack>
+      </Card>
       <LinkTabs aria-label='Select project page' baseLocation={`/dashboard/${teamSlug}/${project.slug}`} key={`${teamSlug}/${project.slug}`} tabs={TABS} />
       <Outlet />
     </>

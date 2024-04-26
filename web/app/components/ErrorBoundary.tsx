@@ -1,21 +1,30 @@
-import styled from '@emotion/styled';
 import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
-
-const Container = styled('div')`
-  background-color: #ff0000;
-  padding: 1rem;
-`;
+import { Typography } from './typography';
+import { Card } from './ui/card';
 
 export const ErrorBoundary = () => {
   const error = useRouteError();
 
-  return isRouteErrorResponse(error) ? (
-    <Container>
-      <h1>{`${error.status} - ${error.data}`}</h1>
-    </Container>
-  ) : (
-    <Container>
-      <p>[ErrorBoundary]: There was an error: {(error as Error).message}</p>
-    </Container>
+  return (
+    <Card className='bg-red-500'>
+      <Typography variant='h3'>Something went wrong</Typography>
+      {isRouteErrorResponse(error) ? (
+        <Typography>{`${error.status} - ${error.data}`}</Typography>
+      ) : error instanceof Error ? (
+        <>
+          <Typography>{`${error.name}: ${error.message}`}</Typography>
+          {process.env.NODE_ENV !== 'production' && (
+            <Card>
+              <Typography variant='small'>Stack:</Typography>
+              <Typography variant='small' className='whitespace-break-spaces font-mono mt-2'>
+                {error.stack}
+              </Typography>
+            </Card>
+          )}
+        </>
+      ) : (
+        <Typography>Unknown error</Typography>
+      )}
+    </Card>
   );
 };

@@ -1,10 +1,10 @@
-import { Box, Card, Typography } from '@mui/joy';
 import { NavLink, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@vercel/remix';
 import { json } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import invariant from 'tiny-invariant';
+import { Typography } from '~/components/typography';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -23,30 +23,18 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 export default function TeamDashboard() {
   const { projects } = useLoaderData<typeof loader>();
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 1 }}>
+    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2'>
       {projects.length === 0 && <Typography>This team hasn't created any projects yet</Typography>}
       {projects.map((project) => (
-        <Card
-          component={NavLink}
+        <NavLink
+          className='rounded-xl border bg-card text-card-foreground break-a shadow p-4 overflow-ellipsis overflow-hidden hover:border-slate-600 [&.transitioning]:[view-transition-name:project-card] [&.transitioning]:[&_h3]:[view-transition-name:project-name] [&.transitioning]:[&_p]:[view-transition-name:project-url]'
           key={project.slug}
-          sx={{
-            overflowWrap: 'anywhere',
-            textDecoration: 'none',
-            '&:hover': { borderColor: 'neutral.outlinedHoverBorder' },
-            '&.transitioning': {
-              viewTransitionName: 'project-card',
-              '& h3': { viewTransitionName: 'project-name' },
-              '& p': { viewTransitionName: 'project-url' },
-            },
-          }}
           to={project.slug}
           unstable_viewTransition>
-          <Typography fontSize='xl' level='h3'>
-            {project.name}
-          </Typography>
-          <Typography fontSize='md'>{project.url}</Typography>
-        </Card>
+          <Typography variant='h3'>{project.name}</Typography>
+          <Typography variant='small'>{project.url}</Typography>
+        </NavLink>
       ))}
-    </Box>
+    </div>
   );
 }
