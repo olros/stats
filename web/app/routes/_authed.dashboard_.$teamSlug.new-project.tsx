@@ -1,4 +1,3 @@
-import { Button, Card, FormControl, FormLabel, Input, Stack, Typography } from '@mui/joy';
 import { Prisma } from '@prisma/client';
 import { Form, Link, useActionData, useNavigation, useParams } from '@remix-run/react';
 import type { ActionFunctionArgs } from '@vercel/remix';
@@ -7,6 +6,11 @@ import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import { slugify } from '~/utils';
 import invariant from 'tiny-invariant';
+import { Card } from '~/components/ui/card';
+import { Typography } from '~/components/typography';
+import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -47,27 +51,25 @@ export default function CreateProject() {
   const { teamSlug } = useParams();
   return (
     <Card>
-      <Typography gutterBottom level='h3'>
+      <Typography className='mb-4' variant='h3'>
         Create project
       </Typography>
-      <Stack component={Form} gap={1} method='post'>
-        <FormControl id='name' required>
-          <FormLabel id='name-label'>Project name</FormLabel>
-          <Input disabled={state === 'submitting'} error={Boolean(actionData?.errors?.name)} name='name' />
-        </FormControl>
-        <FormControl id='url' required>
-          <FormLabel id='url-label'>Website url</FormLabel>
-          <Input disabled={state === 'submitting'} name='url' type='url' />
-        </FormControl>
-        <Stack direction='row' gap={1}>
-          <Button loading={state === 'submitting'} type='submit'>
+      <Form className='flex flex-col gap-2' method='post'>
+        <Label htmlFor='name'>Project name</Label>
+        <Input required id='name' disabled={state === 'submitting'} error={Boolean(actionData?.errors?.name)} name='name' />
+        <Label htmlFor='url'>Website url</Label>
+        <Input required id='url' disabled={state === 'submitting'} name='url' type='url' />
+        <div className='mt-4 flex gap-2'>
+          <Button disabled={state === 'submitting'} type='submit'>
             Save
           </Button>
-          <Button component={Link} to={`/dashboard/${teamSlug}`} unstable_viewTransition variant='plain'>
-            Cancel
+          <Button variant='link'>
+            <Link to={`/dashboard/${teamSlug}`} unstable_viewTransition>
+              Cancel
+            </Link>
           </Button>
-        </Stack>
-      </Stack>
+        </div>
+      </Form>
     </Card>
   );
 }

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // From: https://github.com/PaulieScanlon/paulie-dev-2023/blob/main/src/components/globe-all-cities.tsx
-import { useTheme } from '@mui/joy';
 import { useIsClient } from '~/hooks/useIsClient';
 import { forwardRef } from 'react';
 import type { GlobeMethods, GlobeProps } from 'react-globe.gl';
@@ -11,13 +10,12 @@ import geoJson from '../statistics/globe_countries.geojson.json';
 
 const LazyGlobe = forwardRef<GlobeMethods, GlobeProps>((props, ref) => {
   const isClient = useIsClient();
-  const { palette } = useTheme();
   return (
     <>
       {isClient && (
         <Globe
           animateIn={true}
-          atmosphereColor={palette.primary[700]}
+          atmosphereColor='#12467B'
           backgroundColor='#00000000'
           customLayerData={[...Array(500).keys()].map(() => ({
             lat: (Math.random() - 0.5) * 180,
@@ -28,7 +26,7 @@ const LazyGlobe = forwardRef<GlobeMethods, GlobeProps>((props, ref) => {
             new THREE.Mesh(
               new THREE.SphereGeometry(0.3),
               new THREE.MeshBasicMaterial({
-                color: palette.primary[700],
+                color: '#12467B',
                 opacity: 0.9,
                 transparent: true,
               }),
@@ -36,7 +34,7 @@ const LazyGlobe = forwardRef<GlobeMethods, GlobeProps>((props, ref) => {
           }
           globeMaterial={
             new THREE.MeshPhongMaterial({
-              color: palette.primary[900],
+              color: '#051423',
               opacity: 0.7,
               transparent: true,
             })

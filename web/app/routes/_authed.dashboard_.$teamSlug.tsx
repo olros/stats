@@ -1,10 +1,12 @@
-import { Button, Card, Stack, Typography } from '@mui/joy';
 import { Link, Outlet, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { LinkTabs } from '~/components/LinkTabs';
 import { jsonHash } from 'remix-utils/json-hash';
 import invariant from 'tiny-invariant';
+import { Button } from '~/components/ui/button';
+import { Card } from '~/components/ui/card';
+import { Typography } from '~/components/typography';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -26,14 +28,16 @@ export default function ProjectDashboard() {
   const { team } = useLoaderData<typeof loader>();
   return (
     <>
-      <Stack component={Card} direction={{ sm: 'row' }} gap={1} justifyContent='space-between' sx={{ alignItems: 'center', viewTransitionName: 'team-card' }}>
-        <Typography level='h1' sx={{ viewTransitionName: 'team-name' }}>
+      <Card className='flex-column flex items-center justify-between gap-2 [view-transition-name:team-card] sm:flex-row'>
+        <Typography variant='h1' className='py-1 [view-transition-name:team-name]'>
           {team.name}
         </Typography>
-        <Button component={Link} to='new-project' unstable_viewTransition>
-          New project
+        <Button asChild>
+          <Link unstable_viewTransition to='new-project'>
+            New project
+          </Link>
         </Button>
-      </Stack>
+      </Card>
       <LinkTabs aria-label='Select team page' baseLocation={`/dashboard/${team.slug}`} key={team.slug} tabs={TABS} />
       <Outlet />
     </>

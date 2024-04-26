@@ -1,6 +1,6 @@
 # Stats
 
-**Tech-stack:** [Remix](https://remix.run/), [Prisma](https://www.prisma.io/), [MUI Joy UI](https://mui.com/joy-ui/getting-started/overview/), [Nivo](https://nivo.rocks/)
+**Tech-stack:** [Remix](https://remix.run/), [Prisma](https://www.prisma.io/), [Tailwind](https://tailwindcss.com/), [Radix](https://www.radix-ui.com/), [Nivo](https://nivo.rocks/)
 
 ## Development
 

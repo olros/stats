@@ -45,16 +45,18 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
   const geoData: PageviewRequestData['geo'] | undefined =
     geo.city && geo.country && geo.flag && geo.latitude && geo.longitude ? (geo as PageviewRequestData['geo']) : undefined;
   if (!geoData || !ip || ua.isBot) {
-    console.warn(
-      '[API - getPageViewNextRequest]',
-      new Error(
-        JSON.stringify({
-          location: geoData ? undefined : `Location could not be found: ${JSON.stringify(geo)}`,
-          ip: ip ? undefined : `IP-address could not be found`,
-          isBot: ua.isBot ? `Bot detected: ${ua.ua}` : undefined,
-        }),
-      ),
-    );
+    if (process.env.NODE_ENV === 'production') {
+      console.warn(
+        '[API - getPageViewNextRequest]',
+        new Error(
+          JSON.stringify({
+            location: geoData ? undefined : `Location could not be found: ${JSON.stringify(geo)}`,
+            ip: ip ? undefined : `IP-address could not be found`,
+            isBot: ua.isBot ? `Bot detected: ${ua.ua}` : undefined,
+          }),
+        ),
+      );
+    }
     return undefined;
   }
 
