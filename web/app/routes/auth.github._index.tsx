@@ -8,6 +8,7 @@ export const loader = async ({ response }: LoaderFunctionArgs) => {
 };
 
 export const action = async ({ request, response }: ActionFunctionArgs) => {
+  console.log('GitHub index action new Headers().getSetCookie', new Headers().getSetCookie);
   console.log('GitHub index action', response);
   try {
     const user = await authenticator.authenticate('github', request);
@@ -19,6 +20,7 @@ export const action = async ({ request, response }: ActionFunctionArgs) => {
   } catch (e) {
     console.error('GitHub index action - catch', e);
     if (e instanceof Response) {
+      console.error('GitHub index action - getSetCookie', e.headers.getSetCookie());
       return new Response(undefined, { status: e.status, headers: e.headers });
     }
     throw e;
