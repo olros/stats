@@ -83,7 +83,7 @@ export default function Index() {
       <Container>
         <Typography
           variant='h1'
-          className='bg-gradient-to-br from-purple-700 to-red-600 bg-clip-text pt-8 pb-4 text-center text-8xl font-black text-transparent md:text-[10rem] lg:text-[12rem]'>
+          className='bg-gradient-to-br from-green-700 to-blue-400 bg-clip-text pt-8 pb-4 text-center text-8xl font-black text-transparent md:text-[10rem] lg:text-[12rem]'>
           Stats
         </Typography>
         <Typography variant='h2' className='text-center'>
@@ -114,7 +114,7 @@ export default function Index() {
             <Card key={i}>
               <Typography variant='h3'>
                 {feature.emoji}{' '}
-                <Typography className='bg-gradient-to-br from-green-400 to-blue-400 bg-clip-text font-extrabold text-transparent' asChild>
+                <Typography className='bg-gradient-to-br from-green-600 to-blue-400 bg-clip-text font-extrabold text-transparent' asChild>
                   <span>{feature.heading}</span>
                 </Typography>
               </Typography>
