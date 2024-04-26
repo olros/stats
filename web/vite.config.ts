@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 
-installGlobals({ nativeFetch: true });
+installGlobals();
 
 export default defineConfig({
   server: {
