@@ -1,7 +1,10 @@
-import { Avatar, Button, Card, Stack, Typography } from '@mui/joy';
 import { Link, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
 import { getUserOrRedirect } from '~/auth.server';
+import { Card } from '~/components/ui/card';
+import { Typography } from '~/components/typography';
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
+import { Button } from '~/components/ui/button';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -16,16 +19,17 @@ export default function Profile() {
   const { user } = useLoaderData<typeof loader>();
   return (
     <Card>
-      <Stack alignItems='center' direction='row' gap={1}>
-        <Avatar alt={`Profile image of ${user.name}`} size='lg' src={user.avatar_url || undefined} sx={{ viewTransitionName: 'avatar' }}>
-          {user.name[0]}
+      <div className='flex items-center gap-2'>
+        <Avatar>
+          <AvatarImage alt={`Profile image of ${user.name}`} src={user.avatar_url || undefined} className='[view-transition-name:avatar]' />
+          <AvatarFallback>{user.name[0]}</AvatarFallback>
         </Avatar>
-        <Typography level='h1'>{user.name}</Typography>
-      </Stack>
-      <Typography level='body-lg'>Email: {user.email}</Typography>
-      <Typography level='body-lg'>GitHub: {user.github_username}</Typography>
-      <Button color='danger' component={Link} sx={{ mt: 2 }} to='/auth/logout' variant='outlined'>
-        Log out
+        <Typography variant='h1'>{user.name}</Typography>
+      </div>
+      <Typography>Email: {user.email}</Typography>
+      <Typography className='!mt-0'>GitHub: {user.github_username}</Typography>
+      <Button className='mt-4' asChild variant='destructive'>
+        <Link to='/auth/logout'>Log out</Link>
       </Button>
     </Card>
   );

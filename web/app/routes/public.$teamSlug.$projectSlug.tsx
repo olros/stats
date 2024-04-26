@@ -1,9 +1,11 @@
-import { Container, Typography } from '@mui/joy';
 import { Outlet, useLoaderData } from '@remix-run/react';
 import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
 import { prismaClient } from '~/prismaClient';
 import invariant from 'tiny-invariant';
 import { redirect } from '~/utils.server';
+import { Container } from '~/components/container';
+import { RepositoryLink } from '~/components/repository-link';
+import { Typography } from '~/components/typography';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -45,12 +47,10 @@ export default function PublicPageviewsStatistics() {
   const { project } = useLoaderData<typeof loader>();
 
   return (
-    <Container sx={{ py: 2 }}>
-      <Typography level='h1' sx={{ pb: 4, wordBreak: 'break-word' }} textAlign='center'>{`Stats for ${project.team.name}/${project.name}`}</Typography>
+    <Container>
+      <Typography variant='h1' className='break-words py-8 text-center'>{`Stats for ${project.team.name}/${project.name}`}</Typography>
       <Outlet />
-      <Typography component='a' href='https://github.com/olros/stats' sx={{ textAlign: 'center', my: 2 }} target='_blank'>
-        @olros/stats
-      </Typography>
+      <RepositoryLink />
     </Container>
   );
 }

@@ -1,9 +1,14 @@
-import { Avatar, Button, Card, FormControl, FormHelperText, FormLabel, Input, Tooltip, Typography } from '@mui/joy';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import invariant from 'tiny-invariant';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Button } from '~/components/ui/button';
+import { Typography } from '~/components/typography';
+import { Card } from '~/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -35,7 +40,10 @@ export const action = async ({ request, params, response }: ActionFunctionArgs) 
 
     const user = await prismaClient.user.findFirst({
       where: {
-        github_username: githubUsername,
+        github_username: {
+          equals: githubUsername,
+          mode: 'insensitive',
+        },
       },
     });
 
@@ -85,42 +93,41 @@ export default function TeamMembers() {
 
   return (
     <>
-      <Card component={Form} method='post' sx={{ gap: 1 }}>
-        <Typography level='h3'>Add member</Typography>
-        <Typography level='body-md'>
+      <Card>
+        <Typography variant='h3'>Add member</Typography>
+        <Typography>
           The member to be added must have already logged in to Stats with their GitHub-profile before they can be added to teams. All team members have the
           same rights within the team to create, edit and delete projects and the team itself.
         </Typography>
-        <FormControl error={Boolean(errors?.github_username)} id='github_username' required>
-          <FormLabel id='github_username-label'>GitHub username</FormLabel>
-          <Input disabled={state === 'submitting'} name='github_username' />
-          {Boolean(errors?.github_username) && <FormHelperText>{errors?.github_username}</FormHelperText>}
-        </FormControl>
-        <Button loading={state === 'submitting'} type='submit'>
-          Add member
-        </Button>
+        <Form method='POST'>
+          <Label htmlFor='github_username'>GitHub username</Label>
+          <Input id='github_username' error={Boolean(errors?.github_username)} required disabled={state === 'submitting'} name='github_username' />
+          {Boolean(errors?.github_username) && (
+            <Typography className='mt-1' variant='small'>
+              {errors?.github_username}
+            </Typography>
+          )}
+          <Button className='mt-4' disabled={state === 'submitting'} type='submit'>
+            Add member
+          </Button>
+        </Form>
       </Card>
       {members.map((member) => (
-        <Card key={member.user.id} orientation='horizontal' sx={{ gap: 1, alignItems: 'center' }}>
-          <Avatar alt={`Profile image of ${member.user.name}`} src={member.user.avatar_url || undefined}>
-            {member.user.name[0]}
+        <Card key={member.user.id} className='flex items-center gap-2'>
+          <Avatar>
+            <AvatarImage alt={`Profile image of ${member.user.name}`} src={member.user.avatar_url || undefined} />
+            <AvatarFallback>{member.user.name[0]}</AvatarFallback>
           </Avatar>
-          <Typography fontSize='xl' sx={{ flex: 1 }}>
+          <Typography variant='large' className='flex-1'>
             {member.user.name}
           </Typography>
-          <Tooltip arrow title={members.length === 1 ? 'There must be at least 1 member left in the team' : ''}>
+          {members.length > 1 && (
             <Form method='delete'>
-              <Button
-                color='danger'
-                disabled={state === 'submitting' || members.length === 1}
-                name='userId'
-                type='submit'
-                value={member.user.id}
-                variant='outlined'>
+              <Button disabled={state === 'submitting'} name='userId' type='submit' value={member.user.id} variant='destructive'>
                 Remove
               </Button>
             </Form>
-          </Tooltip>
+          )}
         </Card>
       ))}
     </>

@@ -1,26 +1,24 @@
-import { Box, Card, Typography, useTheme } from '@mui/joy';
 import type { Serie } from '@nivo/line';
 import { format } from 'date-fns';
 import { lazy, Suspense, useMemo } from 'react';
 
 import type { LoadStatisticsSerialized, TrendSerialized } from './loader.server';
+import { Card } from '../ui/card';
+import { Typography } from '../typography';
 
 const ResponsiveLine = lazy(() => import('~/components/lazy/ResponsiveLine'));
 
 export type TrendChartProps = {
   period: LoadStatisticsSerialized['period'];
   trend: TrendSerialized[];
-  dateGte: string;
-  dateLte: string;
   tooltipTitle: string;
 };
 
-export const TrendChart = ({ period, trend, dateGte, dateLte, tooltipTitle }: TrendChartProps) => {
-  const theme = useTheme();
+export const TrendChart = ({ period, trend, tooltipTitle }: TrendChartProps) => {
   const data = useMemo<Serie[]>(() => [{ id: 'TrendChart', data: trend.map((point) => ({ ...point, x: new Date(point.x) })) }], [trend]);
 
   return (
-    <Box sx={{ position: 'relative', height: 400 }}>
+    <div className='relative h-[400px]'>
       <Suspense fallback={null}>
         <ResponsiveLine
           axisBottom={{
@@ -41,12 +39,10 @@ export const TrendChart = ({ period, trend, dateGte, dateLte, tooltipTitle }: Tr
           pointBorderWidth={3}
           pointSize={3}
           sliceTooltip={({ slice }) => (
-            <Card sx={{ gap: 0 }}>
-              <Typography fontSize='md' fontWeight='bold'>
-                {tooltipTitle}
-              </Typography>
+            <Card>
+              <Typography variant='large'>{tooltipTitle}</Typography>
               {slice.points.map((point) => (
-                <Typography fontSize='sm' key={point.serieId}>
+                <Typography variant='small' key={point.serieId}>
                   {`${format(slice.points[0].data.x as Date, 'eee, dd MMM yyyy')}: ${Intl.NumberFormat('en-GB', {
                     notation: 'compact',
                     maximumFractionDigits: 2,
@@ -56,10 +52,10 @@ export const TrendChart = ({ period, trend, dateGte, dateLte, tooltipTitle }: Tr
             </Card>
           )}
           theme={{
-            axis: { domain: { line: { stroke: theme.palette.background.level1 } } },
-            grid: { line: { stroke: theme.palette.background.level1 } },
-            legends: { text: { fill: theme.palette.text.primary } },
-            text: { fill: theme.palette.text.primary },
+            axis: { domain: { line: { stroke: 'var(--color-muted)' } } },
+            grid: { line: { stroke: 'var(--color-muted)' } },
+            legends: { text: { fill: 'var(--color-foreground)' } },
+            text: { fill: 'var(--color-foreground)' },
           }}
           xScale={{
             type: 'time',
@@ -70,6 +66,6 @@ export const TrendChart = ({ period, trend, dateGte, dateLte, tooltipTitle }: Tr
           yScale={{ type: 'linear' }}
         />
       </Suspense>
-    </Box>
+    </div>
   );
 };

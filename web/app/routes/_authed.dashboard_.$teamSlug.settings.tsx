@@ -1,4 +1,3 @@
-import { Button, Card, FormControl, FormLabel, Input, Typography } from '@mui/joy';
 import { Prisma } from '@prisma/client';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
@@ -7,6 +6,11 @@ import { prismaClient } from '~/prismaClient';
 import { useState } from 'react';
 import invariant from 'tiny-invariant';
 import { redirect } from '~/utils.server';
+import { Card } from '~/components/ui/card';
+import { Typography } from '~/components/typography';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Button } from '~/components/ui/button';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -60,30 +64,45 @@ export default function TeamSettings() {
 
   return (
     <>
-      <Card component={Form} method='put' sx={{ gap: 1 }}>
-        <Typography level='h3'>Edit</Typography>
-        <FormControl id='name' required>
-          <FormLabel id='name-label'>Team name</FormLabel>
-          <Input defaultValue={team.name} disabled={state === 'submitting'} error={Boolean(actionData?.errors.name)} name='name' />
-        </FormControl>
-        <Button loading={state === 'submitting'} type='submit'>
-          Save
-        </Button>
+      <Card>
+        <Form method='put'>
+          <Typography variant='h3'>Edit</Typography>
+          <Label htmlFor='name'>Team name</Label>
+          <Input
+            className='mb-4'
+            required
+            id='name'
+            defaultValue={team.name}
+            disabled={state === 'submitting'}
+            error={Boolean(actionData?.errors.name)}
+            name='name'
+          />
+          <Button disabled={state === 'submitting'} type='submit'>
+            Save
+          </Button>
+        </Form>
       </Card>
 
-      <Card color='danger' component={Form} method='delete' sx={{ gap: 1 }}>
-        <Typography color='danger' level='h3'>
-          Delete team
-        </Typography>
-        <Typography>
-          {`Deleting the team will delete all its projects and their data. This action cannot be undone. Type the "delete ${team.name}" to confirm.`}
-        </Typography>
-        <FormControl id='delete-name' required>
-          <Input autoComplete='off' disabled={state === 'submitting'} onChange={(e) => setDeleteName(e.target.value)} value={deleteName} />
-        </FormControl>
-        <Button color='danger' disabled={deleteName !== `delete ${team.name}`} loading={state === 'submitting'} type='submit'>
-          I understand the consequences, delete this team
-        </Button>
+      <Card className='border-red-500'>
+        <Form method='delete'>
+          <Typography className='text-red-500' variant='h3'>
+            Delete team
+          </Typography>
+          <Typography className='select-none'>
+            {`Deleting the team will delete all its projects and their data. This action cannot be undone. Type the "delete ${team.name}" to confirm.`}
+          </Typography>
+          <Input
+            className='my-4'
+            required
+            autoComplete='off'
+            disabled={state === 'submitting'}
+            onChange={(e) => setDeleteName(e.target.value)}
+            value={deleteName}
+          />
+          <Button variant='destructive' disabled={deleteName !== `delete ${team.name}` || state === 'submitting'} type='submit'>
+            I understand the consequences, delete this team
+          </Button>
+        </Form>
       </Card>
     </>
   );

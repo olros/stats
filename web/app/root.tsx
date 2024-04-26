@@ -1,11 +1,14 @@
 import '@fontsource-variable/inter/index.css';
-import { Box } from '@mui/joy';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, useParams } from '@remix-run/react';
+import type { LinksFunction } from '@remix-run/node';
 import { ErrorBoundary as BaseErrorBoundary } from '~/components/ErrorBoundary';
-import StylesContext from '~/styles/server.context';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { stats } from './stats';
+
+import styles from './globals.css?url';
+
+export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }];
 
 export const ErrorBoundary = () => <BaseErrorBoundary />;
 
@@ -14,8 +17,6 @@ export type LayoutProps = {
 };
 
 export const Layout = ({ children }: LayoutProps) => {
-  const styleData = useContext(StylesContext);
-
   const location = useLocation();
   const params = useParams<Record<string, string>>();
 
@@ -25,7 +26,7 @@ export const Layout = ({ children }: LayoutProps) => {
   }, [location.pathname, location.search, params]);
 
   return (
-    <html data-joy-color-scheme='dark' lang='no'>
+    <html lang='no'>
       <head>
         <link href='/favicon-180.png' rel='apple-touch-icon' sizes='180x180' />
         <link href='/favicon-32.png' rel='icon' sizes='32x32' type='image/png' />
@@ -36,27 +37,8 @@ export const Layout = ({ children }: LayoutProps) => {
         <title>Stats</title>
         <meta content='width=device-width,initial-scale=1' name='viewport' />
         <Links />
-        {styleData?.map(({ key, ids, css }) => (
-          <style
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: css }}
-            data-emotion={`${key} ${ids.join(' ')}`}
-            key={key}
-          />
-        ))}
       </head>
       <body>
-        <Box
-          sx={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: -1,
-            background: ({ palette }) =>
-              `linear-gradient(${palette.success[100]}, transparent), linear-gradient(-45deg, ${palette.danger[500]}, transparent), linear-gradient(45deg, ${palette.primary[500]}, transparent)`,
-            backgroundBlendMode: 'multiply',
-            opacity: 0.2,
-          }}
-        />
         {children}
         <ScrollRestoration />
         <Scripts />

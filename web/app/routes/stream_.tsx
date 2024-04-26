@@ -1,4 +1,3 @@
-import { Box, Container, Stack, Typography } from '@mui/joy';
 import { useLoaderData } from '@remix-run/react';
 import type { GlobeWithCitiesProps } from '~/components/statistics/GlobeWithCities';
 import { GlobeWithCities } from '~/components/statistics/GlobeWithCities';
@@ -8,6 +7,9 @@ import { useEventSource } from 'remix-utils/sse/react';
 
 import type { GeoLocationsEventData } from './stream.geolocations';
 import { getTopGeoLocations } from '~/functions.server/getTopGeoLocations';
+import { RepositoryLink } from '~/components/repository-link';
+import { Container } from '~/components/container';
+import { Typography } from '~/components/typography';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -41,27 +43,16 @@ export default function Stream() {
   }, [time]);
 
   return (
-    <Container alignItems='center' component={Stack} sx={{ display: 'flex' }}>
+    <Container>
       <Typography
-        level='h1'
-        sx={{
-          fontSize: { xs: '2rem', sm: '3rem', md: '4rem' },
-          fontWeight: '900',
-          background: ({ palette }) => `linear-gradient(170deg, ${palette.danger[400]} 0%, ${palette.warning[400]} 100%)`,
-          backgroundClip: 'text',
-          textFillColor: 'transparent',
-          pt: 4,
-          pb: 2,
-        }}
-        textAlign='center'>
+        variant='h1'
+        className='bg-gradient-to-br from-purple-700 to-red-600 bg-clip-text pt-8 pb-4 text-center text-8xl font-black text-transparent md:text-[10rem] lg:text-[12rem]'>
         GeoLocations stream
       </Typography>
-      <Box sx={{ width: '100%', p: { xs: 0.5, sm: 1, md: 2 } }}>
+      <div className='w-full p-1 sm:p-2 md:p-4'>
         <GlobeWithCities data={pointsData} height={700} ringsData={ringsData} />
-      </Box>
-      <Typography component='a' href='https://github.com/olros/stats' sx={{ textAlign: 'center', my: 2 }} target='_blank'>
-        @olros/stats
-      </Typography>
+      </div>
+      <RepositoryLink />
     </Container>
   );
 }

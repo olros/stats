@@ -1,0 +1,112 @@
+@import 'tailwindcss';
+
+@layer base {
+  :root {
+    color-scheme: dark;
+
+    --background: 199 47.449999999999996% 4%;
+    --foreground: 199 7.3% 97.5%;
+
+    --muted: 199 36.5% 15%;
+    --muted-foreground: 199 7.3% 55%;
+
+    --popover: 199 50.4% 6.5%;
+    --popover-foreground: 199 7.3% 97.5%;
+
+    --card: 199 50.4% 6.5%;
+    --card-foreground: 199 7.3% 97.5%;
+
+    --border: 199 36.5% 15%;
+    --input: 199 36.5% 15%;
+
+    --primary: 199 73% 50%;
+    --primary-foreground: 199 7.3% 5%;
+
+    --secondary: 199 36.5% 15%;
+    --secondary-foreground: 199 7.3% 97.5%;
+
+    --accent: 199 36.5% 15%;
+    --accent-foreground: 199 7.3% 97.5%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 199 7.3% 97.5%;
+
+    --ring: 199 73% 50%;
+
+    --radius: 0.75rem;
+  }
+
+  html,
+  body {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  .border {
+    border-color: var(--color-border);
+  }
+
+  a,
+  button {
+    cursor: pointer;
+  }
+}
+
+@theme {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+
+  --font-family-poppins: var(--font-poppins);
+  --font-family-inter: var(--font-inter);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+
+    to {
+      height: '0';
+    }
+  }
+}

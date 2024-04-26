@@ -1,24 +1,23 @@
 import {
-  Avatar,
-  Box,
-  Card,
-  Chip,
-  List,
-  ListDivider,
-  ListItemDecorator,
-  listItemDecoratorClasses,
-  Option,
-  optionClasses,
-  Select,
-  Stack,
-  Typography,
-} from '@mui/joy';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu';
 import type { Prisma, User } from '@prisma/client';
 import type { SerializeFrom } from '@remix-run/node';
-import { Link, useLocation, useNavigate, useParams } from '@remix-run/react';
-import { Fragment, useCallback } from 'react';
+import { Link, useLocation, useParams } from '@remix-run/react';
 
-import { Add, Check } from './Icons';
+import { Card } from './ui/card';
+import { Button } from './ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 export type NavbarProps = {
   user: Pick<User, 'avatar_url' | 'name'>;
@@ -32,114 +31,63 @@ export type NavbarProps = {
 export const Navbar = ({ user, teams }: NavbarProps) => {
   const { teamSlug, projectSlug } = useParams();
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const onSelect = useCallback(
-    (_: React.SyntheticEvent | null, value: string | null) => {
-      if (value) {
-        navigate(`/dashboard/${value}`);
-      }
-    },
-    [navigate],
-  );
 
   return (
-    <Card
-      sx={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        overflow: 'hidden',
-        py: 1,
-        px: 2,
-        borderBottom: ({ palette }) => `1px solid ${palette.neutral.outlinedBorder}`,
-        position: 'sticky',
-        top: ({ spacing }) => spacing(1),
-        zIndex: 10,
-        background: ({ palette }) => palette.background.backdrop,
-        backdropFilter: `blur(5px)`,
-      }}>
-      <Stack alignItems='center' direction='row' gap={1} sx={{ overflow: 'hidden' }}>
-        <Box component={Link} sx={{ height: 34 }} to='/dashboard' unstable_viewTransition>
-          <Box alt='' component='img' src='/favicon-192.png' sx={{ height: 34 }} />
-        </Box>
-        <Select
-          onChange={onSelect}
-          placeholder='Choose team/project'
-          slotProps={{
-            listbox: {
-              variant: 'outlined',
-              component: 'div',
-              sx: {
-                maxHeight: 240,
-                overflow: 'auto',
-                '--List-padding': '0px',
-                '--ListItem-radius': '0px',
-              },
-            },
-          }}
-          value={[teamSlug, projectSlug].filter(Boolean).join('/')}
-          variant='plain'>
-          {teams.map((team) => (
-            <Fragment key={team.id}>
-              <List aria-labelledby={`team-${team.slug}`} sx={{ '--ListItemDecorator-size': '28px' }}>
-                <Option
-                  id={`team-${team.slug}`}
-                  label={
-                    <Chip color='primary' size='md' sx={{ borderRadius: 'xs', mr: 1 }}>
-                      {team.name}
-                    </Chip>
-                  }
-                  sx={{
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 1,
-                    textTransform: 'uppercase',
-                    fontSize: ({ fontSize }) => fontSize.sm,
-                    background: ({ palette }) => palette.background.popup,
-                  }}
-                  value={`${team.slug}`}>
-                  {team.name} ({team.projects.length})
-                </Option>
-                {team.projects.map((project) => (
-                  <Option
-                    key={project.id}
-                    label={
-                      <Typography level='body-md'>
-                        <Chip color='primary' component='span' size='sm' sx={{ borderRadius: 'xs', mr: 1 }}>
-                          {team.name}
-                        </Chip>
-                        {project.name}
-                      </Typography>
-                    }
-                    sx={{ [`&.${optionClasses.selected} .${listItemDecoratorClasses.root}`]: { opacity: 1 } }}
-                    value={`${team.slug}/${project.slug}`}>
-                    <ListItemDecorator sx={{ opacity: 0 }}>
-                      <Check />
-                    </ListItemDecorator>
-                    {project.name}
-                  </Option>
-                ))}
-              </List>
-              <ListDivider role='none' />
-            </Fragment>
-          ))}
-          <List aria-labelledby={`new-team`} sx={{ '--ListItemDecorator-size': '28px' }}>
-            <Option id={`new-team`} sx={{ fontSize: ({ fontSize }) => fontSize.sm }} value='new-team'>
-              <ListItemDecorator>
-                <Add />
-              </ListItemDecorator>
-              Create team
-            </Option>
-          </List>
-        </Select>
-      </Stack>
+    <Card className='sticky top-2 z-10 flex justify-between overflow-hidden py-2 px-4 backdrop:blur-sm'>
+      <div className='flex items-center gap-2 overflow-hidden'>
+        <Link className='h-[34px]' to='/dashboard' unstable_viewTransition>
+          <img alt='' src='/favicon-192.png' className='h-[34px]' />
+        </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant='outline'>{[teamSlug, projectSlug].filter(Boolean).join('/') || 'Choose team/project'}</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className='w-56'>
+            <DropdownMenuLabel>My teams</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {teams.map((team) => (
+              <DropdownMenuGroup key={team.id}>
+                <DropdownMenuItem asChild>
+                  <Link to={`/dashboard/${team.slug}`} unstable_viewTransition>
+                    {team.name}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Projects</DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      {team.projects.map((project) => (
+                        <DropdownMenuItem key={project.id} asChild>
+                          <Link to={`/dashboard/${team.slug}/${project.slug}`} unstable_viewTransition>
+                            {project.name}
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
+                <DropdownMenuSeparator />
+              </DropdownMenuGroup>
+            ))}
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link to='/dashboard/new-team' unstable_viewTransition>
+                  New Team
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       {location.pathname !== '/profile' && (
         <Link to='/profile' unstable_viewTransition>
-          <Avatar
-            alt='Link to profile'
-            src={user.avatar_url || undefined}
-            sx={{ viewTransitionName: 'avatar', ':hover': { scale: '1.1', transition: 'scale 0.1s' } }}>
-            {user.name[0]}
+          <Avatar>
+            <AvatarImage
+              alt='Link to profile'
+              src={user.avatar_url || undefined}
+              className='[view-transition-name:avatar] hover:scale-[1.1] hover:transition-[scale_0.1s]'
+            />
+            <AvatarFallback>{user.name[0]}</AvatarFallback>
           </Avatar>
         </Link>
       )}

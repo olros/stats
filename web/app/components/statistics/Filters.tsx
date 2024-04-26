@@ -1,8 +1,12 @@
-import { Button, Card, FormControl, FormLabel, Input, Option, Select, Stack } from '@mui/joy';
 import { Form } from '@remix-run/react';
 import { stats } from '~/stats';
 
 import type { PERIOD } from './utils';
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Label } from '../ui/label';
 
 export type FiltersProps = {
   dateGte: string;
@@ -13,26 +17,25 @@ export type FiltersProps = {
 export const Filters = ({ dateGte, dateLte, period }: FiltersProps) => {
   return (
     <Card>
-      <Stack component={Form} direction={{ xs: 'column', sm: 'row' }} gap={1} onSubmit={() => stats.event('update-filters')}>
-        <FormControl required>
-          <FormLabel id='period-label'>Period</FormLabel>
-          <Select defaultValue={period} name='period' slotProps={{ button: { 'aria-labelledby': 'period-label' } }}>
-            <Option value='day'>Day</Option>
-            <Option value='hour'>Hour</Option>
-          </Select>
-        </FormControl>
-        <FormControl required sx={{ flex: 1 }}>
-          <FormLabel id='gte-label'>From date</FormLabel>
-          <Input defaultValue={dateGte} name='gte' type='date' />
-        </FormControl>
-        <FormControl required sx={{ flex: 1 }}>
-          <FormLabel id='lte-label'>To date</FormLabel>
-          <Input defaultValue={dateLte} name='lte' type='date' />
-        </FormControl>
-        <Button sx={{ height: 40, mt: 'auto' }} type='submit'>
+      <Form className='grid gap-2 sm:grid-flow-col sm:grid-cols-[auto_1fr_1fr_auto] sm:grid-rows-[auto_1fr]' onSubmit={() => stats.event('update-filters')}>
+        <Label htmlFor='period'>Period</Label>
+        <Select name='period' defaultValue={period}>
+          <SelectTrigger className='min-w-20' id='period'>
+            <SelectValue placeholder='Period' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='day'>Day</SelectItem>
+            <SelectItem value='hour'>Hour</SelectItem>
+          </SelectContent>
+        </Select>
+        <Label htmlFor='gte'>From date</Label>
+        <Input id='gte' className='flex-1' required defaultValue={dateGte} name='gte' type='date' />
+        <Label htmlFor='lte'>To date</Label>
+        <Input id='lte' className='flex-1' required defaultValue={dateLte} name='lte' type='date' />
+        <Button className='row-span-2 mt-auto h-10' type='submit'>
           Update
         </Button>
-      </Stack>
+      </Form>
     </Card>
   );
 };

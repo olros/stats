@@ -1,7 +1,8 @@
-import { Box, Typography } from '@mui/joy';
 import { Fragment } from 'react';
 
 import type { TopData } from './loader.server';
+import { Typography } from '../typography';
+import { cn } from '~/lib/utils';
 
 export type BarChartProps = {
   data: TopData[];
@@ -12,54 +13,41 @@ export type BarChartProps = {
 };
 
 export const BarChart = ({ data, maxCount, title, countTitle, nullText }: BarChartProps) => {
-  const gridTemplateColumns = maxCount ? '1fr 4.5rem 4.5rem' : '1fr 4.5rem';
+  const gridTemplateColumns = maxCount ? 'grid-cols-[1fr__4.5rem_4.5rem]' : 'grid-cols-[1fr__4.5rem]';
   if (data.length === 0) {
-    return <Typography level='body-md'>Found none registered with the current filters</Typography>;
+    return <Typography>Found none registered with the current filters</Typography>;
   }
   return (
-    <Box>
-      <Box sx={{ display: 'grid', gridTemplateColumns, gap: 1 }}>
-        <Typography level='body-sm'>{title}</Typography>
-        <Typography level='body-sm' sx={{ textAlign: 'right' }}>
+    <div>
+      <div className={cn('my-2 grid gap-2', gridTemplateColumns)}>
+        <Typography variant='small'>{title}</Typography>
+        <Typography variant='small' className='text-right'>
           {countTitle}
         </Typography>
         {maxCount !== undefined && (
-          <Typography level='body-sm' sx={{ textAlign: 'right' }}>
+          <Typography variant='small' className='text-right'>
             %
           </Typography>
         )}
-      </Box>
-      <Box sx={{ display: 'grid', gridTemplateColumns, rowGap: 0.5, columnGap: 1, maxHeight: 400, overflow: 'auto' }}>
+      </div>
+      <div className={cn('grid max-h-[400px] gap-2 gap-x-2 gap-y-1 overflow-auto', gridTemplateColumns)}>
         {data.map((row) => (
           <Fragment key={row.name}>
-            <Box sx={{ height: '100%', width: '100%', position: 'relative' }}>
-              <Box
-                sx={{
-                  height: '100%',
-                  width: `${(row.count / data[0].count) * 100}%`,
-                  position: 'absolute',
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  background: ({ palette }) => palette.background.backdrop,
-                  borderRadius: ({ radius }) => radius.xs,
-                }}
-              />
-              <Typography level='body-md' sx={{ py: 0.5, px: 1, position: 'relative', zIndex: 2, wordBreak: 'break-word' }}>
-                {decodeURIComponent(row.name || nullText || '')}
-              </Typography>
-            </Box>
-            <Typography level='body-md' sx={{ py: 0.5, textAlign: 'right' }}>
+            <div className='relative h-full w-full'>
+              <div className={`bg-secondary absolute top-0 bottom-0 left-0 h-full rounded`} style={{ width: `${(row.count / data[0].count) * 100}%` }} />
+              <Typography className='relative z-[2] !mt-0 break-words py-1 px-2'>{decodeURIComponent(row.name || nullText || '')}</Typography>
+            </div>
+            <Typography className='!mt-0 py-1 text-right'>
               {Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 }).format(row.count)}
             </Typography>
             {maxCount !== undefined && (
-              <Typography level='body-md' sx={{ py: 0.5, textAlign: 'right' }}>
+              <Typography className='!mt-0 py-1 text-right'>
                 {Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 }).format((row.count / maxCount) * 100)}
               </Typography>
             )}
           </Fragment>
         ))}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };

@@ -1,14 +1,30 @@
-import { Box, Button, Card, FormControl, FormHelperText, FormLabel, Input, Switch, Textarea, Typography } from '@mui/joy';
 import { Prisma } from '@prisma/client';
 import { Form, useActionData, useLoaderData, useNavigation, useSubmit } from '@remix-run/react';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
 import { ensureIsTeamMember } from '~/auth.server';
-import { ConfirmDialog } from '~/components/ConfirmDialog';
 import { useIsClient } from '~/hooks/useIsClient';
 import { prismaClient } from '~/prismaClient';
 import { useCallback, useState } from 'react';
 import invariant from 'tiny-invariant';
 import { redirect } from '~/utils.server';
+import { Card } from '~/components/ui/card';
+import { Button } from '~/components/ui/button';
+import { Typography } from '~/components/typography';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Textarea } from '~/components/ui/textarea';
+import { Checkbox } from '~/components/ui/checkbox';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '~/components/ui/alert-dialog';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -119,71 +135,118 @@ export default function ProjectSettings() {
 
   return (
     <>
-      <Card component={Form} method='put' sx={{ gap: 1 }}>
-        <Typography level='h3'>Edit</Typography>
-        <FormControl error={Boolean(actionData?.errors?.name)} id='name' required>
-          <FormLabel id='name-label'>Project name</FormLabel>
-          <Input defaultValue={project.name} disabled={state === 'submitting'} name='name' />
-          {Boolean(actionData?.errors?.name) && <FormHelperText>{actionData?.errors?.name}</FormHelperText>}
-        </FormControl>
-        <FormControl id='url' required>
-          <FormLabel id='url-label'>Website url</FormLabel>
-          <Input defaultValue={project.url} disabled={state === 'submitting'} name='url' type='url' />
-        </FormControl>
-        <FormControl id='allowed_hosts'>
-          <FormLabel id='allowed_hosts-label'>Allowed orgins</FormLabel>
-          <Textarea defaultValue={project.allowed_hosts} disabled={state === 'submitting'} minRows={2} name='allowed_hosts' placeholder='stats.olafros.com' />
-          <FormHelperText>
+      <Card>
+        <Form method='put'>
+          <Typography variant='h3'>Edit</Typography>
+          <Label htmlFor='name'>Project name</Label>
+          <Input id='name' error={Boolean(actionData?.errors?.name)} required defaultValue={project.name} disabled={state === 'submitting'} name='name' />
+          {Boolean(actionData?.errors?.name) && (
+            <Typography className='mt-1' variant='small'>
+              {actionData?.errors?.name}
+            </Typography>
+          )}
+          <Label htmlFor='url'>Website url</Label>
+          <Input required id='url' defaultValue={project.url} disabled={state === 'submitting'} name='url' type='url' />
+          <Label htmlFor='allowed_hosts'>Allowed orgins</Label>
+          <Textarea
+            id='allowed_hosts'
+            defaultValue={project.allowed_hosts}
+            disabled={state === 'submitting'}
+            name='allowed_hosts'
+            placeholder='stats.olafros.com'
+          />
+          <Typography className='mt-1' variant='muted'>
             Specify which origins that are allowed to track pageviews and events for this project. Separate multiple origins with commas. Leave empty to allow
             all orgins
-          </FormHelperText>
-        </FormControl>
-        <FormControl id='public_statistics' orientation='horizontal' sx={{ justifyContent: 'space-between' }}>
-          <Box>
-            <FormLabel>Public dashboard</FormLabel>
-            <FormHelperText sx={{ mt: 0, display: 'block' }}>
-              Make stats publicly available at{' '}
-              <Box component='a' href={publicStatsUrl} sx={{ overflowWrap: 'anywhere', color: (theme) => theme.palette.text.primary }} target='_blank'>
-                {publicStatsUrl}
-              </Box>
-            </FormHelperText>
-          </Box>
-          <Switch defaultChecked={project.public_statistics} slotProps={{ input: { name: 'public_statistics' } }} variant='solid' />
-        </FormControl>
-        <Button loading={state === 'submitting'} type='submit'>
-          Save
-        </Button>
+          </Typography>
+          <div className='items-top my-4 flex space-x-2'>
+            <Checkbox defaultChecked={project.public_statistics} name='public_statistics' id='public_statistics' />
+            <div className='grid gap-1.5 leading-none'>
+              <Label htmlFor='public_statistics'>Public dashboard</Label>
+              <Typography variant='muted'>
+                Make stats publicly available at{' '}
+                <a href={publicStatsUrl} className='break-words underline' target='_blank'>
+                  {publicStatsUrl}
+                </a>
+              </Typography>
+            </div>
+          </div>
+          <Button disabled={state === 'submitting'} type='submit'>
+            Save
+          </Button>
+        </Form>
       </Card>
 
-      <Card color='danger' sx={{ gap: 1 }}>
-        <Typography color='danger' level='h3'>
+      <Card className='flex flex-col gap-2 border-red-500'>
+        <Typography className='text-red-500' variant='h3'>
           Delete project-data
         </Typography>
-        <ConfirmDialog
-          description="All stored data about this project's pageviews will get permanently deleted"
-          onConfirm={deleteProjectPageviews}
-          title='Delete pageviews data'>
-          Delete pageviews data
-        </ConfirmDialog>
-        <ConfirmDialog
-          description="All stored data about this project's custom events will get permanently deleted"
-          onConfirm={deleteProjectEvents}
-          title='Delete custom events data'>
-          Delete custom events data
-        </ConfirmDialog>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant='outline' className='border-red-500'>
+              Delete pageviews data
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete pageviews data</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. All stored data about this project's pageviews will get permanently deleted.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction asChild>
+                <Button onClick={deleteProjectPageviews} variant='destructive'>
+                  I'm sure
+                </Button>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant='outline' className='border-red-500'>
+              Delete custom events data
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete custom events data</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. All stored data about this project's custom events will get permanently deleted.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction asChild>
+                <Button onClick={deleteProjectEvents} variant='destructive'>
+                  I'm sure
+                </Button>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </Card>
 
-      <Card color='danger' component={Form} method='delete' sx={{ gap: 1 }}>
-        <Typography color='danger' level='h3'>
-          Delete project
-        </Typography>
-        <Typography>{`Deleting the project will delete all its data. This action cannot be undone. Type "delete ${project.name}" to confirm.`}</Typography>
-        <FormControl id='delete-name' required>
-          <Input autoComplete='off' disabled={state === 'submitting'} onChange={(e) => setDeleteName(e.target.value)} value={deleteName} />
-        </FormControl>
-        <Button color='danger' disabled={deleteName !== `delete ${project.name}`} loading={state === 'submitting'} type='submit'>
-          I understand the consequences, delete this project
-        </Button>
+      <Card className='border-red-500'>
+        <Form method='delete'>
+          <Typography className='text-red-500' variant='h3'>
+            Delete project
+          </Typography>
+          <Typography className='select-none'>{`Deleting the project will delete all its data. This action cannot be undone. Type "delete ${project.name}" to confirm.`}</Typography>
+          <Input
+            className='my-4'
+            autoComplete='off'
+            required
+            disabled={state === 'submitting'}
+            onChange={(e) => setDeleteName(e.target.value)}
+            value={deleteName}
+          />
+          <Button variant='destructive' disabled={deleteName !== `delete ${project.name}` || state === 'submitting'} type='submit'>
+            I understand the consequences, delete this project
+          </Button>
+        </Form>
       </Card>
     </>
   );
