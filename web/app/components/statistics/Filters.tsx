@@ -17,7 +17,7 @@ export type FiltersProps = {
 export const Filters = ({ dateGte, dateLte, period }: FiltersProps) => {
   return (
     <Card>
-      <Form className='grid sm:grid-flow-col sm:grid-cols-[auto_1fr_1fr_auto] sm:grid-rows-[auto_1fr] gap-2' onSubmit={() => stats.event('update-filters')}>
+      <Form className='grid gap-2 sm:grid-flow-col sm:grid-cols-[auto_1fr_1fr_auto] sm:grid-rows-[auto_1fr]' onSubmit={() => stats.event('update-filters')}>
         <Label htmlFor='period'>Period</Label>
         <Select name='period' defaultValue={period}>
           <SelectTrigger className='min-w-20' id='period'>
@@ -32,7 +32,7 @@ export const Filters = ({ dateGte, dateLte, period }: FiltersProps) => {
         <Input id='gte' className='flex-1' required defaultValue={dateGte} name='gte' type='date' />
         <Label htmlFor='lte'>To date</Label>
         <Input id='lte' className='flex-1' required defaultValue={dateLte} name='lte' type='date' />
-        <Button className='mt-auto h-10 row-span-2' type='submit'>
+        <Button className='row-span-2 mt-auto h-10' type='submit'>
           Update
         </Button>
       </Form>

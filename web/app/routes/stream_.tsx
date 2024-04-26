@@ -47,7 +47,7 @@ export default function Stream() {
     <Container>
       <Typography
         variant='h1'
-        className='text-8xl text-center md:text-[10rem] lg:text-[12rem] bg-gradient-to-br from-purple-700 to-red-600 font-black bg-clip-text text-transparent pt-8 pb-4'>
+        className='bg-gradient-to-br from-purple-700 to-red-600 bg-clip-text pt-8 pb-4 text-center text-8xl font-black text-transparent md:text-[10rem] lg:text-[12rem]'>
         GeoLocations stream
       </Typography>
       <div className='w-full p-1 sm:p-2 md:p-4'>

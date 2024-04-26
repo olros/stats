@@ -59,7 +59,7 @@ export default function CreateProject() {
         <Input required id='name' disabled={state === 'submitting'} error={Boolean(actionData?.errors?.name)} name='name' />
         <Label htmlFor='url'>Website url</Label>
         <Input required id='url' disabled={state === 'submitting'} name='url' type='url' />
-        <div className='flex gap-2 mt-4'>
+        <div className='mt-4 flex gap-2'>
           <Button disabled={state === 'submitting'} type='submit'>
             Save
           </Button>

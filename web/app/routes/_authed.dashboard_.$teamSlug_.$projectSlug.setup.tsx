@@ -17,7 +17,7 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 const Description = ({ children }: { children: ReactNode }) => <Typography className='break-words'>{children}</Typography>;
 
 const Pre = ({ children, ...props }: TypographyProps) => (
-  <Typography className='!p-4 text-md [&_code]:text-inherit bg-slate-500 !m-0 rounded-md' asChild {...props}>
+  <Typography className='text-md !m-0 rounded-md bg-slate-500 !p-4 [&_code]:text-inherit' asChild {...props}>
     <pre>{children}</pre>
   </Typography>
 );

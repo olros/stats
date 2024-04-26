@@ -51,7 +51,7 @@ export default function PublicPageviewsStatistics() {
 
   return (
     <Container>
-      <Typography variant='h1' className='pb-8 break-words text-center'>{`Stats for ${project.team.name}/${project.name}`}</Typography>
+      <Typography variant='h1' className='break-words pb-8 text-center'>{`Stats for ${project.team.name}/${project.name}`}</Typography>
       <Outlet />
       <RepositoryLink />
     </Container>

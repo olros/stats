@@ -29,8 +29,8 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
   };
   return (
     <div className='flex flex-col gap-2'>
-      <div className='flex flex-col-reverse lg:flex-row gap-2'>
-        <div className='flex flex-col sm:flex-row gap-2 flex-1'>
+      <div className='flex flex-col-reverse gap-2 lg:flex-row'>
+        <div className='flex flex-1 flex-col gap-2 sm:flex-row'>
           <AggregatedCard count={statistics.totalPageViews.count} emoji='👀' title='Total pageviews' />
           <AggregatedCard
             count={statistics.currentVisitors.count}
@@ -45,7 +45,7 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
         <Typography variant='h4'>Pageviews trend</Typography>
         <TrendChart period={statistics.period} tooltipTitle='Pageviews' trend={statistics.pageViewsTrend} />
       </Card>
-      <div className='grid gap-2 grid-cols-1 md:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-2 md:grid-cols-2'>
         <Card>
           <Typography variant='h4'>Top sources</Typography>
           <BarChart countTitle='Pageviews' data={statistics.topReferrers} maxCount={statistics.totalPageViews.count} nullText='Direct / None' title='Source' />
@@ -96,7 +96,7 @@ export const Statistics = ({ statistics }: StatisticsProps) => {
         </Typography>
         <TrendChart period={statistics.period} tooltipTitle='Unique visitors' trend={statistics.uniqueVisitorsTrend} />
       </Card>
-      <div className='grid gap-2 grid-cols-1 md:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-2 md:grid-cols-2'>
         <Card>
           <Typography variant='h4'>Geolocations</Typography>
           <GlobeWithCities data={statistics.topGeoLocations} />

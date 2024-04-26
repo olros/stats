@@ -23,11 +23,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 export default function TeamDashboard() {
   const { projects } = useLoaderData<typeof loader>();
   return (
-    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2'>
+    <div className='grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3'>
       {projects.length === 0 && <Typography>This team hasn't created any projects yet</Typography>}
       {projects.map((project) => (
         <NavLink
-          className='rounded-xl border bg-card text-card-foreground break-a shadow p-4 overflow-ellipsis overflow-hidden hover:border-slate-600 [&.transitioning]:[view-transition-name:project-card] [&.transitioning]:[&_h3]:[view-transition-name:project-name] [&.transitioning]:[&_p]:[view-transition-name:project-url]'
+          className='bg-card text-card-foreground break-a overflow-ellipsis overflow-hidden rounded-xl border p-4 shadow hover:border-slate-600 [&.transitioning]:[view-transition-name:project-card] [&.transitioning]:[&_h3]:[view-transition-name:project-name] [&.transitioning]:[&_p]:[view-transition-name:project-url]'
           key={project.slug}
           to={project.slug}
           unstable_viewTransition>

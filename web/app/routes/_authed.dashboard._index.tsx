@@ -27,7 +27,7 @@ export default function Dashboard() {
   const { teams } = useLoaderData<typeof loader>();
   return (
     <>
-      <Card className='flex flex-col sm:flex-row gap-2 justify-between items-center [view-transition-name:header-old]'>
+      <Card className='flex flex-col items-center justify-between gap-2 [view-transition-name:header-old] sm:flex-row'>
         <Typography variant='h1' className='[view-transition-name:header-old-tex]'>
           Your teams
         </Typography>
@@ -37,10 +37,10 @@ export default function Dashboard() {
           </Link>
         </Button>
       </Card>
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2'>
+      <div className='grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3'>
         {teams.map((team) => (
           <NavLink
-            className='rounded-xl border bg-card text-card-foreground shadow p-4 hover:border-slate-600 [&.transitioning]:[view-transition-name:team-card] [&.transitioning]:*:[view-transition-name:team-name]'
+            className='bg-card text-card-foreground rounded-xl border p-4 shadow hover:border-slate-600 [&.transitioning]:[view-transition-name:team-card] [&.transitioning]:*:[view-transition-name:team-name]'
             key={team.slug}
             to={team.slug}
             unstable_viewTransition>

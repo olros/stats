@@ -1,23 +1,23 @@
 {
   "folders": [
     {
-      "path": "."
-    }
+      "path": ".",
+    },
   ],
   "settings": {
     "files.exclude": {
       "**/.git": true,
       "**/node_modules": true,
       "**/build": true,
-      "**/coverage": true
+      "**/coverage": true,
     },
     "editor.formatOnSave": true,
     "eslint.validate": ["html", "javascript", "javascriptreact", "typescript", "typescriptreact"],
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
-    }
+      "source.fixAll.eslint": "explicit",
+    },
   },
   "extensions": {
-    "recommendations": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
-  }
+    "recommendations": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"],
+  },
 }

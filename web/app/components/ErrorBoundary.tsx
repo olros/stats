@@ -16,7 +16,7 @@ export const ErrorBoundary = () => {
           {process.env.NODE_ENV !== 'production' && (
             <Card>
               <Typography variant='small'>Stack:</Typography>
-              <Typography variant='small' className='whitespace-break-spaces font-mono mt-2'>
+              <Typography variant='small' className='mt-2 whitespace-break-spaces font-mono'>
                 {error.stack}
               </Typography>
             </Card>

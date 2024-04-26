@@ -112,7 +112,7 @@ export default function TeamMembers() {
         </Form>
       </Card>
       {members.map((member) => (
-        <Card key={member.user.id} className='flex gap-2 items-center'>
+        <Card key={member.user.id} className='flex items-center gap-2'>
           <Avatar>
             <AvatarImage alt={`Profile image of ${member.user.name}`} src={member.user.avatar_url || undefined} />
             <AvatarFallback>{member.user.name[0]}</AvatarFallback>

@@ -19,7 +19,7 @@ export const BarChart = ({ data, maxCount, title, countTitle, nullText }: BarCha
   }
   return (
     <div>
-      <div className={cn('grid gap-2 my-2', gridTemplateColumns)}>
+      <div className={cn('my-2 grid gap-2', gridTemplateColumns)}>
         <Typography variant='small'>{title}</Typography>
         <Typography variant='small' className='text-right'>
           {countTitle}
@@ -30,12 +30,12 @@ export const BarChart = ({ data, maxCount, title, countTitle, nullText }: BarCha
           </Typography>
         )}
       </div>
-      <div className={cn('grid gap-2 gap-y-1 gap-x-2 max-h-[400px] overflow-auto', gridTemplateColumns)}>
+      <div className={cn('grid max-h-[400px] gap-2 gap-x-2 gap-y-1 overflow-auto', gridTemplateColumns)}>
         {data.map((row) => (
           <Fragment key={row.name}>
-            <div className='h-full w-full relative'>
-              <div className={`h-full absolute left-0 top-0 bottom-0 rounded bg-secondary`} style={{ width: `${(row.count / data[0].count) * 100}%` }} />
-              <Typography className='!mt-0 py-1 px-2 relative z-[2] break-words'>{decodeURIComponent(row.name || nullText || '')}</Typography>
+            <div className='relative h-full w-full'>
+              <div className={`bg-secondary absolute top-0 bottom-0 left-0 h-full rounded`} style={{ width: `${(row.count / data[0].count) * 100}%` }} />
+              <Typography className='relative z-[2] !mt-0 break-words py-1 px-2'>{decodeURIComponent(row.name || nullText || '')}</Typography>
             </div>
             <Typography className='!mt-0 py-1 text-right'>
               {Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 }).format(row.count)}

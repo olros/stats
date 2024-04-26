@@ -83,7 +83,7 @@ export default function Index() {
       <Container>
         <Typography
           variant='h1'
-          className='text-8xl text-center md:text-[10rem] lg:text-[12rem] bg-gradient-to-br from-purple-700 to-red-600 font-black bg-clip-text text-transparent pt-8 pb-4'>
+          className='bg-gradient-to-br from-purple-700 to-red-600 bg-clip-text pt-8 pb-4 text-center text-8xl font-black text-transparent md:text-[10rem] lg:text-[12rem]'>
           Stats
         </Typography>
         <Typography variant='h2' className='text-center'>
@@ -91,11 +91,11 @@ export default function Index() {
           <br />
           for all applications.
         </Typography>
-        <Typography className='text-center mb-8 px-4'>
+        <Typography className='mb-8 px-4 text-center'>
           No need for a cookie-banner as no cookies are used, ever. Easy to add to your website with a lightweight script, NPM-package or by manually sending
           HTTP-requests, choose whichever fits your application best! Server-side tracking are also supported!
         </Typography>
-        <div className='flex gap-4 justify-center'>
+        <div className='flex justify-center gap-4'>
           <Form action='/auth/github' method='POST'>
             <Button type='submit'>Continue with GitHub</Button>
           </Form>
@@ -109,12 +109,12 @@ export default function Index() {
         <Typography variant='h2' className='text-center'>
           Features
         </Typography>
-        <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 p-2 sm:p-4'>
+        <div className='grid w-full grid-cols-1 gap-2 p-2 sm:grid-cols-2 sm:gap-4 sm:p-4'>
           {FEATURES.map((feature, i) => (
             <Card key={i}>
               <Typography variant='h3'>
                 {feature.emoji}{' '}
-                <Typography className='bg-gradient-to-br from-green-400 to-blue-400 font-extrabold bg-clip-text text-transparent' asChild>
+                <Typography className='bg-gradient-to-br from-green-400 to-blue-400 bg-clip-text font-extrabold text-transparent' asChild>
                   <span>{feature.heading}</span>
                 </Typography>
               </Typography>

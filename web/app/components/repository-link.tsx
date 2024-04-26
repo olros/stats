@@ -6,7 +6,7 @@ export type RepositoryLinkProps = Omit<TypographyProps, 'asChild'>;
 
 const RepositoryLink = forwardRef<HTMLParagraphElement, RepositoryLinkProps>(({ className, ...props }, ref) => {
   return (
-    <Typography ref={ref} asChild variant='small' className={cn('w-min mx-auto text-center py-4 mt-auto', className)} {...props}>
+    <Typography ref={ref} asChild variant='small' className={cn('mt-auto mx-auto w-min py-4 text-center', className)} {...props}>
       <a href='https://github.com/olros/stats' target='_blank'>
         @olros/stats
       </a>

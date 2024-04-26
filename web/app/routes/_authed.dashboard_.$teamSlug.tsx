@@ -28,7 +28,7 @@ export default function ProjectDashboard() {
   const { team } = useLoaderData<typeof loader>();
   return (
     <>
-      <Card className='flex flex-column sm:flex-row gap-2 justify-between items-center [view-transition-name:team-card]'>
+      <Card className='flex-column flex items-center justify-between gap-2 [view-transition-name:team-card] sm:flex-row'>
         <Typography variant='h1' className='[view-transition-name:team-name]'>
           {team.name}
         </Typography>

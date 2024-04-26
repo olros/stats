@@ -12,7 +12,7 @@ export type AggregatedCardProps = {
 export const AggregatedCard = ({ count, emoji, title, tooltip }: AggregatedCardProps) => {
   return (
     <Card className='flex flex-1 items-center gap-4'>
-      <div className='bg-secondary aspect-square rounded-sm w-14 h-14 flex justify-center items-center'>
+      <div className='bg-secondary flex aspect-square h-14 w-14 items-center justify-center rounded-sm'>
         <Typography variant='large'>{emoji}</Typography>
       </div>
       <CardContent className='flex flex-col p-0'>

@@ -157,7 +157,7 @@ export default function ProjectSettings() {
             Specify which origins that are allowed to track pageviews and events for this project. Separate multiple origins with commas. Leave empty to allow
             all orgins
           </Typography>
-          <div className='items-top flex space-x-2 my-4'>
+          <div className='items-top my-4 flex space-x-2'>
             <Checkbox defaultChecked={project.public_statistics} name='public_statistics' id='public_statistics' />
             <div className='grid gap-1.5 leading-none'>
               <Label htmlFor='public_statistics'>Public dashboard</Label>
@@ -175,7 +175,7 @@ export default function ProjectSettings() {
         </Form>
       </Card>
 
-      <Card className='border-red-500 flex flex-col gap-2'>
+      <Card className='flex flex-col gap-2 border-red-500'>
         <Typography className='text-red-500' variant='h3'>
           Delete project-data
         </Typography>

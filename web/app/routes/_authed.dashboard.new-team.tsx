@@ -48,7 +48,7 @@ export default function CreateTeam() {
       <Form method='post'>
         <Label htmlFor='name'>Team name</Label>
         <Input id='name' required disabled={state === 'submitting'} error={Boolean(actionData?.errors.name)} name='name' />
-        <div className='flex gap-2 mt-4'>
+        <div className='mt-4 flex gap-2'>
           <Button disabled={state === 'submitting'} className='[view-transition-name:create-team]' type='submit'>
             Save
           </Button>

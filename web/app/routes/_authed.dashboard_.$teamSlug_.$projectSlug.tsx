@@ -36,12 +36,12 @@ export default function ProjectDashboard() {
   const { teamSlug, project } = useLoaderData<typeof loader>();
   return (
     <>
-      <Card className='flex gap-2 justify-between items-center [view-transition-name:project-card]'>
-        <Typography variant='h1' className='text-ellipsis overflow-hidden [view-transition-name:project-name]'>
+      <Card className='flex items-center justify-between gap-2 [view-transition-name:project-card]'>
+        <Typography variant='h1' className='overflow-hidden text-ellipsis [view-transition-name:project-name]'>
           {project.name}
         </Typography>
         <Typography asChild variant='small'>
-          <a href={project.url} className=' underline text-ellipsis overflow-hidden [view-transition-name:project-url]' target='_blank'>
+          <a href={project.url} className=' overflow-hidden text-ellipsis underline [view-transition-name:project-url]' target='_blank'>
             {project.url}
           </a>
         </Typography>

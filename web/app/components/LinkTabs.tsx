@@ -15,7 +15,7 @@ export const LinkTabs = ({ tabs, baseLocation, ...props }: LinkTabsProps) => {
   const [defaultLocation] = useState(location.pathname);
   return (
     <Tabs defaultValue={defaultLocation} {...props}>
-      <TabsList className='grid w-full grid-flow-col auto-cols-fr'>
+      <TabsList className='grid w-full auto-cols-fr grid-flow-col'>
         {tabs.map((tab) => (
           <TabsTrigger asChild key={tab.label} value={`${baseLocation}${tab.url ? `/${tab.url}` : ''}`}>
             <Link to={`${baseLocation}${tab.url ? `/${tab.url}` : ''}`} unstable_viewTransition>
