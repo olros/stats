@@ -197,8 +197,8 @@ devDependencies:
     specifier: ^15.5.11
     version: 15.5.12
   '@types/three':
-    specifier: ^0.163.0
-    version: 0.163.0
+    specifier: ^0.164.1
+    version: 0.164.1
   '@types/ua-parser-js':
     specifier: ^0.7.39
     version: 0.7.39
@@ -3063,8 +3063,8 @@ packages:
     resolution: {integrity: sha512-pXNfAD3KHOdif9EQXZ9deK82HVNaXP5ZIF5RP2QG6OQFNTaY2YIetfrE9t528vEreGQvEPRDDc8muaoYeK0SxQ==}
     dev: true
 
-  /@types/three@0.163.0:
-    resolution: {integrity: sha512-uIdDhsXRpQiBUkflBS/i1l3JX14fW6Ot9csed60nfbZNXHDTRsnV2xnTVwXcgbvTiboAR4IW+t+lTL5f1rqIqA==}
+  /@types/three@0.164.1:
+    resolution: {integrity: sha512-dR/trWDhyaNqJV38rl1TonlCA9DpnX7OPYDWD81bmBGn/+uEc3+zNalFxQcV4FlPTeDBhCY3SFWKvK6EJwL88g==}
     dependencies:
       '@tweenjs/tween.js': 23.1.1
       '@types/stats.js': 0.17.3
