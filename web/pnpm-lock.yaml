@@ -162,8 +162,8 @@ dependencies:
     specifier: ^3.17.4
     version: 3.17.4
   undici:
-    specifier: ^6.16.0
-    version: 6.16.0
+    specifier: ^6.18.2
+    version: 6.18.2
 
 devDependencies:
   '@remix-run/dev':
@@ -2552,7 +2552,7 @@ packages:
       source-map-support: 0.5.21
       stream-slice: 0.1.2
       typescript: 5.4.5
-      undici: 6.16.0
+      undici: 6.18.2
 
   /@remix-run/react@2.9.1(react-dom@18.3.1)(react@18.3.1)(typescript@5.4.5):
     resolution: {integrity: sha512-QQVZPS56okvDF3FBuGBjyKuYa6bXZvXFFlYeWfngI8ZnDbCzQLKV1oD0FWMhKuQxMaKs25uWg2YwGqwWTdin3w==}
@@ -8538,8 +8538,8 @@ packages:
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
-  /undici@6.16.0:
-    resolution: {integrity: sha512-HQfVddOTb5PJtfLnJ1Px8bNGyIg/z7WTj1hjUSna1Itsv59Oca9JdclIU08ToNqvWWXjFLRzc9rqjnpfw5UWcQ==}
+  /undici@6.18.2:
+    resolution: {integrity: sha512-o/MQLTwRm9IVhOqhZ0NQ9oXax1ygPjw6Vs+Vq/4QRjbOAC3B1GCHy7TYxxbExKlb7bzDRzt9vBWU6BDz0RFfYg==}
     engines: {node: '>=18.17'}
 
   /unified@10.1.2:
