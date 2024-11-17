@@ -23,7 +23,7 @@ export const getFilteringParams = (request: Request) => {
   const period: PERIOD = (rawPeriod && PERIOD_TYPES.includes(rawPeriod as PERIOD) ? rawPeriod : 'day') as PERIOD;
 
   const defaultGte = new Date();
-  const dateGte = startOfDay(getDateFromSearchParam(searchParams.get('gte')) || addDays(defaultGte, -30));
+  const dateGte = startOfDay(getDateFromSearchParam(searchParams.get('gte')) || addDays(defaultGte, -14));
   const dateLte = endOfDay(getDateFromSearchParam(searchParams.get('lte')) || defaultGte);
 
   return { dateGte, dateLte, period };
