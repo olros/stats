@@ -1,5 +1,5 @@
 import { geolocation, ipAddress, waitUntil } from '@vercel/functions';
-import { data, type ActionFunctionArgs } from '@remix-run/node';
+import type { ActionFunctionArgs } from '@remix-run/node';
 import type { UserAgentData } from '~/user-agent';
 import { userAgent } from '~/user-agent';
 import { forwardRequestToInternalApi } from '~/utils_edge.server';
@@ -94,7 +94,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }
   } catch (e) {
     console.error('[API - Pageview]', e);
-    return data({ ok: false }, { status: 400 });
+    return new Response(JSON.stringify({ ok: false }), { status: 400 });
   }
-  return data({ ok: true }, { status: 200 });
+  return new Response(JSON.stringify({ ok: true }), { status: 200 });
 };
