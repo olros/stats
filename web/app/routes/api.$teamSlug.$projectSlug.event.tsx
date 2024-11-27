@@ -1,18 +1,17 @@
-import type { RequestContext } from '@vercel/edge';
+import { waitUntil } from '@vercel/functions';
 import type { ActionFunctionArgs } from '@remix-run/node';
 import { forwardRequestToInternalApi } from '~/utils_edge.server';
 import invariant from 'tiny-invariant';
 
 export const config = { runtime: 'edge' };
 
-export const action = async ({ request, params, context }: ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   try {
     invariant(params.teamSlug, `Expected params.teamSlug`);
     invariant(params.projectSlug, `Expected params.projectSlug`);
-    const ctx = context as unknown as RequestContext;
 
-    if ('waitUntil' in ctx) {
-      ctx.waitUntil(forwardRequestToInternalApi(request, `${params.teamSlug}/${params.projectSlug}/event/`));
+    if (waitUntil) {
+      waitUntil(forwardRequestToInternalApi(request, `${params.teamSlug}/${params.projectSlug}/event/`));
     } else {
       await forwardRequestToInternalApi(request, `${params.teamSlug}/${params.projectSlug}/event/`);
     }

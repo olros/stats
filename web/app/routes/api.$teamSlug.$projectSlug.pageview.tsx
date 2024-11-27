@@ -1,5 +1,4 @@
-import { geolocation, ipAddress } from '@vercel/edge';
-import type { RequestContext } from '@vercel/edge';
+import { geolocation, ipAddress, waitUntil } from '@vercel/functions';
 import type { ActionFunctionArgs } from '@remix-run/node';
 import type { UserAgentData } from '~/user-agent';
 import { userAgent } from '~/user-agent';
@@ -77,11 +76,10 @@ const getPageViewNextRequest = async (request: Request): Promise<Request | undef
   });
 };
 
-export const action = async ({ request, params, context }: ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   try {
     invariant(params.teamSlug, `Expected params.teamSlug`);
     invariant(params.projectSlug, `Expected params.projectSlug`);
-    const ctx = context as unknown as RequestContext;
 
     const pageViewNextRequest = await getPageViewNextRequest(request);
 
@@ -89,8 +87,8 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
       ...(pageViewNextRequest ? [forwardRequestToInternalApi(pageViewNextRequest, `${params.teamSlug}/${params.projectSlug}/pageview/`)] : []),
     ]);
 
-    if ('waitUntil' in ctx) {
-      ctx.waitUntil(promises);
+    if (waitUntil) {
+      waitUntil(promises);
     } else {
       await promises;
     }

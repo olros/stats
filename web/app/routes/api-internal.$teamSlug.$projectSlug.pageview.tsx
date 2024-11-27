@@ -1,5 +1,5 @@
 import type { Location, Prisma, Project } from '@prisma/client';
-import type { Geo } from '@vercel/edge';
+import type { Geo } from '@vercel/functions';
 import type { ActionFunctionArgs } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import { getProjectAndCheckPermissions } from '~/utils_api.server';
