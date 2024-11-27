@@ -165,8 +165,8 @@ importers:
         specifier: ^3.17.4
         version: 3.17.4
       undici:
-        specifier: ^6.19.6
-        version: 6.19.6
+        specifier: ^7.0.0
+        version: 7.0.0
     devDependencies:
       '@remix-run/dev':
         specifier: ^2.15.0
@@ -4875,9 +4875,13 @@ packages:
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
-  undici@6.19.6:
-    resolution: {integrity: sha512-KfINKY5js30ub8NAGQlUyxldk2NTvNkyKBnJtMpSVCk8fqrPpUDEvDkHV6t+lTHCv9NwbUcHU3Jnm2ohE01G+Q==}
+  undici@6.21.0:
+    resolution: {integrity: sha512-BUgJXc752Kou3oOIuU1i+yZZypyZRqNPW0vqoMPl8VaoalSfeR0D8/t4iAS3yirs79SSMTxTag+ZC86uswv+Cw==}
     engines: {node: '>=18.17'}
+
+  undici@7.0.0:
+    resolution: {integrity: sha512-c4xi3kWnQJrb7h2q8aJYKvUzmz7boCgz1cUCC6OwdeM5Tr2P0hDuthr2iut4ggqsz+Cnh20U/LoTzbKIdDS/Nw==}
+    engines: {node: '>=20.18.1'}
 
   unified@10.1.2:
     resolution: {integrity: sha512-pUSWAi/RAnVy1Pif2kAoeWNBa3JVrx0MId2LASj8G+7AiHWoKZNTomq6LG326T68U7/e263X6fTdcXIy7XnF7Q==}
@@ -6525,7 +6529,7 @@ snapshots:
       cookie-signature: 1.2.1
       source-map-support: 0.5.21
       stream-slice: 0.1.2
-      undici: 6.19.6
+      undici: 6.21.0
     optionalDependencies:
       typescript: 5.4.5
 
@@ -10415,7 +10419,9 @@ snapshots:
 
   undici-types@5.26.5: {}
 
-  undici@6.19.6: {}
+  undici@6.21.0: {}
+
+  undici@7.0.0: {}
 
   unified@10.1.2:
     dependencies:
