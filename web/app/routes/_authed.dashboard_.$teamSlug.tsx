@@ -1,4 +1,4 @@
-import { Form, Outlet, useActionData, useLoaderData, useNavigation, type MetaArgs_SingleFetch } from '@remix-run/react';
+import { data, Form, Outlet, redirect, useActionData, useLoaderData, useNavigation, type MetaArgs } from '@remix-run/react';
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { ensureIsTeamMember } from '~/auth.server';
 import { LinkTabs } from '~/components/LinkTabs';
@@ -9,20 +9,20 @@ import { Typography } from '~/components/typography';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '~/components/ui/sheet';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
-import { redirect, slugify } from '~/utils.server';
+import { slugify } from '~/utils.server';
 import { prismaClient } from '~/prismaClient';
 import { Prisma } from '@prisma/client';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const meta = ({ data }: MetaArgs_SingleFetch<typeof loader>) => [{ title: `${data?.team.name} | Stats` }];
+export const meta = ({ data }: MetaArgs<typeof loader>) => [{ title: `${data?.team.name} | Stats` }];
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   return { team: await ensureIsTeamMember(request, params.teamSlug) };
 };
 
-export const action = async ({ request, params, response }: ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   const team = await ensureIsTeamMember(request, params.teamSlug);
   const formData = await request.formData();
@@ -31,8 +31,7 @@ export const action = async ({ request, params, response }: ActionFunctionArgs) 
   const slug = slugify(name);
 
   if (slug === 'settings' || slug === 'members') {
-    response!.status = 400;
-    return { errors: { name: `"settings" and "members" are protected project names, chose a different name and try again` } };
+    return data({ errors: { name: `"settings" and "members" are protected project names, chose a different name and try again` } }, { status: 400 });
   }
 
   try {
@@ -45,15 +44,13 @@ export const action = async ({ request, params, response }: ActionFunctionArgs) 
         allowed_hosts: '',
       },
     });
-    return redirect(response, `/dashboard/${team.slug}/${project.slug}`);
+    return redirect(`/dashboard/${team.slug}/${project.slug}`);
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      response!.status = 400;
-      return { errors: { name: `This team already contains a project named "${name}"` } };
+      return data({ errors: { name: `This team already contains a project named "${name}"` } }, { status: 400 });
     }
   }
-  response!.status = 400;
-  return { errors: { name: 'Something went wrong' } };
+  return data({ errors: { name: 'Something went wrong' } }, { status: 400 });
 };
 
 const TABS = [

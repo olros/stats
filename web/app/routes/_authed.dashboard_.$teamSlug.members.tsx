@@ -1,4 +1,4 @@
-import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
+import { data, Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
@@ -29,7 +29,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return { members: await members };
 };
 
-export const action = async ({ request, params, response }: ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   const team = await ensureIsTeamMember(request, params.teamSlug);
 
@@ -48,8 +48,7 @@ export const action = async ({ request, params, response }: ActionFunctionArgs) 
     });
 
     if (!user) {
-      response!.status = 400;
-      return { errors: { github_username: 'No users exists with this GitHub username' } };
+      return data({ errors: { github_username: 'No users exists with this GitHub username' } }, { status: 400 });
     }
 
     await prismaClient.teamUser.create({
@@ -76,8 +75,7 @@ export const action = async ({ request, params, response }: ActionFunctionArgs) 
 
       return { detail: 'Member successfully removed from the team' };
     } catch {
-      response!.status = 400;
-      return { errors: { userId: 'Something went wrong' } };
+      return data({ errors: { userId: 'Something went wrong' } }, { status: 400 });
     }
   }
 };

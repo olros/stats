@@ -1,5 +1,5 @@
 import type { Prisma, Project } from '@prisma/client';
-import type { ActionFunctionArgs } from '@remix-run/node';
+import { data, type ActionFunctionArgs } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import { getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getCustomEventsUsage } from '~/utils_usage.server';
@@ -9,12 +9,12 @@ import invariant from 'tiny-invariant';
 import type { CustomEventInput } from '~/types';
 
 const parseCustomEventInput = async (request: Request): Promise<CustomEventInput> => {
-  const data = (await request.json()) as CustomEventInput;
-  if (!data.name) {
-    throw new Response(JSON.stringify({ errors: { name: `Name isn't defined` } }), { status: 400 });
+  const body = (await request.json()) as CustomEventInput;
+  if (!body.name) {
+    throw data({ errors: { name: `Name isn't defined` } }, { status: 400 });
   }
 
-  return data;
+  return body;
 };
 
 const trackCustomEvent = async (request: Request, project: Project) => {
@@ -59,9 +59,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     await trackCustomEvent(request, project);
 
-    return new Response(JSON.stringify({ ok: true }), { status: 200 });
+    return data({ ok: true }, { status: 200 });
   } catch (e) {
     console.error('[API-Internal - Event]', e);
-    return new Response(JSON.stringify({ ok: false }), { status: 400 });
+    return data({ ok: false }, { status: 400 });
   }
 };

@@ -1,11 +1,10 @@
 import { Prisma } from '@prisma/client';
-import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
+import { data, Form, redirect, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import { useState } from 'react';
 import invariant from 'tiny-invariant';
-import { redirect } from '~/utils.server';
 import { Card } from '~/components/ui/card';
 import { Typography } from '~/components/typography';
 import { Input } from '~/components/ui/input';
@@ -20,7 +19,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return { team };
 };
 
-export const action = async ({ request, params, response }: ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   await ensureIsTeamMember(request, params.teamSlug);
   if (request.method === 'PUT') {
@@ -35,11 +34,10 @@ export const action = async ({ request, params, response }: ActionFunctionArgs) 
           slug: params.teamSlug.toLowerCase(),
         },
       });
-      return redirect(response, `/dashboard/${team.slug}/settings`);
+      return redirect(`/dashboard/${team.slug}/settings`);
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        response!.status = 400;
-        return { errors: { name: 'This team name is already taken' } };
+        return data({ errors: { name: 'This team name is already taken' } }, { status: 400 });
       }
     }
   }
@@ -49,10 +47,9 @@ export const action = async ({ request, params, response }: ActionFunctionArgs) 
         slug: params.teamSlug.toLowerCase(),
       },
     });
-    return redirect(response, `/dashboard`);
+    return redirect(`/dashboard`);
   }
-  response!.status = 400;
-  return { errors: { name: 'Something went wrong' } };
+  return data({ errors: { name: 'Something went wrong' } }, { status: 400 });
 };
 
 export default function TeamSettings() {

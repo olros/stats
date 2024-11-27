@@ -1,6 +1,6 @@
 import type { Location, Prisma, Project } from '@prisma/client';
 import type { Geo } from '@vercel/functions';
-import type { ActionFunctionArgs } from '@remix-run/node';
+import { data, type ActionFunctionArgs } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import { getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getPageViewsNextUsage } from '~/utils_usage.server';
@@ -88,7 +88,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     await trackPageviewNext(request, project);
   } catch (e) {
     console.error('[API-Internal - PageviewNext]', e);
-    return new Response(JSON.stringify({ ok: false }), { status: 400 });
+    return data({ ok: false }, { status: 400 });
   }
-  return new Response(JSON.stringify({ ok: true }), { status: 200 });
+  return data({ ok: true }, { status: 200 });
 };

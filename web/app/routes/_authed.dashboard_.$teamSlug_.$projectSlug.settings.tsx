@@ -1,12 +1,11 @@
 import { Prisma } from '@prisma/client';
-import { Form, useActionData, useLoaderData, useNavigation, useSubmit } from '@remix-run/react';
+import { data, Form, redirect, useActionData, useLoaderData, useNavigation, useSubmit } from '@remix-run/react';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { ensureIsTeamMember } from '~/auth.server';
 import { useIsClient } from '~/hooks/useIsClient';
 import { prismaClient } from '~/prismaClient';
 import { useCallback, useState } from 'react';
 import invariant from 'tiny-invariant';
-import { redirect } from '~/utils.server';
 import { Card } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Typography } from '~/components/typography';
@@ -28,7 +27,7 @@ import {
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request, params, response }: LoaderFunctionArgs) => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
   await ensureIsTeamMember(request, params.teamSlug);
@@ -40,13 +39,13 @@ export const loader = async ({ request, params, response }: LoaderFunctionArgs) 
   });
 
   if (!project) {
-    throw redirect(response, `/dashboard/${params.teamSlug}`);
+    throw redirect(`/dashboard/${params.teamSlug}`);
   }
 
   return { project };
 };
 
-export const action = async ({ request, params, response }: ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
   await ensureIsTeamMember(request, params.teamSlug);
@@ -73,7 +72,7 @@ export const action = async ({ request, params, response }: ActionFunctionArgs) 
         },
       });
     }
-    return redirect(response, `/dashboard/${params.teamSlug}/${params.projectSlug}/settings`);
+    return redirect(`/dashboard/${params.teamSlug}/${params.projectSlug}/settings`);
   }
   if (request.method === 'PUT') {
     const formData = await request.formData();
@@ -96,11 +95,10 @@ export const action = async ({ request, params, response }: ActionFunctionArgs) 
           },
         },
       });
-      return redirect(response, `/dashboard/${params.teamSlug}/${project.slug}/settings`);
+      return redirect(`/dashboard/${params.teamSlug}/${project.slug}/settings`);
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        response!.status = 400;
-        return { errors: { name: 'This team already contains a project with this name' } };
+        return data({ errors: { name: 'This team already contains a project with this name' } }, { status: 400 });
       }
     }
   }
@@ -113,10 +111,9 @@ export const action = async ({ request, params, response }: ActionFunctionArgs) 
         },
       },
     });
-    return redirect(response, `/dashboard/${params.teamSlug}`);
+    return redirect(`/dashboard/${params.teamSlug}`);
   }
-  response!.status = 400;
-  return { errors: { name: 'Something went wrong' } };
+  return data({ errors: { name: 'Something went wrong' } }, { status: 400 });
 };
 
 export default function ProjectSettings() {

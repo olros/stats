@@ -1,9 +1,8 @@
-import { Outlet, useLoaderData } from '@remix-run/react';
+import { Outlet, useLoaderData, redirect } from '@remix-run/react';
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { LinkTabs } from '~/components/LinkTabs';
 import { prismaClient } from '~/prismaClient';
 import invariant from 'tiny-invariant';
-import { redirect } from '~/utils.server';
 import { Card } from '~/components/ui/card';
 import { Typography } from '~/components/typography';
 
@@ -11,7 +10,7 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: `${data?.project.name} | Stats` }];
 
-export const loader = async ({ response, params }: LoaderFunctionArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
 
@@ -21,7 +20,7 @@ export const loader = async ({ response, params }: LoaderFunctionArgs) => {
   const project = await prismaClient.project.findFirst({ where: { slug: projectSlug, teamSlug: teamSlug } });
 
   if (!project) {
-    throw redirect(response, `/dashboard/${teamSlug}`);
+    return redirect(`/dashboard/${teamSlug}`);
   }
   return { teamSlug, project };
 };

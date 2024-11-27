@@ -1,5 +1,5 @@
-import { Form } from '@remix-run/react';
-import { type LoaderFunctionArgs } from '@remix-run/node';
+import { Form, redirect } from '@remix-run/react';
+import type { LoaderFunctionArgs } from '@remix-run/node';
 import { authenticator } from '~/auth.server';
 import { Container } from '~/components/container';
 import { RepositoryLink } from '~/components/repository-link';
@@ -8,14 +8,13 @@ import { Button } from '~/components/ui/button';
 import { Card } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
 import { stats } from '~/stats';
-import { redirect } from '~/utils.server';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
-export const loader = async ({ request, response }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await authenticator.isAuthenticated(request);
   if (user) {
-    return redirect(response, `/dashboard`);
+    return redirect(`/dashboard`);
   }
   return null;
 };

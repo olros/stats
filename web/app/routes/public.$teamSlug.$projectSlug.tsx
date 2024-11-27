@@ -1,8 +1,7 @@
-import { Outlet, useLoaderData } from '@remix-run/react';
+import { Outlet, useLoaderData, redirect } from '@remix-run/react';
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import invariant from 'tiny-invariant';
-import { redirect } from '~/utils.server';
 import { Container } from '~/components/container';
 import { RepositoryLink } from '~/components/repository-link';
 import { Typography } from '~/components/typography';
@@ -11,7 +10,7 @@ export { ErrorBoundary } from '~/components/ErrorBoundary';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: `${data?.project.team.name}/${data?.project.name} | Stats` }];
 
-export const loader = async ({ params, response }: LoaderFunctionArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.teamSlug, 'Expected params.teamSlug');
   invariant(params.projectSlug, 'Expected params.projectSlug');
 
@@ -32,7 +31,7 @@ export const loader = async ({ params, response }: LoaderFunctionArgs) => {
   });
 
   if (!project) {
-    throw redirect(response, '/');
+    throw redirect('/');
   }
 
   try {

@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { Form, NavLink, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
+import { data, Form, NavLink, redirect, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { getUserOrRedirect } from '~/auth.server';
 import { Typography } from '~/components/typography';
@@ -9,7 +9,7 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/components/ui/sheet';
 import { prismaClient } from '~/prismaClient';
-import { redirect, slugify } from '~/utils.server';
+import { slugify } from '~/utils.server';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 
@@ -27,7 +27,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return { teams };
 };
 
-export const action = async ({ request, response }: ActionFunctionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const user = await getUserOrRedirect(request);
   const formData = await request.formData();
   const name = formData.get('name') as string;
@@ -43,16 +43,14 @@ export const action = async ({ request, response }: ActionFunctionArgs) => {
         },
       },
     });
-    return redirect(response, `/dashboard/${team.slug}`);
+    return redirect(`/dashboard/${team.slug}`);
   } catch (e) {
     console.error('[New Team]', e);
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      response!.status = 400;
-      return { errors: { name: 'This team name is already taken' } };
+      return data({ errors: { name: 'This team name is already taken' } }, { status: 400 });
     }
   }
-  response!.status = 400;
-  return { errors: { name: 'Something went wrong' } };
+  return data({ errors: { name: 'Something went wrong' } }, { status: 400 });
 };
 
 export default function Dashboard() {
