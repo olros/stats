@@ -1,9 +1,13 @@
 import { useParams } from '@remix-run/react';
 import { ReactNode } from 'react';
 
+// @ts-ignore
 import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism-light';
+// @ts-ignore
 import js from 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
+// @ts-ignore
 import bash from 'react-syntax-highlighter/dist/esm/languages/prism/bash';
+// @ts-ignore
 import codeStyle from 'react-syntax-highlighter/dist/esm/styles/prism/coldark-dark';
 
 import { Typography, TypographyProps } from '~/components/typography';
