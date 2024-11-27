@@ -1,6 +1,6 @@
 import { geolocation, ipAddress } from '@vercel/edge';
 import type { RequestContext } from '@vercel/edge';
-import type { ActionFunctionArgs } from '@vercel/remix';
+import type { ActionFunctionArgs } from '@remix-run/node';
 import type { UserAgentData } from '~/user-agent';
 import { userAgent } from '~/user-agent';
 import { forwardRequestToInternalApi } from '~/utils_edge.server';

@@ -5,7 +5,7 @@
   "sideEffects": false,
   "type": "module",
   "engines": {
-    "node": "^18"
+    "node": "^22"
   },
   "scripts": {
     "prebuild": "pnpm run db:generate",
@@ -52,11 +52,10 @@
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-toggle-group": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
-    "@remix-run/node": "^2.9.1",
-    "@remix-run/react": "^2.9.1",
-    "@remix-run/server-runtime": "^2.9.1",
-    "@vercel/edge": "^1.1.1",
-    "@vercel/remix": "^2.9.0",
+    "@remix-run/node": "^2.15.0",
+    "@remix-run/react": "^2.15.0",
+    "@remix-run/server-runtime": "^2.15.0",
+    "@vercel/edge": "^1.1.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "d3-scale": "^4.0.2",
@@ -82,9 +81,9 @@
     "undici": "^6.19.6"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.9.1",
-    "@remix-run/eslint-config": "^2.9.1",
-    "@remix-run/serve": "^2.9.1",
+    "@remix-run/dev": "^2.15.0",
+    "@remix-run/eslint-config": "^2.15.0",
+    "@remix-run/serve": "^2.15.0",
     "@tailwindcss/vite": "4.0.0-alpha.14",
     "@types/d3-scale": "^4.0.8",
     "@types/d3-scale-chromatic": "^3.0.3",

@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { authenticator } from '~/auth.server';
 import { redirect } from '~/utils.server';
 

@@ -1,5 +1,5 @@
 import { Outlet } from '@remix-run/react';
-import type { MetaFunction } from '@vercel/remix';
+import type { MetaFunction } from '@remix-run/node';
 
 export { ErrorBoundary } from '~/components/ErrorBoundary';
 

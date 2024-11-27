@@ -1,5 +1,5 @@
 import { Form, Outlet, useActionData, useLoaderData, useNavigation, type MetaArgs_SingleFetch } from '@remix-run/react';
-import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { ensureIsTeamMember } from '~/auth.server';
 import { LinkTabs } from '~/components/LinkTabs';
 import invariant from 'tiny-invariant';
@@ -69,8 +69,8 @@ export default function ProjectDashboard() {
   const { state } = useNavigation();
   return (
     <>
-      <Card className='flex-column flex items-center justify-between gap-2 [view-transition-name:team-card] sm:flex-row'>
-        <Typography variant='h1' className='py-1 [view-transition-name:team-name]'>
+      <Card className='flex-column gap-2sm:flex-row flex items-center justify-between'>
+        <Typography variant='h1' className='py-1'>
           {team.name}
         </Typography>
         <Sheet>

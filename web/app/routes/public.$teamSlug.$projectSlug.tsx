@@ -1,5 +1,5 @@
 import { Outlet, useLoaderData } from '@remix-run/react';
-import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import invariant from 'tiny-invariant';
 import { redirect } from '~/utils.server';

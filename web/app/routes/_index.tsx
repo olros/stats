@@ -1,5 +1,5 @@
 import { Form } from '@remix-run/react';
-import { type LoaderFunctionArgs } from '@vercel/remix';
+import { type LoaderFunctionArgs } from '@remix-run/node';
 import { authenticator } from '~/auth.server';
 import { Container } from '~/components/container';
 import { RepositoryLink } from '~/components/repository-link';

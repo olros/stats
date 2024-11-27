@@ -1,5 +1,5 @@
 import { useLoaderData } from '@remix-run/react';
-import type { LoaderFunctionArgs } from '@vercel/remix';
+import type { LoaderFunctionArgs } from '@remix-run/node';
 import { ensureIsTeamMember } from '~/auth.server';
 import type { Usage } from '~/utils_usage.server';
 import { getTeamUsage } from '~/utils_usage.server';

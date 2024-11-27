@@ -1,5 +1,5 @@
 import { Outlet, useLoaderData } from '@remix-run/react';
-import type { LoaderFunctionArgs } from '@vercel/remix';
+import type { LoaderFunctionArgs } from '@remix-run/node';
 import { getUserOrRedirect } from '~/auth.server';
 import { Navbar } from '~/components/Navbar';
 import { prismaClient } from '~/prismaClient';

@@ -1,5 +1,5 @@
 import { Outlet, useLoaderData } from '@remix-run/react';
-import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { LinkTabs } from '~/components/LinkTabs';
 import { prismaClient } from '~/prismaClient';
 import invariant from 'tiny-invariant';
@@ -36,12 +36,12 @@ export default function ProjectDashboard() {
   const { teamSlug, project } = useLoaderData<typeof loader>();
   return (
     <>
-      <Card className='flex items-center justify-between gap-2 [view-transition-name:project-card]'>
-        <Typography variant='h1' className='overflow-hidden text-ellipsis py-1 [view-transition-name:project-name]'>
+      <Card className='flex items-center justify-between gap-2'>
+        <Typography variant='h1' className='overflow-hidden text-ellipsis py-1'>
           {project.name}
         </Typography>
         <Typography asChild variant='small'>
-          <a href={project.url} className=' overflow-hidden text-ellipsis underline [view-transition-name:project-url]' target='_blank'>
+          <a href={project.url} className=' overflow-hidden text-ellipsis underline' target='_blank'>
             {project.url}
           </a>
         </Typography>

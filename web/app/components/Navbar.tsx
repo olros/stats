@@ -12,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 import type { Prisma, User } from '@prisma/client';
-import type { SerializeFrom } from '@remix-run/node';
 import { Link, useLocation, useParams } from '@remix-run/react';
 
 import { Card } from './ui/card';
@@ -35,7 +34,7 @@ export const Navbar = ({ user, teams }: NavbarProps) => {
   return (
     <Card className='sticky top-2 z-10 flex justify-between overflow-hidden py-2 px-4 backdrop:blur-sm'>
       <div className='flex items-center gap-2 overflow-hidden'>
-        <Link className='h-[34px]' to='/dashboard' unstable_viewTransition>
+        <Link className='h-[34px]' to='/dashboard'>
           <img alt='' src='/favicon-192.png' className='h-[34px]' />
         </Link>
         <DropdownMenu>
@@ -48,9 +47,7 @@ export const Navbar = ({ user, teams }: NavbarProps) => {
             {teams.map((team, index) => (
               <DropdownMenuGroup key={team.id}>
                 <DropdownMenuItem asChild>
-                  <Link to={`/dashboard/${team.slug}`} unstable_viewTransition>
-                    {team.name}
-                  </Link>
+                  <Link to={`/dashboard/${team.slug}`}>{team.name}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>Projects</DropdownMenuSubTrigger>
@@ -58,9 +55,7 @@ export const Navbar = ({ user, teams }: NavbarProps) => {
                     <DropdownMenuSubContent>
                       {team.projects.map((project) => (
                         <DropdownMenuItem key={project.id} asChild>
-                          <Link to={`/dashboard/${team.slug}/${project.slug}`} unstable_viewTransition>
-                            {project.name}
-                          </Link>
+                          <Link to={`/dashboard/${team.slug}/${project.slug}`}>{project.name}</Link>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuSubContent>
@@ -73,13 +68,9 @@ export const Navbar = ({ user, teams }: NavbarProps) => {
         </DropdownMenu>
       </div>
       {location.pathname !== '/profile' && (
-        <Link to='/profile' unstable_viewTransition>
+        <Link to='/profile' className='group'>
           <Avatar>
-            <AvatarImage
-              alt='Link to profile'
-              src={user.avatar_url || undefined}
-              className='[view-transition-name:avatar] hover:scale-[1.1] hover:transition-[scale_0.1s]'
-            />
+            <AvatarImage alt='Link to profile' src={user.avatar_url || undefined} className='hover:scale-[1.1] hover:transition-[scale_0.1s]' />
             <AvatarFallback>{user.name[0]}</AvatarFallback>
           </Avatar>
         </Link>

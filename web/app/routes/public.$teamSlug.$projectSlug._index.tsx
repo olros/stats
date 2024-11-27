@@ -1,5 +1,5 @@
 import { useLoaderData, useRevalidator } from '@remix-run/react';
-import { type LoaderFunctionArgs } from '@vercel/remix';
+import { type LoaderFunctionArgs } from '@remix-run/node';
 import { Statistics } from '~/components/statistics';
 import { loadStatistics } from '~/components/statistics/loader.server';
 import { useInterval } from '~/hooks/useInterval';

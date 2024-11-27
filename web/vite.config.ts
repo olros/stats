@@ -1,11 +1,13 @@
 import { vitePlugin as remix } from '@remix-run/dev';
-import { installGlobals } from '@remix-run/node';
-import { vercelPreset } from '@vercel/remix/vite';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 
-installGlobals({ nativeFetch: true });
+declare module '@remix-run/node' {
+  interface Future {
+    v3_singleFetch: true;
+  }
+}
 
 export default defineConfig({
   server: {
@@ -18,12 +20,13 @@ export default defineConfig({
     remix({
       serverModuleFormat: 'esm',
       ignoredRouteFiles: ['**/.*'],
-      presets: [vercelPreset()],
       future: {
         v3_throwAbortReason: true,
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
-        unstable_singleFetch: true,
+        v3_lazyRouteDiscovery: true,
+        v3_singleFetch: true,
+        unstable_optimizeDeps: true,
       },
     }),
     tsconfigPaths(),

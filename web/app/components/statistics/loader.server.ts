@@ -1,4 +1,3 @@
-import type { SerializeFrom } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import { format, setDay, subMinutes } from 'date-fns';
 

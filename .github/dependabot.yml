@@ -13,10 +13,9 @@ updates:
       remix:
         patterns:
           - "@remix-run/*"
-          - "@vercel/*"
-      mui:
+      radix:
         patterns:
-          - "@mui/*"
+          - "@radix-ui/*"
           - "@emotion/*"
       nivo:
         patterns:
@@ -36,6 +35,10 @@ updates:
           - "react"
           - "react-dom"
           - "@types/react"
+      tailwind:
+        patterns:
+          - "class-variance-authority"
+          - "tailwind*"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]

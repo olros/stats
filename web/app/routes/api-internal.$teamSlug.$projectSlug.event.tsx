@@ -1,5 +1,5 @@
 import type { Prisma, Project } from '@prisma/client';
-import type { ActionFunctionArgs } from '@vercel/remix';
+import type { ActionFunctionArgs } from '@remix-run/node';
 import { prismaClient } from '~/prismaClient';
 import { getProjectAndCheckPermissions } from '~/utils_api.server';
 import { getCustomEventsUsage } from '~/utils_usage.server';

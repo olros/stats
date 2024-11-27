@@ -1,5 +1,5 @@
 import { Link, useLoaderData } from '@remix-run/react';
-import type { LoaderFunctionArgs, MetaFunction } from '@vercel/remix';
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { getUserOrRedirect } from '~/auth.server';
 import { Card } from '~/components/ui/card';
 import { Typography } from '~/components/typography';
@@ -21,7 +21,7 @@ export default function Profile() {
     <Card>
       <div className='flex items-center gap-2'>
         <Avatar>
-          <AvatarImage alt={`Profile image of ${user.name}`} src={user.avatar_url || undefined} className='[view-transition-name:avatar]' />
+          <AvatarImage alt={`Profile image of ${user.name}`} src={user.avatar_url || undefined} />
           <AvatarFallback>{user.name[0]}</AvatarFallback>
         </Avatar>
         <Typography variant='h1'>{user.name}</Typography>

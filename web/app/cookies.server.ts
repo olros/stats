@@ -1,5 +1,5 @@
-import type { SessionIdStorageStrategy } from '@vercel/remix';
-import { createCookieSessionStorage } from '@vercel/remix';
+import type { SessionIdStorageStrategy } from '@remix-run/node';
+import { createCookieSessionStorage } from '@remix-run/node';
 import { hoursToSeconds, weeksToDays } from 'date-fns';
 import invariant from 'tiny-invariant';
 

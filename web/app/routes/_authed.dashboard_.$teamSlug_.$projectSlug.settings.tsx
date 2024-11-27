@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { Form, useActionData, useLoaderData, useNavigation, useSubmit } from '@remix-run/react';
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { ensureIsTeamMember } from '~/auth.server';
 import { useIsClient } from '~/hooks/useIsClient';
 import { prismaClient } from '~/prismaClient';

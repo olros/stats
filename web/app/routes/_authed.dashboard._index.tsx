@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { Form, NavLink, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@vercel/remix';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { getUserOrRedirect } from '~/auth.server';
 import { Typography } from '~/components/typography';
 import { Button } from '~/components/ui/button';
@@ -61,10 +61,8 @@ export default function Dashboard() {
   const { state } = useNavigation();
   return (
     <>
-      <Card className='flex flex-col items-center justify-between gap-2 [view-transition-name:header-old] sm:flex-row'>
-        <Typography variant='h1' className='[view-transition-name:header-old-tex]'>
-          Your teams
-        </Typography>
+      <Card className='flex flex-col items-center justify-between gap-2 sm:flex-row'>
+        <Typography variant='h1'>Your teams</Typography>
         <Sheet>
           <SheetTrigger asChild>
             <Button>New team</Button>
@@ -90,11 +88,7 @@ export default function Dashboard() {
       </Card>
       <div className='grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3'>
         {teams.map((team) => (
-          <NavLink
-            className='bg-card text-card-foreground rounded-xl border p-4 shadow hover:border-slate-600 [&.transitioning]:[view-transition-name:team-card] [&.transitioning]:*:[view-transition-name:team-name]'
-            key={team.slug}
-            to={team.slug}
-            unstable_viewTransition>
+          <NavLink className='bg-card text-card-foreground rounded-xl border p-4 shadow hover:border-slate-600' key={team.slug} to={team.slug}>
             <Typography variant='h2' className='p-0'>
               {team.name}
             </Typography>

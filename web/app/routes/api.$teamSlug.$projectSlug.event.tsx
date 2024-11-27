@@ -1,5 +1,5 @@
 import type { RequestContext } from '@vercel/edge';
-import type { ActionFunctionArgs } from '@vercel/remix';
+import type { ActionFunctionArgs } from '@remix-run/node';
 import { forwardRequestToInternalApi } from '~/utils_edge.server';
 import invariant from 'tiny-invariant';
 

@@ -1,5 +1,5 @@
 import { NavLink, useLoaderData } from '@remix-run/react';
-import type { LoaderFunctionArgs } from '@vercel/remix';
+import type { LoaderFunctionArgs } from '@remix-run/node';
 import { ensureIsTeamMember } from '~/auth.server';
 import { prismaClient } from '~/prismaClient';
 import invariant from 'tiny-invariant';
@@ -26,10 +26,9 @@ export default function TeamDashboard() {
       {projects.length === 0 && <Typography>This team hasn't created any projects yet</Typography>}
       {projects.map((project) => (
         <NavLink
-          className='bg-card text-card-foreground break-a overflow-ellipsis overflow-hidden rounded-xl border p-4 shadow hover:border-slate-600 [&.transitioning]:[view-transition-name:project-card] [&.transitioning]:[&_h3]:[view-transition-name:project-name] [&.transitioning]:[&_p]:[view-transition-name:project-url]'
+          className='bg-card text-card-foreground break-a overflow-ellipsis overflow-hidden rounded-xl border p-4 shadow hover:border-slate-600'
           key={project.slug}
-          to={project.slug}
-          unstable_viewTransition>
+          to={project.slug}>
           <Typography variant='h3'>{project.name}</Typography>
           <Typography variant='muted'>{project.url}</Typography>
         </NavLink>
