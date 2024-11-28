@@ -144,7 +144,7 @@ export default function ProjectSettings() {
           )}
           <Label htmlFor='url'>Website url</Label>
           <Input required id='url' defaultValue={project.url} disabled={state === 'submitting'} name='url' type='url' />
-          <Label htmlFor='allowed_hosts'>Allowed orgins</Label>
+          <Label htmlFor='allowed_hosts'>Allowed origins</Label>
           <Textarea
             id='allowed_hosts'
             defaultValue={project.allowed_hosts}
