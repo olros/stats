@@ -36,11 +36,11 @@ export default function ProjectDashboard() {
   return (
     <>
       <Card className='flex items-center justify-between gap-2'>
-        <Typography variant='h1' className='overflow-hidden text-ellipsis py-1'>
+        <Typography variant='h1' className='overflow-hidden py-1 text-ellipsis'>
           {project.name}
         </Typography>
         <Typography asChild variant='small'>
-          <a href={project.url} className=' overflow-hidden text-ellipsis underline' target='_blank'>
+          <a href={project.url} className='overflow-hidden text-ellipsis underline' target='_blank'>
             {project.url}
           </a>
         </Typography>

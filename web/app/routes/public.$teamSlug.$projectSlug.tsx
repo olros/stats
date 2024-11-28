@@ -47,7 +47,7 @@ export default function PublicPageviewsStatistics() {
 
   return (
     <Container>
-      <Typography variant='h1' className='break-words py-8 text-center'>{`Stats for ${project.team.name}/${project.name}`}</Typography>
+      <Typography variant='h1' className='py-8 text-center break-words'>{`Stats for ${project.team.name}/${project.name}`}</Typography>
       <Outlet />
       <RepositoryLink />
     </Container>

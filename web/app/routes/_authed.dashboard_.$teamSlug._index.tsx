@@ -26,7 +26,7 @@ export default function TeamDashboard() {
       {projects.length === 0 && <Typography>This team hasn't created any projects yet</Typography>}
       {projects.map((project) => (
         <NavLink
-          className='bg-card text-card-foreground break-a overflow-ellipsis overflow-hidden rounded-xl border p-4 shadow hover:border-slate-600'
+          className='bg-card text-card-foreground break-a overflow-hidden rounded-xl border p-4 overflow-ellipsis shadow hover:border-slate-600'
           key={project.slug}
           to={project.slug}>
           <Typography variant='h3'>{project.name}</Typography>

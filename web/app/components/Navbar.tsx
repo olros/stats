@@ -32,7 +32,7 @@ export const Navbar = ({ user, teams }: NavbarProps) => {
   const location = useLocation();
 
   return (
-    <Card className='sticky top-2 z-10 flex justify-between overflow-hidden py-2 px-4 backdrop:blur-sm'>
+    <Card className='sticky top-2 z-10 flex justify-between overflow-hidden px-4 py-2 backdrop:blur-sm'>
       <div className='flex items-center gap-2 overflow-hidden'>
         <Link className='h-[34px]' to='/dashboard'>
           <img alt='' src='/favicon-192.png' className='h-[34px]' />

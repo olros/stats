@@ -35,7 +35,7 @@ export const BarChart = ({ data, maxCount, title, countTitle, nullText }: BarCha
           <Fragment key={row.name}>
             <div className='relative h-full w-full'>
               <div className={`bg-secondary absolute top-0 bottom-0 left-0 h-full rounded`} style={{ width: `${(row.count / data[0].count) * 100}%` }} />
-              <Typography className='relative z-[2] !mt-0 break-words py-1 px-2'>{decodeURIComponent(row.name || nullText || '')}</Typography>
+              <Typography className='relative z-[2] !mt-0 px-2 py-1 break-words'>{decodeURIComponent(row.name || nullText || '')}</Typography>
             </div>
             <Typography className='!mt-0 py-1 text-right'>
               {Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 }).format(row.count)}

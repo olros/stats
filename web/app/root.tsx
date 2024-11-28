@@ -1,4 +1,4 @@
-import '@fontsource-variable/inter/index.css';
+import '@fontsource-variable/inter/opsz.css';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, useParams } from '@remix-run/react';
 import type { LinksFunction } from '@remix-run/node';
 import { ErrorBoundary as BaseErrorBoundary } from '~/components/ErrorBoundary';
