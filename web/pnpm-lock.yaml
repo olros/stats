@@ -162,8 +162,8 @@ importers:
         specifier: ^1.0.37
         version: 1.0.37
       uglify-js:
-        specifier: ^3.17.4
-        version: 3.17.4
+        specifier: ^3.19.3
+        version: 3.19.3
       undici:
         specifier: ^7.0.0
         version: 7.0.0
@@ -4873,8 +4873,8 @@ packages:
   ufo@1.5.3:
     resolution: {integrity: sha512-Y7HYmWaFwPUmkoQCUIAYpKqkOf+SbVj/2fJJZ4RJMCfZp0rTGwRbzQD+HghfnhKOjL9E01okqz+ncJskGYfBNw==}
 
-  uglify-js@3.17.4:
-    resolution: {integrity: sha512-T9q82TJI9e/C1TAxYvfb16xO120tMVFZrGA3f9/P4424DNu6ypK103y0GPFVa17yotwSyZW5iYXgjYHkGrJW/g==}
+  uglify-js@3.19.3:
+    resolution: {integrity: sha512-v3Xu+yuwBXisp6QYTcH4UbH+xYJXqnq2m/LtQVWKWzYc1iehYnLixoQDN9FH6/j9/oybfd6W9Ghwkl8+UMKTKQ==}
     engines: {node: '>=0.8.0'}
     hasBin: true
 
@@ -10366,7 +10366,7 @@ snapshots:
 
   ufo@1.5.3: {}
 
-  uglify-js@3.17.4: {}
+  uglify-js@3.19.3: {}
 
   unbox-primitive@1.0.2:
     dependencies:
