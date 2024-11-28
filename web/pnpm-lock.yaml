@@ -141,8 +141,8 @@ importers:
         specifier: ^1.7.0
         version: 1.7.0(@remix-run/server-runtime@2.15.0(typescript@5.7.2))(remix-auth@3.7.0(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(@remix-run/server-runtime@2.15.0(typescript@5.7.2)))
       remix-utils:
-        specifier: ^7.6.0
-        version: 7.6.0(@remix-run/node@2.15.0(typescript@5.7.2))(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(@remix-run/router@1.21.0)(is-ip@5.0.1)(react@18.3.1)
+        specifier: ^7.7.0
+        version: 7.7.0(@remix-run/node@2.15.0(typescript@5.7.2))(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(@remix-run/router@1.21.0)(is-ip@5.0.1)(react@18.3.1)
       slugify:
         specifier: ^1.6.6
         version: 1.6.6
@@ -4382,12 +4382,11 @@ packages:
       '@remix-run/react': ^1.0.0 || ^2.0.0
       '@remix-run/server-runtime': ^1.0.0 || ^2.0.0
 
-  remix-utils@7.6.0:
-    resolution: {integrity: sha512-BPhCUEy+nwrhDDDg2v3+LFSszV6tluMbeSkbffj2o4tqZxt5Kn69Y9sNpGxYLAj8gjqeYDuxjv55of+gYnnykA==}
+  remix-utils@7.7.0:
+    resolution: {integrity: sha512-J8NhP044nrNIam/xOT1L9a4RQ9FSaA2wyrUwmN8ZT+c/+CdAAf70yfaLnvMyKcV5U+8BcURQ/aVbth77sT6jGA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       '@remix-run/cloudflare': ^2.0.0
-      '@remix-run/deno': ^2.0.0
       '@remix-run/node': ^2.0.0
       '@remix-run/react': ^2.0.0
       '@remix-run/router': ^1.7.2
@@ -4398,8 +4397,6 @@ packages:
       zod: ^3.22.4
     peerDependenciesMeta:
       '@remix-run/cloudflare':
-        optional: true
-      '@remix-run/deno':
         optional: true
       '@remix-run/node':
         optional: true
@@ -9836,7 +9833,7 @@ snapshots:
       '@remix-run/server-runtime': 2.15.0(typescript@5.7.2)
       uuid: 8.3.2
 
-  remix-utils@7.6.0(@remix-run/node@2.15.0(typescript@5.7.2))(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(@remix-run/router@1.21.0)(is-ip@5.0.1)(react@18.3.1):
+  remix-utils@7.7.0(@remix-run/node@2.15.0(typescript@5.7.2))(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(@remix-run/router@1.21.0)(is-ip@5.0.1)(react@18.3.1):
     dependencies:
       type-fest: 4.18.1
     optionalDependencies:
