@@ -141,8 +141,8 @@ importers:
         specifier: ^1.7.0
         version: 1.7.0(@remix-run/server-runtime@2.15.0(typescript@5.7.2))(remix-auth@3.7.0(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(@remix-run/server-runtime@2.15.0(typescript@5.7.2)))
       remix-utils:
-        specifier: ^7.7.0
-        version: 7.7.0(@remix-run/node@2.15.0(typescript@5.7.2))(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(@remix-run/router@1.21.0)(is-ip@5.0.1)(react@18.3.1)
+        specifier: ^8.0.0
+        version: 8.0.0(is-ip@5.0.1)(react@18.3.1)
       slugify:
         specifier: ^1.6.6
         version: 1.6.6
@@ -4536,35 +4536,29 @@ packages:
       '@remix-run/react': ^1.0.0 || ^2.0.0
       '@remix-run/server-runtime': ^1.0.0 || ^2.0.0
 
-  remix-utils@7.7.0:
-    resolution: {integrity: sha512-J8NhP044nrNIam/xOT1L9a4RQ9FSaA2wyrUwmN8ZT+c/+CdAAf70yfaLnvMyKcV5U+8BcURQ/aVbth77sT6jGA==}
-    engines: {node: '>=18.0.0'}
+  remix-utils@8.0.0:
+    resolution: {integrity: sha512-vrs8Iytnuwi+KF+VYOPT3vzDX7cLbys897pwzLpMzLjOXJQ/S60dApHCmQ9cPWH3XHRgvaoJjZ6+sMGaax4fbg==}
+    engines: {node: '>=20.0.0'}
     peerDependencies:
-      '@remix-run/cloudflare': ^2.0.0
-      '@remix-run/node': ^2.0.0
-      '@remix-run/react': ^2.0.0
-      '@remix-run/router': ^1.7.2
-      crypto-js: ^4.1.1
+      '@oslojs/crypto': ^1.0.1
+      '@oslojs/encoding': ^1.1.0
       intl-parse-accept-language: ^1.0.0
       is-ip: ^5.0.1
-      react: ^18.0.0
+      react: ^18.0.0 || ^19.0.0
+      react-router: ^7.0.0
       zod: ^3.22.4
     peerDependenciesMeta:
-      '@remix-run/cloudflare':
+      '@oslojs/crypto':
         optional: true
-      '@remix-run/node':
-        optional: true
-      '@remix-run/react':
-        optional: true
-      '@remix-run/router':
-        optional: true
-      crypto-js:
+      '@oslojs/encoding':
         optional: true
       intl-parse-accept-language:
         optional: true
       is-ip:
         optional: true
       react:
+        optional: true
+      react-router:
         optional: true
       zod:
         optional: true
@@ -5017,8 +5011,8 @@ packages:
     resolution: {integrity: sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==}
     engines: {node: '>=10'}
 
-  type-fest@4.29.0:
-    resolution: {integrity: sha512-RPYt6dKyemXJe7I6oNstcH24myUGSReicxcHTvCLgzm4e0n8y05dGvcGB15/SoPRBmhlMthWQ9pvKyL81ko8nQ==}
+  type-fest@4.30.2:
+    resolution: {integrity: sha512-UJShLPYi1aWqCdq9HycOL/gwsuqda1OISdBO3t8RlXQC4QvtuIz4b5FCfe2dQIWEpmlRExKmcTBfP1r9bhY7ig==}
     engines: {node: '>=16'}
 
   type-is@1.6.18:
@@ -10188,13 +10182,10 @@ snapshots:
       '@remix-run/server-runtime': 2.15.0(typescript@5.7.2)
       uuid: 8.3.2
 
-  remix-utils@7.7.0(@remix-run/node@2.15.0(typescript@5.7.2))(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(@remix-run/router@1.21.0)(is-ip@5.0.1)(react@18.3.1):
+  remix-utils@8.0.0(is-ip@5.0.1)(react@18.3.1):
     dependencies:
-      type-fest: 4.29.0
+      type-fest: 4.30.2
     optionalDependencies:
-      '@remix-run/node': 2.15.0(typescript@5.7.2)
-      '@remix-run/react': 2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)
-      '@remix-run/router': 1.21.0
       is-ip: 5.0.1
       react: 18.3.1
 
@@ -10691,7 +10682,7 @@ snapshots:
 
   type-fest@0.20.2: {}
 
-  type-fest@4.29.0: {}
+  type-fest@4.30.2: {}
 
   type-is@1.6.18:
     dependencies:
