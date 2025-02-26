@@ -93,8 +93,8 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0(typescript@5.7.2)
       '@vercel/functions':
-        specifier: ^1.5.1
-        version: 1.5.1
+        specifier: ^2.0.0
+        version: 2.0.0
       '@vercel/remix':
         specifier: ^2.15.0
         version: 2.15.0(@remix-run/dev@2.15.0(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(@remix-run/serve@2.15.0(typescript@5.7.2))(@types/node@22.10.1)(lightningcss@1.28.2)(typescript@5.7.2)(vite@6.2.0(@types/node@22.10.1)(jiti@2.4.0)(lightningcss@1.28.2)(yaml@2.6.1)))(@remix-run/node@2.15.0(typescript@5.7.2))(@remix-run/server-runtime@2.15.0(typescript@5.7.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2021,9 +2021,9 @@ packages:
   '@vanilla-extract/private@1.0.6':
     resolution: {integrity: sha512-ytsG/JLweEjw7DBuZ/0JCN4WAQgM9erfSTdS1NQY778hFQSZ6cfCDEZZ0sgVm4k54uNz6ImKB33AYvSR//fjxw==}
 
-  '@vercel/functions@1.5.1':
-    resolution: {integrity: sha512-cCdrWa4sUkNE8WjZu9ODA4Q3d92Y333bCL3zebvQ8XCOH0MCy37q3rQ02sJU93mn7BuZyEk5hWBnEtfOb6Sr2Q==}
-    engines: {node: '>= 16'}
+  '@vercel/functions@2.0.0':
+    resolution: {integrity: sha512-BSwIihLHoV18gerKZJyGuqd3rtaYM6rJvET1kOwKktshucyaHXTJel7Cxegs+sdX0NZqsX4LO2MFnMU2jG01Cw==}
+    engines: {node: '>= 18'}
     peerDependencies:
       '@aws-sdk/credential-provider-web-identity': '*'
     peerDependenciesMeta:
@@ -7306,7 +7306,7 @@ snapshots:
 
   '@vanilla-extract/private@1.0.6': {}
 
-  '@vercel/functions@1.5.1': {}
+  '@vercel/functions@2.0.0': {}
 
   '@vercel/remix@2.15.0(@remix-run/dev@2.15.0(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(@remix-run/serve@2.15.0(typescript@5.7.2))(@types/node@22.10.1)(lightningcss@1.28.2)(typescript@5.7.2)(vite@6.2.0(@types/node@22.10.1)(jiti@2.4.0)(lightningcss@1.28.2)(yaml@2.6.1)))(@remix-run/node@2.15.0(typescript@5.7.2))(@remix-run/server-runtime@2.15.0(typescript@5.7.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
